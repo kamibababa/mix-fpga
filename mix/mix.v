@@ -174,10 +174,12 @@ module mix(
 	//ST
 	reg store;
 	always @(posedge clk)
-		store <=  (command[5:3]==3'b011);
+		store <=  (command[5:3]==3'b011)|(command==6'd32)|(command==6'd33);
 	reg [30:0] dataS;
 	always @(posedge clk)
-		if ((command[5:3] == 3'b011))
+		if (command==6'd32) dataS <= {19'd0,RegisterJ};
+		else if (command == 6'd33) dataS <=31'd0;
+		else if ((command[5:3] == 3'b011))
 			dataS <= (command[2]?
 					(command[1]?
 						(command[0]?
