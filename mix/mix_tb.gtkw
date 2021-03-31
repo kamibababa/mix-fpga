@@ -1,0 +1,33 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Wed Mar 31 08:27:58 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/MIX/mix/mix_tb.vcd"
+[dumpfile_mtime] "Wed Mar 31 08:25:26 2021"
+[dumpfile_size] 26943
+[savefile] "/home/micha/git/gitlab/MIX/mix/mix_tb.gtkw"
+[timestart] 0
+[size] 1280 703
+[pos] 0 27
+*-13.000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] mix_tb.
+[sst_width] 238
+[signals_width] 166
+[sst_expanded] 1
+[sst_vpaned_height] 181
+@28
+mix_tb.MIX.clk
+mix_tb.MIX.reset
+mix_tb.MIX.cycle
+@30
+mix_tb.MIX.pc[11:0]
+mix_tb.MIX.data[30:0]
+@28
+mix_tb.MIX.loadA
+mix_tb.MIX.store
+@31
+mix_tb.MIX.f[5:0]
+@30
+mix_tb.MIX.RegisterA[30:0]
+[pattern_trace] 1
+[pattern_trace] 0
