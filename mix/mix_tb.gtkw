@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Wed Mar 31 12:54:38 2021
+[*] Wed Mar 31 14:25:13 2021
 [*]
 [dumpfile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.vcd"
-[dumpfile_mtime] "Wed Mar 31 12:54:23 2021"
-[dumpfile_size] 27005
+[dumpfile_mtime] "Wed Mar 31 14:24:29 2021"
+[dumpfile_size] 27778
 [savefile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.gtkw"
 [timestart] 0
 [size] 1280 703
 [pos] 0 27
-*-13.000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-13.000000 3000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] mix_tb.
 [sst_width] 238
 [signals_width] 166
@@ -20,6 +20,10 @@ mix_tb.MIX.clk
 mix_tb.MIX.reset
 @30
 mix_tb.MIX.pc[11:0]
+@22
+mix_tb.MIX.command[5:0]
+mix_tb.MIX.nextI[11:0]
+@30
 mix_tb.MIX.data[30:0]
 @28
 mix_tb.MIX.loadA
@@ -27,8 +31,6 @@ mix_tb.MIX.store
 @30
 mix_tb.MIX.f[5:0]
 @28
-mix_tb.MIX.nop
-@29
 mix_tb.MIX.nop
 @30
 mix_tb.MIX.RegisterA[30:0]

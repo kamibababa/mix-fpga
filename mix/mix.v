@@ -9,7 +9,8 @@ module mix(
 	output wire [30:0] a
 );
 	assign a = RegisterA[30:0];
-	//register
+	
+	//Register
 	reg [30:0] RegisterA;
 	reg [30:0] RegisterX;
 	reg [12:0] RegisterI1;
@@ -24,16 +25,21 @@ module mix(
 	reg fetch;
 	always @(posedge clk)
 		if (reset) fetch <= 0;
-		else if (nop) fetch <= 1;
-		else fetch <= ~fetch;
+		else fetch <= next;
+	wire next;
+	assign next = ~fetch | nop;
+	
+	//programm counter
+	reg [11:0] nextI;
+	always @(posedge clk)
+		if (reset) nextI <= 0;
+		else if (next) nextI <= nextI + 1;
 
 	//programm counter
 	reg [11:0] pc;
 	always @(posedge clk)
-		if (reset) pc <= 0;
-		else if (nop) pc <= pc+1;
-		else if (~fetch) pc <= pc+1;
-	
+		if (next) pc <= nextI;
+	//NOP	
 	wire nop;
 	assign nop = fetch & (command == 6'd0);
 
@@ -45,24 +51,72 @@ module mix(
 	end
 	reg [30:0] data;
 	wire [11:0] address;
-		assign address = ((fetch==1'b0)|nop)? pc : data[29:18];
+		assign address = (next)? nextI : addressI;
 	always @(posedge clk)
 		data <= memory[address];
+
+	//Index	
+	wire [11:0] addressI;
+	assign addressI = offsetSign?
+				(data[30]?
+					(12'd0):
+					(data[29:18]-offset)):
+				(data[30]?
+					(offset - data[29:18]):
+					(data[29:18]+offset));
 
 	//COMMAND
 	wire [5:0] command;
 	assign command = data[5:0];
-	
-	//LDA,LDAN
+	wire offsetSign;
+	assign offsetSign = data[14]?
+			(data[13]?
+				(data[12]?
+					(1'd0):
+					(RegisterI6[12])):
+				(data[12]?
+					(RegisterI5[12]):
+					(RegisterI4[12]))):
+			(data[13]?
+				(data[12]?
+					(RegisterI3[12]):
+					(RegisterI2[12])):
+				(data[12]?
+					(RegisterI1[12]):
+					(1'd0)));	
+
+	wire [11:0] offset;
+	assign offset = data[14]?
+			(data[13]?
+				(data[12]?
+					(12'd0):
+					(RegisterI6[11:0])):
+				(data[12]?
+					(RegisterI5[11:0]):
+					(RegisterI4[11:0]))):
+			(data[13]?
+				(data[12]?
+					(RegisterI3[11:0]):
+					(RegisterI2[11:0])):
+				(data[12]?
+					(RegisterI1[11:0]):
+					(12'd0)));	
+	//LDA,LDAN,ADD
 	reg loadA;
 	always @(posedge clk)
 		loadA <= fetch & (command==6'd8);
 	reg loadAN;
 	always @(posedge clk)
 		loadAN <= fetch & (command==6'd16);
+	reg add;
+	always @(posedge clk)
+		add <= fetch & (command==6'd1);
 	always @(posedge clk)
 		if (loadA) RegisterA <= fieldLoad;
 		else if (loadAN) RegisterA <= {~fieldLoad[30],fieldLoad[29:0]};
+		else if (add) RegisterA <= fieldLoad[30]?
+						(RegisterA - fieldLoad[29:0]):
+						(RegisterA + fieldLoad[29:0]);
 	//LD1,LD1N
 	reg load1;
 	always @(posedge clk)
@@ -137,10 +191,12 @@ module mix(
 	//ST
 	reg store;
 	always @(posedge clk)
-		store <=  fetch & (command[5:3]==3'b011);
+		store <=  fetch & ((command[5:3]==3'b011)|(command[5:0]==6'd32)|(command[5:0]==6'd33));
 	reg [30:0] dataS;
 	always @(posedge clk)
-		if (fetch & (command[5:3] == 3'b011))
+		if (fetch & (command[5:0]==6'd32)) dataS <= {19'd0,RegisterJ};
+		else if (fetch & (command[5:0]==6'd33)) dataS <= 31'd0;
+		else if (fetch & (command[5:3] == 3'b011))
 			dataS <= (command[2]?
 					(command[1]?
 						(command[0]?
@@ -165,7 +221,7 @@ module mix(
 		if (fetch) f <= data[11:6];
 	reg [11:0] addressStore;
 	always @(posedge clk)
-		addressStore <= data[29:18];	
+		addressStore <= addressI;	
 	wire [30:0] fieldStore;
 	fieldS FIELDS(.data(data),.in(dataS),.field(f),.out(fieldStore));
 	always @(posedge clk)
