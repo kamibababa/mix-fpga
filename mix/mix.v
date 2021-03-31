@@ -43,7 +43,10 @@ module mix(
 	always @(posedge clk)
 		if (reset) pc <= 0;
 		else if (incpc) pc <= pc+1;
-	
+
+	reg [11:0] oldpc;
+	always @(posedge clk)
+		if (incpc) oldpc <= pc;
 	wire nop;
 	assign nop = cmd & (command == 6'd0);
 
