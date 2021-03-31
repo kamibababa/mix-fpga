@@ -20,15 +20,17 @@ module mix(
 	reg [12:0] RegisterI6;
 	reg [11:0] RegisterJ;
 	
-	//fetch
-	reg fetch;
+	//state
+	reg state;
 	always @(posedge clk)
-		if (reset) fetch <= 1;
-		else if (nop|fetch) fetch <= 0;
-		else fetch <= fetch+1'd1;
+		if (reset) state <= 1;
+		else if (incpc) state <= 0;
+		else state <= state + 1'd1;
 	wire cmd;
-	assign cmd = ~fetch;
-	
+	assign cmd = (state==0);
+
+	wire incpc;
+	assign 	incpc = nop | (state == 1);
 	//COMMAND
 	wire [5:0] command;
 	assign command = {cmd,cmd,cmd,cmd,cmd,cmd} & data[5:0];
@@ -40,7 +42,7 @@ module mix(
 	reg [11:0] pc;
 	always @(posedge clk)
 		if (reset) pc <= 0;
-		else if (nop|fetch) pc <= pc+1;
+		else if (incpc) pc <= pc+1;
 	
 	wire nop;
 	assign nop = cmd & (command == 6'd0);
@@ -53,7 +55,7 @@ module mix(
 	end
 	reg [30:0] data;
 	wire [11:0] address;
-	assign address = (fetch|nop)? pc : (offsetS? (data[29:18]-offset):(data[29:18]+offset) );
+	assign address = (incpc)? pc : (offsetS? (data[29:18]-offset):(data[29:18]+offset) );
 	wire[11:0] offset;
 	assign offset =	data[14]?
 				(data[13]?
