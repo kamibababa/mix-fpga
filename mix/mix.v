@@ -9,6 +9,7 @@ module mix(
 	output wire [30:0] a
 );
 	assign a = RegisterA[30:0];
+	
 	//register
 	reg [30:0] RegisterA;
 	reg [30:0] RegisterX;
@@ -21,32 +22,36 @@ module mix(
 	reg [11:0] RegisterJ;
 	
 	//state
-	reg state;
+	reg [3:0] state;
 	always @(posedge clk)
-		if (reset) state <= 1;
-		else if (incpc) state <= 0;
-		else state <= state + 1'd1;
-	wire cmd;
-	assign cmd = (state==0);
-
-	wire incpc;
-	assign 	incpc = nop | (state == 1);
+		if (reset) state <= 4'd0;
+		else if (incpc) state <= 4'd0;
+		else state <= state + 4'd1;
+	
 	//COMMAND
+	wire cmd;
+	assign cmd = (state==4'd0);
 	wire [5:0] command;
 	assign command = {cmd,cmd,cmd,cmd,cmd,cmd} & data[5:0];
 	reg [5:0] f;
 	always @(posedge clk)
 		if (cmd) f <= data[11:6];
-	
+	reg oldreset;
+	always @(posedge clk)
+		oldreset <= reset;
 	//programm counter
+	wire incpc;
+	assign 	incpc =oldreset | nop | ((~mul) & (~run)&(state == 4'd1)) | (state==4'd10);
+	reg [11:0] nextpc;
+	always @(posedge clk)
+		if (reset) nextpc <= 0;
+		else if (incpc) nextpc <= nextpc+1;
 	reg [11:0] pc;
 	always @(posedge clk)
 		if (reset) pc <= 0;
-		else if (incpc) pc <= pc+1;
-
-	reg [11:0] oldpc;
-	always @(posedge clk)
-		if (incpc) oldpc <= pc;
+		else if (incpc) pc <= nextpc;
+	
+	//NOP
 	wire nop;
 	assign nop = cmd & (command == 6'd0);
 
@@ -57,8 +62,12 @@ module mix(
 		$readmemb(ROMFILE,memory);
 	end
 	reg [30:0] data;
+	always @(posedge clk)
+		data <= memory[address];
 	wire [11:0] address;
-	assign address = (incpc)? pc : (offsetS? (data[29:18]-offset):(data[29:18]+offset) );
+	assign address = (incpc)? nextpc : (offsetS? (data[29:18]-offset):(data[29:18]+offset) );
+	
+	//index
 	wire[11:0] offset;
 	assign offset =	data[14]?
 				(data[13]?
@@ -92,10 +101,47 @@ module mix(
 						(RegisterI1[12]):
 						(1'd0)));
 			
+	//FIELD
+	wire [30:0] fieldLoad;
+	field FIELDM(.in(data),.field(f),.out(fieldLoad));
+	reg [11:0] addressStore;
 	always @(posedge clk)
-		data <= memory[address];
+		addressStore <= address;	
+	wire [30:0] fieldStore;
+	fieldS FIELDS(.data(data),.in(dataS),.field(f),.out(fieldStore));
+	always @(posedge clk)
+		if (store) memory[addressStore] <= fieldStore;
+	//ADD
+	reg add;
+	always @(posedge clk)
+		add <= (command == 6'd1);
+	reg sub;
+	always @(posedge clk)
+		sub <= (command == 6'd2);
+	//MUlitplikation
+	reg mul;
+	always @(posedge clk)
+		mul <= (command == 6'd3);
+	
+	reg [29:0] bb;
+	reg [59:0] c;
+	reg [29:0] aa;
+	reg run = 0;
+	wire start;
+	assign start = (command ==6'd3);
+	always @(posedge clk)
+		if (~run & start) run <= 1;
+		else if (state == 10) run <= 0;
 
-	//LDA,LDAN
+	
+	always @(posedge clk)
+		if (~run & start) bb <= RegisterA;
+		else if (run) bb <= bb * 8;
+	always @(posedge clk)
+		if (state==1) aa <= fieldLoad[29:0];
+	
+	
+	//LDA,LDAN,ADD
 	reg loadA;
 	always @(posedge clk)
 		loadA <= (command==6'd8);
@@ -103,8 +149,16 @@ module mix(
 	always @(posedge clk)
 		loadAN <= (command==6'd16);
 	always @(posedge clk)
-		if (loadA) RegisterA <= fieldLoad;
+		if (~run & start) {RegisterA[29:0],RegisterX[29:0]} <= 60'd0;
+		else if (run & (state==1)) {RegisterA[29:0],RegisterX[29:0]} <= 8*{RegisterA[29:0],RegisterX[29:0]} + bb[29:27] * fieldLoad[29:0];
+		else if (run) {RegisterA[29:0],RegisterX[29:0]} <= 8*{RegisterA[29:0],RegisterX[29:0]} + bb[29:27] * aa;
+		else if (loadA) RegisterA <= fieldLoad;
 		else if (loadAN) RegisterA <= {~fieldLoad[30],fieldLoad[29:0]};
+		else if (add) RegisterA <= {RegisterA[30],RegisterA[29:0] + fieldLoad[29:0]};
+		else if (sub) RegisterA <= {RegisterA[30],RegisterA[29:0] - fieldLoad[29:0]};
+		else if (loadX) RegisterX <= fieldLoad;
+		else if (loadXN) RegisterX <= {~fieldLoad[30],fieldLoad[29:0]};
+	
 	//LD1,LD1N
 	reg load1;
 	always @(posedge clk)
@@ -115,6 +169,7 @@ module mix(
 	always @(posedge clk)
 		if (load1) RegisterI1 <= {fieldLoad[30],fieldLoad[11:0]};
 		else if (load1N) RegisterI1 <= {~fieldLoad[30],fieldLoad[11:0]};
+	
 	//LD2
 	reg load2;
 	always @(posedge clk)
@@ -172,9 +227,6 @@ module mix(
 	reg loadXN;
 	always @(posedge clk)
 		loadXN <= (command==6'd23);
-	always @(posedge clk)
-		if (loadX) RegisterX <= fieldLoad;
-		else if (loadXN) RegisterX <= {~fieldLoad[30],fieldLoad[29:0]};
 
 	//ST
 	reg store;
@@ -182,7 +234,7 @@ module mix(
 		store <=  (command[5:3]==3'b011)|(command==6'd32)|(command==6'd33);
 	reg [30:0] dataS;
 	always @(posedge clk)
-		if (command==6'd32) dataS <= {19'd0,RegisterJ};
+		if (command == 6'd32) dataS <= {19'd0,RegisterJ};
 		else if (command == 6'd33) dataS <=31'd0;
 		else if ((command[5:3] == 3'b011))
 			dataS <= (command[2]?
@@ -201,16 +253,6 @@ module mix(
 							({RegisterI1[12],18'd0,RegisterI1[11:0]}):
 							(RegisterA))));
 	
-	//FIELD
-	wire [30:0] fieldLoad;
-	field FIELDM(.in(data),.field(f),.out(fieldLoad));
-	reg [11:0] addressStore;
-	always @(posedge clk)
-		addressStore <= address;	
-	wire [30:0] fieldStore;
-	fieldS FIELDS(.data(data),.in(dataS),.field(f),.out(fieldStore));
-	always @(posedge clk)
-		if (store) memory[addressStore] <= fieldStore;
 
 	
 endmodule

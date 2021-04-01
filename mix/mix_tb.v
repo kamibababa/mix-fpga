@@ -12,7 +12,7 @@
 module mix_tb();
 
 //-- Simulation time: 1us (10 * 100ns)
-parameter DURATION = 100;
+parameter DURATION = 240;
 
 //-- Clock signal. It is not used in this simulation
 reg clk = 0;
