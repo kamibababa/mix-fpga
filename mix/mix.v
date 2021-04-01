@@ -41,7 +41,7 @@ module mix(
 		oldreset <= reset;
 	//programm counter
 	wire incpc;
-	assign 	incpc =oldreset | nop | ((~mul) & (~run)&(state == 4'd1)) | (state==4'd10);
+	assign 	incpc =oldreset | nop | ((~mul) & (~oldmul)&(state == 4'd1)) | (state==4'd9);
 	reg [11:0] nextpc;
 	always @(posedge clk)
 		if (reset) nextpc <= 0;
@@ -50,7 +50,10 @@ module mix(
 	always @(posedge clk)
 		if (reset) pc <= 0;
 		else if (incpc) pc <= nextpc;
-	
+
+	reg oldmul;
+	always @(posedge clk)
+		oldmul <= mul;	
 	//NOP
 	wire nop;
 	assign nop = cmd & (command == 6'd0);
@@ -108,7 +111,7 @@ module mix(
 	always @(posedge clk)
 		addressStore <= address;	
 	wire [30:0] fieldStore;
-	fieldS FIELDS(.data(data),.in(dataS),.field(f),.out(fieldStore));
+	fieldS FIELDS(.data(data),.in(dataSS),.field(f),.out(fieldStore));
 	always @(posedge clk)
 		if (store) memory[addressStore] <= fieldStore;
 	//ADD
@@ -131,7 +134,7 @@ module mix(
 	assign start = (command ==6'd3);
 	always @(posedge clk)
 		if (~run & start) run <= 1;
-		else if (state == 10) run <= 0;
+		else if (oldstate9) run <= 0;
 
 	
 	always @(posedge clk)
@@ -145,6 +148,9 @@ module mix(
 	reg loadA;
 	always @(posedge clk)
 		loadA <= (command==6'd8);
+	reg oldstate9;
+	always @(posedge clk)
+		oldstate9 <= (state==4'd9);
 	reg loadAN;
 	always @(posedge clk)
 		loadAN <= (command==6'd16);
@@ -253,6 +259,31 @@ module mix(
 							({RegisterI1[12],18'd0,RegisterI1[11:0]}):
 							(RegisterA))));
 	
+
+	reg [5:0] commandold;
+	always @(posedge clk)
+		commandold <= command[5:0];
+	
+	wire [30:0] dataSS;
+	assign dataSS = 
+		(commandold == 6'd32)? {19'd0,RegisterJ}:
+		(commandold == 6'd33)? 31'd0:
+		(commandold[5:3] == 3'b011)?
+				(commandold[2]?
+					(commandold[1]?
+						(commandold[0]?
+							(RegisterX):
+							({RegisterI6[12],18'd0,RegisterI6[11:0]})):
+						(commandold[0]?
+							({RegisterI5[12],18'd0,RegisterI5[11:0]}):
+							({RegisterI4[12],18'd0,RegisterI4[11:0]}))):
+					(commandold[1]?
+						(commandold[0]?
+							({RegisterI3[12],18'd0,RegisterI3[11:0]}):
+							({RegisterI2[12],18'd0,RegisterI2[11:0]})):
+						(commandold[0]?
+							({RegisterI1[12],18'd0,RegisterI1[11:0]}):
+							(RegisterA)))):31'd0;
 
 	
 endmodule
