@@ -32,7 +32,7 @@ initial begin
   //-- File were to store the simulation results
   $dumpfile(`DUMPSTR(`VCD_OUTPUT));
   $dumpvars(0, mix_tb);
-  #2 reset = 0;
+  #3 reset = 0;
    #(DURATION) $display("End of simulation");
   $finish;
 end

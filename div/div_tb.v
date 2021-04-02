@@ -19,8 +19,8 @@ reg clk = 0;
 always #0.5 clk = ~clk;
 
 //-- Leds port
-reg [59:0] out=2098570923875;
-reg [29:0] a=837504;
+reg [59:0] out=60'o77777777767777777772;
+reg [29:0] a=30'o7777777777;
 wire [29:0] b;
 reg start = 0;
 //-- Instantiate the unit to test

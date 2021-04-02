@@ -8,9 +8,11 @@
 module div(
 	input wire clk,
 	input wire start,
+	output stop,
 	input wire [29:0] a,
 	output reg [29:0] b,
-	input wire [59:0] c
+	input wire [59:0] c,
+	output wire [29:0] rest
 	);
 reg [3:0]state=0;
 reg run=0;
@@ -52,7 +54,10 @@ assign dd = {i4|i5|i6|i7,i2|i3|i6|i7,i1|i3|i5|i7};
 always @(posedge clk)
 	if (~run & start) run <= 1;
 	else if (state == 10) run <= 0;
-
+reg stop;
+always @(posedge clk)
+	if (run & (state ==10)) stop <= 1;
+	else stop <= 0;
 always @(posedge clk)
 	if (~run & start) state <=0;
 	else if (run) state <= state + 1;
@@ -72,5 +77,5 @@ always @(posedge clk)
 always @(posedge clk)
 	if (~run & start) b <= 0;
 	else if (run) b <= b*8 | dd ;
-
+assign rest = cc[29:0];
 endmodule

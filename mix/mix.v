@@ -24,10 +24,18 @@ module mix(
 	//state
 	reg [3:0] state;
 	always @(posedge clk)
-		if (reset) state <= 4'd0;
+		if (reset|oldreset) state <= 4'd0;
+		else if (cmdhalt | halt) state <= 4'd0;
 		else if (incpc) state <= 4'd0;
 		else state <= state + 4'd1;
-	
+	//halt
+	reg halt;
+	wire cmdhalt;
+	always @(posedge clk)
+		if (reset) halt <=1'd0;
+		else if (cmdhalt) halt <=1'd1;
+	assign cmdhalt = cmd & (command == 6'd5);
+
 	//COMMAND
 	wire cmd;
 	assign cmd = (state==4'd0);
@@ -41,11 +49,11 @@ module mix(
 		oldreset <= reset;
 	//programm counter
 	wire incpc;
-	assign 	incpc =oldreset | nop | ((~mul) & (~oldmul)&(state == 4'd1)) | (state==4'd9);
-	reg [11:0] nextpc;
+	assign 	incpc = (~(halt|cmdhalt)) & (oldreset | nop | ((~(mul|div)) & (~(oldmul|olddiv))&(state == 4'd1)) | (oldmul&(state==4'd9)) | (olddiv & (state==4'd11)));
+	reg [11:0] nextpc=0;
 	always @(posedge clk)
 		if (reset) nextpc <= 0;
-		else if (incpc) nextpc <= nextpc+1;
+		else if (incpc ) nextpc <= nextpc+1;
 	reg [11:0] pc;
 	always @(posedge clk)
 		if (reset) pc <= 0;
@@ -53,7 +61,9 @@ module mix(
 
 	reg oldmul;
 	always @(posedge clk)
-		oldmul <= mul;	
+		if (reset) oldmul <= 0;
+		else if (mul) oldmul <= 1'd1;
+		else if (state ==4'd9) oldmul <=0;	
 	//NOP
 	wire nop;
 	assign nop = cmd & (command == 6'd0);
@@ -66,9 +76,9 @@ module mix(
 	end
 	reg [30:0] data;
 	always @(posedge clk)
-		data <= memory[address];
+		if (~(cmdhalt|halt)|reset) data <= memory[address];
 	wire [11:0] address;
-	assign address = (incpc)? nextpc : (offsetS? (data[29:18]-offset):(data[29:18]+offset) );
+	assign address = (incpc|reset)? nextpc : (offsetS? (data[29:18]-offset):(data[29:18]+offset) );
 	
 	//index
 	wire[11:0] offset;
@@ -127,7 +137,6 @@ module mix(
 		mul <= (command == 6'd3);
 	
 	reg [29:0] bb;
-	reg [59:0] c;
 	reg [29:0] aa;
 	reg run = 0;
 	wire start;
@@ -142,8 +151,21 @@ module mix(
 		else if (run) bb <= bb * 8;
 	always @(posedge clk)
 		if (state==1) aa <= fieldLoad[29:0];
-	
-	
+
+	//DIV
+	reg olddiv;
+	always @(posedge clk)
+		if (reset) olddiv <= 0;
+		else if (div) olddiv <= 1;
+		else if (state == 11) olddiv <=0;
+	wire stopdiv;
+	wire [29:0] diverg;
+	wire [29:0] rest;
+	wire div;
+	assign div = (command == 6'd4);
+	div DIV(.stop(stopdiv),.clk(clk),.start(div),.b(diverg),.rest(rest),.c({RegisterA[29:0],RegisterX[29:0]}),.a(operand));
+	wire [29:0] operand;
+	assign operand = (state == 1)? fieldLoad[29:0]:aa;
 	//LDA,LDAN,ADD
 	reg loadA;
 	always @(posedge clk)
@@ -164,6 +186,7 @@ module mix(
 		else if (sub) RegisterA <= {RegisterA[30],RegisterA[29:0] - fieldLoad[29:0]};
 		else if (loadX) RegisterX <= fieldLoad;
 		else if (loadXN) RegisterX <= {~fieldLoad[30],fieldLoad[29:0]};
+		else if (stopdiv) {RegisterA[29:0],RegisterX[29:0]} <= {diverg,rest};
 	
 	//LD1,LD1N
 	reg load1;
