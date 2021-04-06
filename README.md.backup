@@ -1,6 +1,6 @@
 # MIX-fpga
 
-Implementation of MIX computer as proposed in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth.
+Implementation of computer MIX as proposed in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth.
 Runs on iCE40-fpga using only free and open source hard- and software.
 
 ## Hardware
@@ -35,4 +35,4 @@ MIX's basic unit of time 1u equals to 25 ns for this implementation. So accordin
 
 ## Things to come:
 * Implement missing commands (see todo in command list)
-* Build a UART and connect to U16/U17 to communitcate to MIX at runtime.
+* Build a UART and connect to  to communitcate to MIX at runtime.
