@@ -1,8 +1,8 @@
 //Field
 
 `default_nettype none
-module field(
-	input wire[30:0] in,
+module val(
+	input wire [30:0] in,
 	input wire [5:0] field,
 	output wire [30:0] out
 );

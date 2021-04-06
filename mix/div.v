@@ -1,21 +1,29 @@
-//------------------------------------------------------------------
-//-- Hello world example
-//-- Control leds by pushing the buttons
-//-- This example has been tested on the following boards:
-//--   * iCE40-HX1K-EVB Olimex
-//------------------------------------------------------------------
+// DIV - command 4
+
+`default_nettype none
 
 module div(
 	input wire clk,
 	input wire start,
-	output stop,
-	input wire [29:0] a,
-	output reg [29:0] b,
-	input wire [59:0] c,
-	output wire [29:0] rest
-	);
-reg [3:0]state=0;
-reg run=0;
+	output reg stop,
+	input wire [60:0] dividend,
+	input wire [30:0] divisor,
+	output reg [29:0] quotient,
+	output wire [29:0] rest,
+	output reg sign,
+	output reg overflow
+);
+
+always @(posedge clk)
+	if (start) overflow <= ((divisor == 30'd0) | diff[30]);
+always @(posedge clk)
+	if (start) sign <= (dividend[60] ^ divisor[30]);
+
+wire [30:0] diff;
+assign diff = {1'd0,dividend[59:30]} - {1'd0,divisor[29:0]};
+
+reg [3:0] state = 0;
+reg run = 0;
 reg [63:0] cc;
 reg [63:0] aa;
 wire [63:0] d1;
@@ -54,7 +62,6 @@ assign dd = {i4|i5|i6|i7,i2|i3|i6|i7,i1|i3|i5|i7};
 always @(posedge clk)
 	if (~run & start) run <= 1;
 	else if (state == 10) run <= 0;
-reg stop;
 always @(posedge clk)
 	if (run & (state ==10)) stop <= 1;
 	else stop <= 0;
@@ -63,7 +70,7 @@ always @(posedge clk)
 	else if (run) state <= state + 1;
 
 always @(posedge clk)
-	if (~run & start) cc <= c;
+	if (~run & start) cc <= dividend[59:0];
 	else if (run & i7) cc <= d7;
 	else if (run & i6) cc <= d6;
 	else if (run & i5) cc <= d5;
@@ -72,10 +79,10 @@ always @(posedge clk)
 	else if (run & i2) cc <= d2;
 	else if (run & i1) cc <= d1;
 always @(posedge clk)
-	if (~run & start) aa <= {a,30'b0};
+	if (~run & start) aa <= {divisor[29:0],30'b0};
 	else if (run) aa <= aa / 8;
 always @(posedge clk)
-	if (~run & start) b <= 0;
-	else if (run) b <= b*8 | dd ;
+	if (~run & start) quotient <= 0;
+	else if (run) quotient <= quotient*8 | dd ;
 assign rest = cc[29:0];
 endmodule

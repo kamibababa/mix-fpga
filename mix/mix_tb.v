@@ -33,8 +33,8 @@ mix MIX (
 	.reset(reset),
 	.clk(clk),
 	.pc(pc),
-	.RegisterA(regA),
-	.RegisterX(regX)
+	.RegisterA(regA)
+//	.RegisterX(regX)
 	//.RegisterJ(regJ),
 	//.RegisterI1(regI1),
 	//.RegisterI2(regI2),
