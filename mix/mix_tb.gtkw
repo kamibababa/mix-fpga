@@ -1,62 +1,52 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Fri Apr  2 14:16:37 2021
+[*] Tue Apr  6 14:54:30 2021
 [*]
 [dumpfile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.vcd"
-[dumpfile_mtime] "Fri Apr  2 14:15:39 2021"
-[dumpfile_size] 58700
+[dumpfile_mtime] "Tue Apr  6 14:53:46 2021"
+[dumpfile_size] 165657
 [savefile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.gtkw"
-[timestart] 158440
+[timestart] 0
 [size] 1280 703
 [pos] 0 27
-*-13.000000 165000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-13.000000 9000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] mix_tb.
 [treeopen] mix_tb.MIX.
 [sst_width] 238
-[signals_width] 150
+[signals_width] 236
 [sst_expanded] 1
 [sst_vpaned_height] 181
 @28
 mix_tb.MIX.clk
 mix_tb.MIX.reset
-@30
+@c00200
+-mix_tb.MIX.pold
+@1401200
+-group_end
+@25
 mix_tb.MIX.pc[11:0]
 @22
+mix_tb.MIX.p[11:0]
+@24
 mix_tb.MIX.command[5:0]
+@22
+mix_tb.MIX.field[5:0]
 @30
 mix_tb.MIX.data[30:0]
-@28
-mix_tb.MIX.loadA
-mix_tb.MIX.store
-@30
-mix_tb.MIX.f[5:0]
-@28
-mix_tb.MIX.nop
-@200
--Multiplier
+@24
+mix_tb.MIX.addressIndex[11:0]
 @22
-mix_tb.MIX.state[3:0]
-@30
+mix_tb.MIX.RegisterI2[12:0]
+mix_tb.MIX.RegisterI3[12:0]
 mix_tb.MIX.RegisterA[30:0]
-mix_tb.MIX.RegisterX[30:0]
-mix_tb.MIX.DIV.c[59:0]
 @28
-mix_tb.MIX.DIV.start
-mix_tb.MIX.DIV.run
+mix_tb.MIX.ST.clk
 @22
-mix_tb.MIX.DIV.state[3:0]
-@30
-mix_tb.MIX.DIV.a[29:0]
-mix_tb.MIX.DIV.b[29:0]
-mix_tb.MIX.DIV.c[59:0]
-@22
-mix_tb.MIX.MUL2.a[29:0]
-mix_tb.MIX.MUL2.b[29:0]
-@28
-mix_tb.MIX.MUL2.clk
-@22
-mix_tb.MIX.MUL2.out[59:0]
-@29
-mix_tb.MIX.MUL2.start
+mix_tb.MIX.ST.data[30:0]
+mix_tb.MIX.ST.dd0[30:0]
+mix_tb.MIX.ST.f[5:0]
+mix_tb.MIX.ST.in[30:0]
+mix_tb.MIX.ST.out[30:0]
+mix_tb.MIX.ST.data[30:0]
 [pattern_trace] 1
 [pattern_trace] 0

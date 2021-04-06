@@ -11,20 +11,19 @@ module mix(
 );
 	//fetch execute - cycle
 	wire fetch;
-	reg execute;
+	reg execute=0;
 	always @(posedge clk)
 		if (fetch) execute <= 1;
 		else execute <= 0;
 	
-	assign fetch = reset | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmpr | jmp;
+	assign fetch = reset | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr;
 
 	//programm counter
 	reg [11:0] pc;
 	always @(posedge clk)
-		if (reset) pc <= 0;
-		else if (jmprout) pc <= addressIndex;
-		else if (fetch) pc <= pc+1;
-
+		if (fetch) pc <= p;
+	wire [11:0] p;
+		assign p = (reset)? 0 : (jmprout|jmpout)? addressIndex : pc+1;
 	//memory 
 	reg [30:0] memory[0:4095];
 	parameter ROMFILE = "rom.bin";
@@ -35,7 +34,7 @@ module mix(
 	always @(posedge clk)
 		data <= memory[address];
 	wire [11:0] address;
-	assign address = (fetch)? pc : addressIndex;
+	assign address = (fetch)? p: addressIndex;
 
 	always @(posedge clk)
 		if (st2) memory[addressIndex] <= stout;
@@ -43,7 +42,8 @@ module mix(
 	//Register
 	reg [30:0] RegisterA;
 	always @(posedge clk)
-		if (ld2 & rA) RegisterA <= ldout;
+		if (reset) RegisterA <= 30'd0;
+		else if (ld2 & rA) RegisterA <= ldout;
 		else if (ldn2 & rA) RegisterA <= {~ldnout[30],ldnout[29:0]};
 		else if (add2) RegisterA <= addout;
 		else if (sub2) RegisterA <= subout;
@@ -90,7 +90,7 @@ module mix(
 	reg [11:0] RegisterJ;
 	always @(posedge clk)
 		if (jmprout) RegisterJ <= pc+1;
-		else if (jmpout | ~saveJ) RegisterJ <= pc+1;
+		else if (jmpout & ~saveJ) RegisterJ <= pc+1;
 	wire rA;
 	assign rA = (command[2:0] == 3'd0);
 	wire r1;
@@ -204,7 +204,7 @@ module mix(
 	wire [30:0] ldout;
 	ld LD(.clk(clk),.start(ld1),.stop(ld2),.field(field),.in(data),.out(ldout));
 	
-	//command 16-24 - LD
+	//command 16-24 - LDN
 	wire ldn1;
 	assign ldn1 = (command[5:3] == 3'd2);
 	wire ldn2;
@@ -222,17 +222,17 @@ module mix(
 	wire [30:0] stin;
 	assign stin = (st1)?rout:(stj1?RegisterJ:30'd0);
 	wire [30:0] stout;
-	st ST(.clk(clk),.start(st1|stj1|stz1),.stop(st2),.field(field),.in(stin),.out(stout));
+	st ST(.clk(clk),.start(st1|stj1|stz1),.stop(st2),.data(data),.field(field),.in(stin),.out(stout));
 	
 	//command 39 - JMP
 	wire jmp;
-	assign jmp = (command[5:3] == 3'd5);
+	assign jmp = (command[5:0] == 6'd39);
 	wire clearof;
 	assign clearof = jmp & (field==6'd2 | field==6'd3);
 	wire saveJ;
 	assign saveJ = (field==6'd1);
 	wire jmpout;
-	assign jmpout = jmp & (field[3]?
+	assign jmpout = (jmp)? (field[3]?
 					(field[2]?
 						(field[1]?
 							(field[0]?
@@ -262,12 +262,13 @@ module mix(
 								(overflow)):
 							(field[0]?
 								(1'd1):
-								(1'd1)))));
+								(1'd1)))))
+								:1'd0;
 	//command 40-47 - JMPr
 	wire jmpr;
 	assign jmpr = (command[5:3] == 3'd5);
 	wire jmprout;
-	jmpr JMPR(.in(rout),.field(field[2:0]),.out(jmprout));
+	jmpr JMPR(.sel(jmpr),.in(rout),.field(field[2:0]),.out(jmprout));
 
 	//command 48-55 - INC,DEC,ENT,ENN
 	wire ide;

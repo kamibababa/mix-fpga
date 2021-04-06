@@ -6,7 +6,7 @@ module ide(
 	input wire [12:0] m,
 	output wire [30:0] out,
 	output wire overflow,
-	output wire [1:0] field
+	input wire [1:0] field
 );
 	assign {overflow,out} = field[1]?
 			(field[0]?

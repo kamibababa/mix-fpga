@@ -49,7 +49,7 @@ initial begin
   //-- File were to store the simulation results
   $dumpfile(`DUMPSTR(`VCD_OUTPUT));
   $dumpvars(0, mix_tb);
-  	#3 reset = 0;
+  	#2 reset = 0;
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
