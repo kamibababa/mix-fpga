@@ -3,7 +3,7 @@
 *                                                       
 * label ins    operand     	comment                       
 TERM    EQU    19		 
-	ORIG   3000        	
+	ORIG   1000        	
 START   OUT    MSG(TERM)   	
 	HLT                
 MSG     ALF    "MIXAL"                                 

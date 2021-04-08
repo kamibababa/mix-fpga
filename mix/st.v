@@ -10,9 +10,9 @@ module st(
 	input wire [5:0] field,
 	output wire [30:0] out
 );
-	reg [30:0] new;
+	reg [30:0] nnew;
 	always @(posedge clk)
-		if (start) new <= in;
+		if (start) nnew <= in;
 	always @(posedge clk)
 		if (start) stop <= 1;
 		else stop <= 0;
@@ -25,50 +25,50 @@ module st(
 		(f[4]?
 			(f[5]?
 				(data):
-				({data[30:16],new[17:0]})):
+				({data[30:16],nnew[17:0]})):
 			(f[5]?
-				({data[30:6],new[5:0]}):
-				({data[30],new[29:0]}))):
+				({data[30:6],nnew[5:0]}):
+				({data[30],nnew[29:0]}))):
 		(f[4]?
 			(f[5]?
 				({data}):
-				({data[30:24],new[23:0]})):
+				({data[30:24],nnew[23:0]})):
 			(f[5]?
-				({data[30:12],new[11:0]}):
-				(new)));
+				({data[30:12],nnew[11:0]}):
+				(nnew)));
 	wire [30:0] dd4;
 	assign dd4 = f[3]?
 		(f[4]?
 			(f[5]?
 				({data}):
-				({data[30:18],new[11:0],data[5:0]})):
+				({data[30:18],nnew[11:0],data[5:0]})):
 			(f[5]?
 				({data}):
-				({data[30],new[23:0],data[5:0]}))):
+				({data[30],nnew[23:0],data[5:0]}))):
 		(f[4]?
 			(f[5]?
 				({data}):
-				({data[30:24],new[17:0],data[5:0]})):
+				({data[30:24],nnew[17:0],data[5:0]})):
 			(f[5]?
-				({data[30:12],new[5:0],data[5:0]}):
-				({new[30],new[23:0],data[5:0]})));
+				({data[30:12],nnew[5:0],data[5:0]}):
+				({nnew[30],nnew[23:0],data[5:0]})));
 	
 	wire [30:0] dd3;
 	assign dd3 = f[3]?
 		(f[4]?
 			(f[5]?
 				({data}):
-				({data[30:18],new[5:0],data[11:0]})):
+				({data[30:18],nnew[5:0],data[11:0]})):
 			(f[5]?
 				({data}):
-				({data[30],new[17:0],data[11:0]}))):
+				({data[30],nnew[17:0],data[11:0]}))):
 		(f[4]?
 			(f[5]?
 				({data}):
-				({data[30:24],new[11:0],data[11:0]})):
+				({data[30:24],nnew[11:0],data[11:0]})):
 			(f[5]?
 				(data):
-				({new[30],new[17:0],data[11:0]})));
+				({nnew[30],nnew[17:0],data[11:0]})));
 	wire [30:0] dd2;
 	assign dd2 = f[3]?
 		(f[4]?
@@ -77,14 +77,14 @@ module st(
 				(data)):
 			(f[5]?
 				({data}):
-				({data[30],new[11:0],data[17:0]}))):
+				({data[30],nnew[11:0],data[17:0]}))):
 		(f[4]?
 			(f[5]?
 				({data}):
-				({data[30:24],new[5:0],data[17:0]})):
+				({data[30:24],nnew[5:0],data[17:0]})):
 			(f[5]?
 				(data):
-				({new[30],new[11:0],data[17:0]})));
+				({nnew[30],nnew[11:0],data[17:0]})));
 	wire [30:0] dd1;
 	assign dd1 = f[3]?
 		(f[4]?
@@ -93,14 +93,14 @@ module st(
 				(data)):
 			(f[5]?
 				({data}):
-				({data[30],new[5:0],data[23:0]}))):
+				({data[30],nnew[5:0],data[23:0]}))):
 		(f[4]?
 			(f[5]?
 				({data}):
 				(data)):
 			(f[5]?
 				(data):
-				({new[30],new[5:0],data[23:0]})));
+				({nnew[30],nnew[5:0],data[23:0]})));
 	wire [30:0] dd0;
 	assign dd0 = f[3]?
 		(f[4]?
@@ -116,7 +116,7 @@ module st(
 				(data)):
 			(f[5]?
 				(data):
-				({new[30],data[29:0]})));
+				({nnew[30],data[29:0]})));
 	assign out = f[0]?
 		(f[1]?
 			(f[2]?

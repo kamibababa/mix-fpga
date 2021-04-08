@@ -1,52 +1,126 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Tue Apr  6 14:54:30 2021
+[*] Thu Apr  8 15:48:31 2021
 [*]
 [dumpfile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.vcd"
-[dumpfile_mtime] "Tue Apr  6 14:53:46 2021"
-[dumpfile_size] 165657
+[dumpfile_mtime] "Thu Apr  8 15:35:06 2021"
+[dumpfile_size] 830994
 [savefile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.gtkw"
 [timestart] 0
 [size] 1280 703
-[pos] 0 27
-*-13.000000 9000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 14 0
+*-14.000000 53000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] mix_tb.
 [treeopen] mix_tb.MIX.
+[treeopen] mix_tb.MIX.OUT.
 [sst_width] 238
-[signals_width] 236
+[signals_width] 276
 [sst_expanded] 1
 [sst_vpaned_height] 181
 @28
 mix_tb.MIX.clk
 mix_tb.MIX.reset
+mix_tb.MIX.rst
 @c00200
 -mix_tb.MIX.pold
 @1401200
 -group_end
-@25
+@24
 mix_tb.MIX.pc[11:0]
+@28
+mix_tb.MIX.fetch
 @22
 mix_tb.MIX.p[11:0]
+mix_tb.MIX.address[11:0]
+@30
+mix_tb.MIX.data[30:0]
+@28
+mix_tb.MIX.st1
+mix_tb.MIX.st2
 @24
+mix_tb.MIX.address[11:0]
+@28
+mix_tb.MIX.ST.start
+mix_tb.MIX.stj1
+@24
+mix_tb.MIX.stout[30:0]
+@22
+mix_tb.MIX.RegisterJ[11:0]
+mix_tb.MIX.ST.out[30:0]
+@30
+mix_tb.MIX.ST.out[30:0]
+mix_tb.MIX.ST.data[30:0]
+@22
+mix_tb.MIX.ST.in[30:0]
+@30
+mix_tb.MIX.ST.data[30:0]
+@24
+mix_tb.MIX.addressIndex[11:0]
+@30
+mix_tb.MIX.stout[30:0]
+@22
+mix_tb.MIX.ideout[30:0]
+@29
+mix_tb.MIX.jmp
+@22
+mix_tb.MIX.OUT.data1[29:0]
+mix_tb.MIX.data[30:0]
+@28
+mix_tb.MIX.fetch
+mix_tb.MIX.outload
+@30
+mix_tb.MIX.p[11:0]
+@24
+mix_tb.MIX.address[11:0]
+@28
+mix_tb.MIX.OUT.start
+mix_tb.MIX.OUT.ready
+@c00024
 mix_tb.MIX.command[5:0]
+@28
+(0)mix_tb.MIX.command[5:0]
+(1)mix_tb.MIX.command[5:0]
+(2)mix_tb.MIX.command[5:0]
+(3)mix_tb.MIX.command[5:0]
+(4)mix_tb.MIX.command[5:0]
+(5)mix_tb.MIX.command[5:0]
+@1401200
+-group_end
 @22
 mix_tb.MIX.field[5:0]
 @30
 mix_tb.MIX.data[30:0]
-@24
-mix_tb.MIX.addressIndex[11:0]
+@28
+mix_tb.MIX.OUT.stop
+mix_tb.MIX.OUT.TX.tx
 @22
+mix_tb.MIX.RegisterJ[11:0]
+mix_tb.MIX.OUT.in[29:0]
+@28
+mix_tb.MIX.OUT.load
+@30
+mix_tb.MIX.OUT.data0[29:0]
+mix_tb.MIX.OUT.data1[29:0]
+mix_tb.MIX.OUT.data2[29:0]
+@22
+mix_tb.MIX.OUT.word[29:0]
+@28
+mix_tb.MIX.OUT.TX.load
+mix_tb.MIX.OUT.byte4
+mix_tb.MIX.OUT.byte0
+mix_tb.MIX.OUT.byte1
+mix_tb.MIX.OUT.byte2
+mix_tb.MIX.OUT.byte3
+@22
+mix_tb.MIX.RegisterI1[12:0]
 mix_tb.MIX.RegisterI2[12:0]
 mix_tb.MIX.RegisterI3[12:0]
-mix_tb.MIX.RegisterA[30:0]
 @28
-mix_tb.MIX.ST.clk
-@22
-mix_tb.MIX.ST.data[30:0]
-mix_tb.MIX.ST.dd0[30:0]
-mix_tb.MIX.ST.f[5:0]
-mix_tb.MIX.ST.in[30:0]
-mix_tb.MIX.ST.out[30:0]
-mix_tb.MIX.ST.data[30:0]
+mix_tb.tx
+@820
+mix_tb.MIX.OUT.TX.shifter[9:0]
+mix_tb.MIX.OUT.TX.shifter[9:0]
+@28
+mix_tb.MIX.OUT.byte3
 [pattern_trace] 1
 [pattern_trace] 0

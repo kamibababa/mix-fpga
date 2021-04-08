@@ -4,11 +4,20 @@
 
 `default_nettype none
 module mix(
-	input wire reset,
-	input wire clk,
-	output [11:0] pc,
-	output [30:0] RegisterA
+	input clk_in,
+	//input wire rst,
+	output wire tx
 );
+
+	//reg reset;
+	//always @(posedge clk)
+	//	if (rst) reset <= 1;
+	//	else reset <= 0;
+	wire clk;
+	wire clk_out;
+	wire reset;
+	//assign clk = clk_in;
+	pll PLL(.in(clk_in),.reset(reset),.out(clk));
 	//fetch execute - cycle
 	wire fetch;
 	reg execute=0;
@@ -16,7 +25,7 @@ module mix(
 		if (fetch) execute <= 1;
 		else execute <= 0;
 	
-	assign fetch = reset | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr;
+	assign fetch = reset | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | out2;
 
 	//programm counter
 	reg [11:0] pc;
@@ -32,7 +41,8 @@ module mix(
 	end
 	reg [30:0] data;
 	always @(posedge clk)
-		data <= memory[address];
+		if (outload) data <= memory[addressOut];
+		else data <= memory[address];
 	wire [11:0] address;
 	assign address = (fetch)? p: addressIndex;
 
@@ -52,44 +62,52 @@ module mix(
 		else if (ide & rA) RegisterA <= ideout;
 	reg [12:0] RegisterI1;
 	always @(posedge clk)
-		if (ld2 & r1) RegisterI1 <= {ldout[30],ldout[11:0]};
+		if (reset) RegisterI1 <= 13'd0;
+		else if (ld2 & r1) RegisterI1 <= {ldout[30],ldout[11:0]};
 		else if (ldn2 & r1) RegisterI1 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r1) RegisterI1 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI2;
 	always @(posedge clk)
-		if (ld2 & r2) RegisterI2 <= {ldout[30],ldout[11:0]};
+		if (reset) RegisterI2 <= 13'd0;
+		else if (ld2 & r2) RegisterI2 <= {ldout[30],ldout[11:0]};
 		else if (ldn2 & r2) RegisterI2 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r2) RegisterI2 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI3;
 	always @(posedge clk)
-		if (ld2 & r3) RegisterI3 <= {ldout[30],ldout[11:0]};
+		if (reset) RegisterI3 <= 13'd0;
+		else if (ld2 & r3) RegisterI3 <= {ldout[30],ldout[11:0]};
 		else if (ldn2 & r3) RegisterI3 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r3) RegisterI3 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI4;
 	always @(posedge clk)
-		if (ld2 & r4) RegisterI4 <= {ldout[30],ldout[11:0]};
+		if (reset) RegisterI4 <= 13'd0;
+		else if (ld2 & r4) RegisterI4 <= {ldout[30],ldout[11:0]};
 		else if (ldn2 & r4) RegisterI4 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r4) RegisterI4 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI5;
 	always @(posedge clk)
-		if (ld2 & r5) RegisterI5 <= {ldout[30],ldout[11:0]};
+		if (reset) RegisterI5 <= 13'd0;
+		else if (ld2 & r5) RegisterI5 <= {ldout[30],ldout[11:0]};
 		else if (ldn2 & r5) RegisterI5 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r5) RegisterI5 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI6;
 	always @(posedge clk)
-		if (ld2 & r6) RegisterI6 <= {ldout[30],ldout[11:0]};
+		if (reset) RegisterI6 <= 13'd0;
+		else if (ld2 & r6) RegisterI6 <= {ldout[30],ldout[11:0]};
 		else if (ldn2 & r6) RegisterI6 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r6) RegisterI6 <= {ideout[30],ideout[11:0]};
 	reg [30:0] RegisterX;
 	always @(posedge clk)
-		if (ld2 & rX) RegisterX <= ldout;
+		if (reset) RegisterX <= 31'd0;
+		else if (ld2 & rX) RegisterX <= ldout;
 		else if (ldn2 & rX) RegisterX <= {~ldnout[30],ldnout[29:0]};
 		else if (ide & rX) RegisterX <= ideout;
 		else if (mul2) RegisterX <= {mulsign,mulout[29:0]};
 		else if (div2) RegisterX <= {divsign,divR};
 	reg [11:0] RegisterJ;
 	always @(posedge clk)
-		if (jmprout) RegisterJ <= pc+1;
+		if (reset) RegisterJ <= 12'd0;
+		else if (jmprout) RegisterJ <= pc+1;
 		else if (jmpout & ~saveJ) RegisterJ <= pc+1;
 	wire rA;
 	assign rA = (command[2:0] == 3'd0);
@@ -223,7 +241,14 @@ module mix(
 	assign stin = (st1)?rout:(stj1?RegisterJ:30'd0);
 	wire [30:0] stout;
 	st ST(.clk(clk),.start(st1|stj1|stz1),.stop(st2),.data(data),.field(field),.in(stin),.out(stout));
-	
+
+	//command 37 - OUT
+	wire out1;
+	assign out1 = (command[5:0] == 6'd37);
+	wire out2;
+	wire outload;
+	wire [11:0] addressOut;
+	out OUT(.tx(tx),.clk(clk),.addressin(addressIndex),.addressout(addressOut),.load(outload),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
 	//command 39 - JMP
 	wire jmp;
 	assign jmp = (command[5:0] == 6'd39);

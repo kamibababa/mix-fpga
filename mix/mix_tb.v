@@ -12,7 +12,7 @@
 module mix_tb();
 
 //-- Simulation time: 1us (10 * 100ns)
-parameter DURATION = 240;
+parameter DURATION = 50000;
 
 //-- Clock signal. It is not used in this simulation
 reg clk = 0;
@@ -28,12 +28,11 @@ wire [12:0] regI3;
 wire [12:0] regI4;
 wire [12:0] regI5;
 wire [12:0] regI6;
+wire tx;
 //-- Instantiate the unit to test
 mix MIX (
-	.reset(reset),
-	.clk(clk),
-	.pc(pc),
-	.RegisterA(regA)
+	.clk_in(clk),
+	.tx(tx)
 //	.RegisterX(regX)
 	//.RegisterJ(regJ),
 	//.RegisterI1(regI1),
@@ -50,6 +49,8 @@ initial begin
   $dumpfile(`DUMPSTR(`VCD_OUTPUT));
   $dumpvars(0, mix_tb);
   	#2 reset = 0;
+	#20 reset =1;
+	#7 reset =0;
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);

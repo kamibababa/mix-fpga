@@ -2,14 +2,14 @@
 
 Stumbled over MIX-computer of D.E. Knuth and want to run MIXAL-code on real hardware?
 
-This projeImplementation of MIX computer as proposed in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth.
+Implementation of MIX computer as proposed in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth.
 Runs on iCE40-fpga using only free and open source hard- and software.
 
 ## Hardware
-Runs on fpga board iCE40HX8K-EVB from Olimex at 40 MHz.
+Runs on fpga board iCE40HX8K-EVB from Olimex at 33 MHz.
 
 # Timing
-MIX's basic unit of time 1u equals to 25 ns for this implementation. So according to Knuth it's a relatively high priced machine.
+MIX's basic unit of time 1u equals to 30 ns for this implementation. So according to Knuth it's a relatively high priced machine.
 ## List of commands
 
 | OP  | Menmonic | Remarks |
@@ -29,12 +29,13 @@ MIX's basic unit of time 1u equals to 25 ns for this implementation. So accordin
 | 34   | JBUS | todo | 
 | 35   | IOC | todo | 
 | 36   | IN | todo | 
-| 37   | OUT | todo | 
+| 37   | OUT | ok | 
 | 38   | JRED | todo | 
 | 39 - 47   | JMP | ok | 
 | 48 - 55   | INC,DEC,ENT,ENN | ok | 
 | 56 - 63  | CMP | ok | 
-
+## Attached Hardware
+On U19 a UART with 115200 Baud is connected. The UART sends 3 Words equal to 15 bytes on every IN instruction. The 6bit bytes
 ## How to run MIX-programms
 * compile the MIXAL-programms to binary
 * put binary in `rom.bin`
@@ -44,4 +45,4 @@ MIX's basic unit of time 1u equals to 25 ns for this implementation. So accordin
 
 ## Things to come:
 * Implement missing commands (see todo in command list)
-* Build a UART and connect to U16/U17 to communitcate to MIX at runtime.
+* Build a UART-RX and connect to communitcate to MIX at runtime.
