@@ -9,13 +9,14 @@ module mix(
 	output wire tx
 );
 
-	//reg reset;
+	//reg nreset=0;
 	//always @(posedge clk)
-	//	if (rst) reset <= 1;
-	//	else reset <= 0;
+	//	if (nreset) nreset <= 1;
+	//	else nreset <= 1;
 	wire clk;
-	wire clk_out;
+	//wire clk_out;
 	wire reset;
+	//assign reset = (nreset)? 0:1;
 	//assign clk = clk_in;
 	pll PLL(.in(clk_in),.reset(reset),.out(clk));
 	//fetch execute - cycle

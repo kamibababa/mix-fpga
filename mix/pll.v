@@ -15,7 +15,8 @@ module pll(
 	output wire out,
 	output wire reset
 	);
-	wire clk_out;
+wire locked;
+wire clk_out;
 SB_PLL40_CORE #(
 		.FEEDBACK_PATH("SIMPLE"),
 		.DIVR(4'b1000),		// DIVR =  8
@@ -23,7 +24,7 @@ SB_PLL40_CORE #(
 		.DIVQ(3'b100),		// DIVQ =  4
 		.FILTER_RANGE(3'b001)	// FILTER_RANGE = 1
 	) uut (
-		.LOCK(reset),
+		.LOCK(locked),
 		.RESETB(1'b1),
 		.BYPASS(1'b0),
 		.REFERENCECLK(in),
@@ -33,6 +34,10 @@ SB_PLL40_CORE #(
 	SB_GB Clock_Buffer (
 		.USER_SIGNAL_TO_GLOBAL_BUFFER (clk_out),
 		.GLOBAL_BUFFER_OUTPUT (out)
+	);
+	SB_GB Reset_Buffer (
+		.USER_SIGNAL_TO_GLOBAL_BUFFER (~locked),
+		.GLOBAL_BUFFER_OUTPUT (reset)
 	);
 
 endmodule
