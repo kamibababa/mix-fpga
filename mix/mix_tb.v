@@ -12,12 +12,11 @@
 module mix_tb();
 
 //-- Simulation time: 1us (10 * 100ns)
-parameter DURATION = 50000;
+parameter DURATION = 500000;
 
 //-- Clock signal. It is not used in this simulation
 reg clk = 0;
 always #0.5 clk = ~clk;
-reg reset = 1;
 wire [11:0] pc;
 wire [30:0] regA;
 wire [30:0] regX;
@@ -48,9 +47,6 @@ initial begin
   //-- File were to store the simulation results
   $dumpfile(`DUMPSTR(`VCD_OUTPUT));
   $dumpvars(0, mix_tb);
-  	#2 reset = 0;
-	#20 reset =1;
-	#7 reset =0;
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
 	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);

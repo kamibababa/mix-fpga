@@ -4,29 +4,32 @@
 
 `default_nettype none
 module mix(
-	input clk_in,
-	//input wire rst,
+	input wire clk_in,
 	output wire tx
 );
-
-	//reg nreset=0;
-	//always @(posedge clk)
-	//	if (nreset) nreset <= 1;
-	//	else nreset <= 1;
-	wire clk;
-	//wire clk_out;
 	wire reset;
-	//assign reset = (nreset)? 0:1;
-	//assign clk = clk_in;
-	pll PLL(.in(clk_in),.reset(reset),.out(clk));
+	wire clk;
+	clk CLK(.in(clk_in),.reset(reset),.out(clk));
+
+	reg go;
+	always @(posedge clk)
+		if (go) go <= 0;
+		else if (reset) go <= 1;
+
 	//fetch execute - cycle
 	wire fetch;
+	wire fetch1;
 	reg execute=0;
 	always @(posedge clk)
 		if (fetch) execute <= 1;
 		else execute <= 0;
-	
-	assign fetch = reset | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | out2;
+	reg fetch2;
+	always @(posedge clk)
+		if (reset) fetch2 <=0;
+		else if (fetch1 & outload) fetch2 <= 1;
+		else fetch2 <= 0;
+	assign fetch = (fetch1 & ~outload) | fetch2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | ioc1 | in2 | out2 | char2;
 
 	//programm counter
 	reg [11:0] pc;
@@ -34,77 +37,80 @@ module mix(
 		if (fetch) pc <= p;
 	wire [11:0] p;
 		assign p = (reset)? 0 : (jmprout|jmpout)? addressIndex : pc+1;
+	
 	//memory 
-	reg [30:0] memory[0:4095];
+	reg [30:0] memory[0:3999];
 	parameter ROMFILE = "rom.bin";
 	initial begin
 		$readmemb(ROMFILE,memory);
 	end
 	reg [30:0] data;
 	always @(posedge clk)
-		if (outload) data <= memory[addressOut];
-		else data <= memory[address];
+		data <= memory[address];
 	wire [11:0] address;
-	assign address = (fetch)? p: addressIndex;
+	assign address = (fetch)? p: (outload? addressOut: addressIndex);
 
 	always @(posedge clk)
-		if (st2) memory[addressIndex] <= stout;
+		if (st2) memory[staddress] <= stout;
+		else if (instore) memory[addressIn] <= dataIn;
 	
 	//Register
 	reg [30:0] RegisterA;
 	always @(posedge clk)
-		if (reset) RegisterA <= 30'd0;
-		else if (ld2 & rA) RegisterA <= ldout;
-		else if (ldn2 & rA) RegisterA <= {~ldnout[30],ldnout[29:0]};
+		if (reset) RegisterA <= 31'd0;
+		else if (ld2 & rA2) RegisterA <= ldout;
+		else if (ldn2 & rA2) RegisterA <= {~ldnout[30],ldnout[29:0]};
 		else if (add2) RegisterA <= addout;
 		else if (sub2) RegisterA <= subout;
 		else if (mul2) RegisterA <= {mulsign,mulout[59:30]};
 		else if (div2) RegisterA <= {divsign,divQ};
 		else if (ide & rA) RegisterA <= ideout;
+		else if (char2) RegisterA <= charout[59:30];
 	reg [12:0] RegisterI1;
 	always @(posedge clk)
 		if (reset) RegisterI1 <= 13'd0;
-		else if (ld2 & r1) RegisterI1 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r1) RegisterI1 <= {~ldnout[30],ldnout[11:0]};
+		else if (ld2 & r12) RegisterI1 <= {ldout[30],ldout[11:0]};
+		else if (ldn2 & r12) RegisterI1 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r1) RegisterI1 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI2;
 	always @(posedge clk)
 		if (reset) RegisterI2 <= 13'd0;
-		else if (ld2 & r2) RegisterI2 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r2) RegisterI2 <= {~ldnout[30],ldnout[11:0]};
+		else if (ld2 & r22) RegisterI2 <= {ldout[30],ldout[11:0]};
+		else if (ldn2 & r22) RegisterI2 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r2) RegisterI2 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI3;
 	always @(posedge clk)
 		if (reset) RegisterI3 <= 13'd0;
-		else if (ld2 & r3) RegisterI3 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r3) RegisterI3 <= {~ldnout[30],ldnout[11:0]};
+		else if (ld2 & r32) RegisterI3 <= {ldout[30],ldout[11:0]};
+		else if (ldn2 & r32) RegisterI3 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r3) RegisterI3 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI4;
 	always @(posedge clk)
 		if (reset) RegisterI4 <= 13'd0;
-		else if (ld2 & r4) RegisterI4 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r4) RegisterI4 <= {~ldnout[30],ldnout[11:0]};
+		else if (ld2 & r42) RegisterI4 <= {ldout[30],ldout[11:0]};
+		else if (ldn2 & r42) RegisterI4 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r4) RegisterI4 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI5;
 	always @(posedge clk)
 		if (reset) RegisterI5 <= 13'd0;
-		else if (ld2 & r5) RegisterI5 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r5) RegisterI5 <= {~ldnout[30],ldnout[11:0]};
+		else if (ld2 & r52) RegisterI5 <= {ldout[30],ldout[11:0]};
+		else if (ldn2 & r52) RegisterI5 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r5) RegisterI5 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI6;
 	always @(posedge clk)
 		if (reset) RegisterI6 <= 13'd0;
-		else if (ld2 & r6) RegisterI6 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r6) RegisterI6 <= {~ldnout[30],ldnout[11:0]};
+		else if (ld2 & r62) RegisterI6 <= {ldout[30],ldout[11:0]};
+		else if (ldn2 & r62) RegisterI6 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r6) RegisterI6 <= {ideout[30],ideout[11:0]};
 	reg [30:0] RegisterX;
 	always @(posedge clk)
 		if (reset) RegisterX <= 31'd0;
-		else if (ld2 & rX) RegisterX <= ldout;
-		else if (ldn2 & rX) RegisterX <= {~ldnout[30],ldnout[29:0]};
+		else if (ld2 & rX2) RegisterX <= ldout;
+		else if (ldn2 & rX2) RegisterX <= {~ldnout[30],ldnout[29:0]};
 		else if (ide & rX) RegisterX <= ideout;
 		else if (mul2) RegisterX <= {mulsign,mulout[29:0]};
 		else if (div2) RegisterX <= {divsign,divR};
+		else if (char2) RegisterX <= charout[29:0];
 	reg [11:0] RegisterJ;
 	always @(posedge clk)
 		if (reset) RegisterJ <= 12'd0;
@@ -112,20 +118,44 @@ module mix(
 		else if (jmpout & ~saveJ) RegisterJ <= pc+1;
 	wire rA;
 	assign rA = (command[2:0] == 3'd0);
+	reg rA2;
+	always @(posedge clk)
+		rA2 <= rA;
 	wire r1;
 	assign r1 = (command[2:0] == 3'd1);
+	reg r12;
+	always @(posedge clk)
+		r12 <= r1;
 	wire r2;
 	assign r2 = (command[2:0] == 3'd2);
+	reg r22;
+	always @(posedge clk)
+		r22 <= r2;
 	wire r3;
 	assign r3 = (command[2:0] == 3'd3);
+	reg r32;
+	always @(posedge clk)
+		r32 <= r3;
 	wire r4;
 	assign r4 = (command[2:0] == 3'd4);
+	reg r42;
+	always @(posedge clk)
+		r42 <= r4;
 	wire r5;
 	assign r5 = (command[2:0] == 3'd5);
+	reg r52;
+	always @(posedge clk)
+		r52 <= r5;
 	wire r6;
 	assign r6 = (command[2:0] == 3'd6);
+	reg r62;
+	always @(posedge clk)
+		r62 <= r6;
 	wire rX;
 	assign rX = (command[2:0] == 3'd7);
+	reg rX2;
+	always @(posedge clk)
+		rX2 <= rX;
 	wire [30:0] rout;
 	assign rout = command[2]?
 				(command[1]?
@@ -149,15 +179,19 @@ module mix(
 	reg equal;
 	reg greater;
 	always @(posedge clk)
-		if (add2) overflow <= addof;
+		if (reset) overflow <= 0;
+		else if (add2) overflow <= addof;
 		else if (sub2) overflow <= subof;
 		else if (ide) overflow <= (rA|rX)? ideout[30] : ideout[12];
 	always @(posedge clk)
-		if (cmp2) less <= cmpl;
+		if (reset) less <= 0;
+		else if (cmp2) less <= cmpl;
 	always @(posedge clk)
-		if (cmp2) greater <= cmpg;
+		if (reset) greater <= 0;
+		else if (cmp2) greater <= cmpg;
 	always @(posedge clk)
-		if (cmp2) equal <= cmpe;
+		if (reset) equal <= 1;
+		else if (cmp2) equal <= cmpe;
 
 	//Command
 	wire [5:0] command;
@@ -216,6 +250,13 @@ module mix(
 	wire divsign;
 	div DIV(.clk(clk),.start(div1),.stop(div2),.divisor(value),.quotient(divQ),.dividend({RegisterA,RegisterX[29:0]}),.overflow(divof),.rest(divR),.sign(divsign));	
 	
+	//command 5(1) - CHAR
+	wire char1;
+	assign char1 = (command == 6'd5) & (field == 6'd1);
+	wire char2;
+	wire [59:0] charout;
+	char CHAR(.clk(clk),.start(char1),.stop(char2),.in1(RegisterA[29:0]),.out(charout));
+
 	//command 8-15 - LD
 	wire ld1;
 	assign ld1 = (command[5:3] == 3'd1);
@@ -241,15 +282,36 @@ module mix(
 	wire [30:0] stin;
 	assign stin = (st1)?rout:(stj1?RegisterJ:30'd0);
 	wire [30:0] stout;
-	st ST(.clk(clk),.start(st1|stj1|stz1),.stop(st2),.data(data),.field(field),.in(stin),.out(stout));
+	wire [11:0] staddress;
+	st ST(.clk(clk),.addressin(addressIndex),.addressout(staddress),.start(st1|stj1|stz1),.stop(st2),.data(data),.field(field),.in(stin),.out(stout));
+	//command 35 - IOC
+	wire ioc1;
+	assign ioc1 = (command[5:0] ==6'd35);
 
+	//command 36 - IN
+	wire in1;
+	assign in1 = (command[5:0] == 6'd36);
+	wire in2;
+	wire instore;
+	wire [29:0] dataIn;
+	wire [11:0] addressIn;
+	in IN(.rx(),.clk(clk),.addressin(addressIndex),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn));
+	
 	//command 37 - OUT
 	wire out1;
 	assign out1 = (command[5:0] == 6'd37);
 	wire out2;
 	wire outload;
+	assign outload = ~execute & outrequest;
+	reg outload2;
+	always @(posedge clk)
+		if (reset) outload2 <= 0;
+		else if (outload) outload2 <= 1;
+		else outload2 <= 0;
+	wire outrequest;
 	wire [11:0] addressOut;
-	out OUT(.tx(tx),.clk(clk),.addressin(addressIndex),.addressout(addressOut),.load(outload),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
+	out OUT(.tx(tx),.clk(clk),.addressin(addressIndex),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
+	
 	//command 39 - JMP
 	wire jmp;
 	assign jmp = (command[5:0] == 6'd39);
@@ -290,6 +352,7 @@ module mix(
 								(1'd1):
 								(1'd1)))))
 								:1'd0;
+	
 	//command 40-47 - JMPr
 	wire jmpr;
 	assign jmpr = (command[5:3] == 3'd5);

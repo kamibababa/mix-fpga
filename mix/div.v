@@ -22,10 +22,10 @@ always @(posedge clk)
 wire [30:0] diff;
 assign diff = {1'd0,dividend[59:30]} - {1'd0,divisor[29:0]};
 
-reg [3:0] state = 0;
+reg [3:0] state;
 reg run = 0;
 reg [63:0] cc;
-reg [63:0] aa;
+wire [63:0] aa;
 wire [63:0] d1;
 wire [63:0] d2;
 wire [63:0] d3;
@@ -61,9 +61,9 @@ assign dd = {i4|i5|i6|i7,i2|i3|i6|i7,i1|i3|i5|i7};
 
 always @(posedge clk)
 	if (~run & start) run <= 1;
-	else if (state == 10) run <= 0;
+	else if (state == 11) run <= 0;
 always @(posedge clk)
-	if (run & (state ==10)) stop <= 1;
+	if (run & (state ==11)) stop <= 1;
 	else stop <= 0;
 always @(posedge clk)
 	if (~run & start) state <=0;
@@ -78,11 +78,13 @@ always @(posedge clk)
 	else if (run & i3) cc <= d3;
 	else if (run & i2) cc <= d2;
 	else if (run & i1) cc <= d1;
+assign aa = (state==0)? {4'd0,divisor[29:0],30'd0}: aaa;
+reg [63:0] aaa;
 always @(posedge clk)
-	if (~run & start) aa <= {divisor[29:0],30'b0};
-	else if (run) aa <= aa / 8;
+	if (state==0) aaa <= aa;
+	else if (run) aaa <= {3'd0,aaa[63:3]};
 always @(posedge clk)
-	if (~run & start) quotient <= 0;
-	else if (run) quotient <= quotient*8 | dd ;
+	if (~run & start) quotient <= 30'd0;
+	else if (run) quotient <= {quotient[26:0],3'd0} | dd ;
 assign rest = cc[29:0];
 endmodule

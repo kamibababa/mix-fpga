@@ -1,0 +1,13 @@
+IN
+JRED
+JBUS
+IOC
+MOVE
+HLT
+GO
+SIFT
+NUM
+CHAR
+
+div 12 cycle
+mul 10 cycle

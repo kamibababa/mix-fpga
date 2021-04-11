@@ -27,9 +27,9 @@ module cmp(
 	wire [30:0] b;
 	assign b = in2;
 	wire [30:0] sub1;
-	assign sub1 = a[29:0]-b[29:0];
+	assign sub1 = a[29:0] - b[29:0];
 	wire [30:0] sub2;
-	assign sub2 = b[29:0]-a[29:0];
+	assign sub2 = b[29:0] - a[29:0];
 	
 	assign equal = (~(sub1[30]|sub2[30])) & ((a[30] & b[30]) | (~a[30] & ~b[30]));
 	

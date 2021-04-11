@@ -5,6 +5,8 @@ module st(
 	input wire clk,
 	input wire start,
 	output reg stop,
+	input wire [11:0] addressin,
+	output reg [11:0] addressout,
 	input wire [30:0] data,
 	input wire [30:0] in,
 	input wire [5:0] field,
@@ -20,6 +22,8 @@ module st(
 	always @(posedge clk)
 		if (start) f <= field;
 		else f <= 6'd0;
+	always @(posedge clk)
+		if (start) addressout <= addressin;
 	wire [30:0] dd5;
 	assign dd5 = f[3]?
 		(f[4]?

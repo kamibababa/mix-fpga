@@ -28,8 +28,8 @@ for line in sys.stdin:
                                         while(l<m):
                                             l=l+1
                                             print('0000000000000000000000000000000')
-                                        print(format(code,'031b')+"\t//"+line2)
+                                        print(format(code,'031b'))
                                         l=l+1
-    else:
-        print("//"+line2)
+    #else:
+        #print("//"+line2)
 

@@ -1,23 +1,27 @@
-/**
- * PLL configuration
- *
- * This Verilog module was generated automatically
- * using the icepll tool from the IceStorm project.
- * Use at your own risk.
- *
- * Given input frequency:       100.000 MHz
- * Requested output frequency:   33.333 MHz
- * Achieved output frequency:    33.333 MHz
- */
 `default_nettype none
-module pll(
+module clk(
 	input  wire in,
 	output wire out,
 	output wire reset
 	);
-wire locked;
-wire clk_out;
-SB_PLL40_CORE #(
+
+	wire locked;
+	wire clk_out;
+
+	reg rst1;
+	always @(posedge out)
+		if (locked) rst1 <=1;
+		else rst1 <=0;
+	reg rst2;
+	always @(posedge out)
+		if (rst1) rst2 <=1;
+		else rst2 <=0;
+	reg rst3;
+	always @(posedge out)
+		if (rst2) rst3 <=0;
+		else rst3 <=1;
+	
+	SB_PLL40_CORE #(
 		.FEEDBACK_PATH("SIMPLE"),
 		.DIVR(4'b1000),		// DIVR =  8
 		.DIVF(7'b0101111),	// DIVF = 47
@@ -36,7 +40,7 @@ SB_PLL40_CORE #(
 		.GLOBAL_BUFFER_OUTPUT (out)
 	);
 	SB_GB Reset_Buffer (
-		.USER_SIGNAL_TO_GLOBAL_BUFFER (~locked),
+		.USER_SIGNAL_TO_GLOBAL_BUFFER (rst3),
 		.GLOBAL_BUFFER_OUTPUT (reset)
 	);
 
