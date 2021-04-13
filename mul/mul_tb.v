@@ -29,7 +29,7 @@ mul UUT (
 	   .start(start),
            .a(a),
            .b(b),
-	   .c(out)
+	   .out(out)
          );
 
 

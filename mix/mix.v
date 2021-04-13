@@ -29,7 +29,7 @@ module mix(
 		else if (fetch1 & outload) fetch2 <= 1;
 		else fetch2 <= 0;
 	assign fetch = (fetch1 & ~outload) | fetch2;
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | ioc1 | in2 | out2 | char2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | ioc1 | in2 | out2 | char2 | mov2;
 
 	//programm counter
 	reg [11:0] pc;
@@ -48,11 +48,12 @@ module mix(
 	always @(posedge clk)
 		data <= memory[address];
 	wire [11:0] address;
-	assign address = (fetch)? p: (outload? addressOut: addressIndex);
+	assign address = (fetch)? p: (outload? addressOut: (movload? movaddress: addressIndex));
 
 	always @(posedge clk)
 		if (st2) memory[staddress] <= stout;
 		else if (instore) memory[addressIn] <= dataIn;
+		else if (movstore) memory[RegisterI1] <= data;
 	
 	//Register
 	reg [30:0] RegisterA;
@@ -72,6 +73,7 @@ module mix(
 		else if (ld2 & r12) RegisterI1 <= {ldout[30],ldout[11:0]};
 		else if (ldn2 & r12) RegisterI1 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r1) RegisterI1 <= {ideout[30],ideout[11:0]};
+		else if (movstore) RegisterI1 <= RegisterI1 + 1;
 	reg [12:0] RegisterI2;
 	always @(posedge clk)
 		if (reset) RegisterI2 <= 13'd0;
@@ -257,6 +259,15 @@ module mix(
 	wire [59:0] charout;
 	char CHAR(.clk(clk),.start(char1),.stop(char2),.in1(RegisterA[29:0]),.out(charout));
 
+	//command 7 - MOV
+	wire mov1;
+	assign mov1 = (command == 6'd7);
+	wire mov2;
+	wire movload;
+	wire movstore;
+	wire [11:0] movaddress;
+	mov MOV(.clk(clk),.start(mov1),.stop(mov2),.len(field),.addressin(addressIndex),.addressout(movaddress),.load(movload),.store(movstore));
+
 	//command 8-15 - LD
 	wire ld1;
 	assign ld1 = (command[5:3] == 3'd1);
@@ -302,7 +313,7 @@ module mix(
 	assign out1 = (command[5:0] == 6'd37);
 	wire out2;
 	wire outload;
-	assign outload = ~execute & outrequest;
+	assign outload = ~movload & ~execute & outrequest;
 	reg outload2;
 	always @(posedge clk)
 		if (reset) outload2 <= 0;

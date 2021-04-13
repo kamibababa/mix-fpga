@@ -3,9 +3,12 @@
 *                                                       
 * label ins    operand     	comment                       
 TERM    EQU    19		 
-	ORIG   1000        	
-START   OUT    MSG(TERM)
+	ORIG   0        	
+START   ENT1   2000
+	MOVE   MSG(2)
+	OUT    2000(TERM)
 	HLT                
+	ORIG   1000
 MSG     ALF    "MIXAL"                                 
 	ALF    " HELL"                                   
 	ALF    "O WOR"                                  
