@@ -1,0 +1,40 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Wed Apr 14 14:53:21 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/ice-mix/shift/shift_tb.vcd"
+[dumpfile_mtime] "Wed Apr 14 14:52:57 2021"
+[dumpfile_size] 60606
+[savefile] "/home/micha/git/gitlab/ice-mix/shift/shift_tb.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] -1 -1
+*-19.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] shift_tb.
+[sst_width] 238
+[signals_width] 134
+[sst_expanded] 1
+[sst_vpaned_height] 138
+@28
+shift_tb.clk
+shift_tb.start
+@30
+shift_tb.a[29:0]
+@28
+shift_tb.SHIFT.stop
+@30
+shift_tb.SHIFT.outa[30:0]
+shift_tb.SHIFT.outx[30:0]
+@22
+shift_tb.SHIFT.m[11:0]
+@28
+shift_tb.SHIFT.c0
+shift_tb.SHIFT.c2
+shift_tb.SHIFT.c4
+shift_tb.SHIFT.c6
+shift_tb.SHIFT.c8
+@31
+shift_tb.SHIFT.outa[30:0]
+shift_tb.SHIFT.outx[30:0]
+[pattern_trace] 1
+[pattern_trace] 0
