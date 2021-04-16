@@ -17,12 +17,12 @@ reg [29:0] a=792348734;
 reg [29:0] b=234234234;
 reg start = 0;
 reg [11:0] m=12'd0;
-reg tick=0;
+reg tick=1;
 always @(posedge clk)
 	if (tick) tick<= 0;
 	else tick <= 1;
 always @(posedge clk)
-	if (tick) m <= m+1;
+	if (~tick) m <= m+1;
 //-- Instantiate the unit to test
 shift SHIFT(
 	   .clk(clk),
