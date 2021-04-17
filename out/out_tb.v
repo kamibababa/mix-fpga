@@ -15,15 +15,26 @@ reg reset = 1;
 reg start = 0;
 reg [11:0] ain = 12'd8;
 reg load=0;
+reg r2;
+always @(posedge clk)
+	if (request) r2 <= 1;
+	else r2 <= 0;
 wire request;
 always @(posedge clk)
-	if (request) load <=1;
+	if (r2) load <=1;
 	else load <= 0;
 reg [29:0] mem[55:0];
 initial begin
 mem[12'd8] = 30'o0102030405;
 mem[12'd9] = 30'o0607101112;
-mem[12'd10] = 30'o0607101112;
+mem[12'd10] = 30'o0102030405;
+mem[12'd11] = 30'o0607101112;
+mem[12'd12] = 30'o0102030405;
+mem[12'd13] = 30'o0607101112;
+mem[12'd14] = 30'o0102030405;
+mem[12'd15] = 30'o0607101112;
+mem[12'd16] = 30'o0102030405;
+mem[12'd17] = 30'o0607101112;
 mem[12'd50] = 30'o3132333435;
 mem[12'd51] = 30'o3637303132;
 mem[12'd52] = 30'o3637303132;

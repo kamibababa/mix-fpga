@@ -20,6 +20,7 @@ reg [3:0] state;
 always @(posedge clk)
 	if (start) state <=0;
 	else if (run) state <= state + 1;
+	else state <= 0;
 
 reg run;
 always @(posedge clk)
@@ -53,9 +54,9 @@ always @(posedge clk)
 	else if (run) out <= {out[53:0],d};
 
 wire [5:0] d;
-	assign d = i9? 6'd9 : i8? 6'd8: i7? 6'd7:
-		i6? 6'd6: i5? 6'd5: i4? 6'd4:
-		i3? 6'd3: i2? 6'd2: i1? 6'd1: 6'd0;
+	assign d = i9? 6'd39 : i8? 6'd38: i7? 6'd37:
+		i6? 6'd36: i5? 6'd35: i4? 6'd34:
+		i3? 6'd33: i2? 6'd32: i1? 6'd31: 6'd30;
 
 wire [29:0] f9;
 assign f9 = state[3]?
@@ -80,7 +81,7 @@ assign f9 = state[3]?
 					(30'd90000000)):
 				(state[0]?
 					(30'd900000000):
-					(30'd9000000000))));
+					(33'd7000000000))));
 wire [29:0] f8;
 assign f8 = state[3]?
 		(state[2]?
@@ -104,7 +105,7 @@ assign f8 = state[3]?
 					(30'd80000000)):
 				(state[0]?
 					(30'd800000000):
-					(30'd8000000000))));
+					(33'd8000000000))));
 wire [29:0] f7;
 assign f7 = state[3]?
 		(state[2]?
@@ -128,7 +129,7 @@ assign f7 = state[3]?
 					(30'd70000000)):
 				(state[0]?
 					(30'd700000000):
-					(30'd7000000000))));
+					(33'd7000000000))));
 wire [29:0] f6;
 assign f6 = state[3]?
 		(state[2]?
@@ -152,7 +153,7 @@ assign f6 = state[3]?
 					(30'd60000000)):
 				(state[0]?
 					(30'd600000000):
-					(30'd6000000000))));
+					(33'd6000000000))));
 wire [29:0] f5;
 assign f5 = state[3]?
 		(state[2]?
@@ -176,7 +177,7 @@ assign f5 = state[3]?
 					(30'd50000000)):
 				(state[0]?
 					(30'd500000000):
-					(30'd5000000000))));
+					(33'd5000000000))));
 wire [29:0] f4;
 assign f4 = state[3]?
 		(state[2]?
@@ -200,7 +201,7 @@ assign f4 = state[3]?
 					(30'd40000000)):
 				(state[0]?
 					(30'd400000000):
-					(30'd4000000000))));
+					(33'd4000000000))));
 wire [29:0] f3;
 assign f3 = state[3]?
 		(state[2]?
@@ -224,7 +225,7 @@ assign f3 = state[3]?
 					(30'd30000000)):
 				(state[0]?
 					(30'd300000000):
-					(30'd3000000000))));
+					(33'd3000000000))));
 wire [29:0] f2;
 assign f2 = state[3]?
 		(state[2]?
@@ -248,7 +249,7 @@ assign f2 = state[3]?
 					(30'd20000000)):
 				(state[0]?
 					(30'd200000000):
-					(30'd2000000000))));
+					(33'd2000000000))));
 wire [29:0] f1;
 assign f1 = state[3]?
 		(state[2]?
@@ -272,5 +273,5 @@ assign f1 = state[3]?
 					(30'd10000000)):
 				(state[0]?
 					(30'd100000000):
-					(30'd1000000000))));
+					(33'd1000000000))));
 endmodule

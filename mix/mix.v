@@ -29,7 +29,7 @@ module mix(
 		else if (fetch1 & outload) fetch2 <= 1;
 		else fetch2 <= 0;
 	assign fetch = (fetch1 & ~outload) | fetch2;
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | ioc1 | in2 | out2 | char2 | mov2 | shift2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | ioc1 | in2 | out2 | mov2 | shift2|char2|num2;
 
 	//programm counter
 	reg [11:0] pc;
@@ -66,7 +66,8 @@ module mix(
 		else if (mul2) RegisterA <= {mulsign,mulout[59:30]};
 		else if (div2) RegisterA <= {divsign,divQ};
 		else if (ide & rA) RegisterA <= ideout;
-		else if (char2) RegisterA <= charout[59:30];
+		else if (char2) RegisterA <= {RegisterA[30],charout[59:30]};
+		else if (num2) RegisterA <= {RegisterA[30],numout};
 		else if (shift2) RegisterA <= {RegisterA[30],shiftaout};
 	reg [12:0] RegisterI1;
 	always @(posedge clk)
@@ -113,7 +114,7 @@ module mix(
 		else if (ide & rX) RegisterX <= ideout;
 		else if (mul2) RegisterX <= {mulsign,mulout[29:0]};
 		else if (div2) RegisterX <= {divsign,divR};
-		else if (char2) RegisterX <= charout[29:0];
+		else if (char2) RegisterX <= {RegisterX[30],charout[29:0]};
 		else if (shift2) RegisterX <= {RegisterX[30],shiftxout};
 	reg [11:0] RegisterJ;
 	always @(posedge clk)
@@ -259,7 +260,13 @@ module mix(
 	assign char1 = (command == 6'd5) & (field == 6'd1);
 	wire char2;
 	wire [59:0] charout;
-	char CHAR(.clk(clk),.start(char1),.stop(char2),.in1(RegisterA[29:0]),.out(charout));
+	char CHAR(.clk(clk),.start(char1),.stop(char2),.in(RegisterA[29:0]),.out(charout));
+	//command 5(2) - NUM
+	wire num1;
+	assign num1 = (command == 6'd5) & (field == 6'd2);
+	wire num2;
+	wire [29:0] numout;
+	num NUM(.clk(clk),.start(num1),.stop(num2),.in({RegisterA[29:0],RegisterX[29:0]}),.out(numout));
 	
 	//command 7 - SHIFT
 	wire shift1;
