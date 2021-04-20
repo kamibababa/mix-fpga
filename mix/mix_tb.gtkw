@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Sat Apr 17 15:31:53 2021
+[*] Mon Apr 19 17:34:13 2021
 [*]
 [dumpfile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.vcd"
-[dumpfile_mtime] "Sat Apr 17 15:31:28 2021"
-[dumpfile_size] 178027913
+[dumpfile_mtime] "Mon Apr 19 17:28:13 2021"
+[dumpfile_size] 8646489
 [savefile] "/home/micha/git/gitlab/mix-fpga/mix/mix_tb.gtkw"
-[timestart] 0
+[timestart] 23134350
 [size] 1280 703
 [pos] 14 9
-*-24.000000 46207000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-13.000000 23149000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] mix_tb.
 [treeopen] mix_tb.MIX.
 [treeopen] mix_tb.MIX.OUT.
@@ -22,6 +22,12 @@ mix_tb.MIX.clk
 mix_tb.MIX.reset
 @24
 mix_tb.MIX.pc[11:0]
+@28
+mix_tb.MIX.outload
+mix_tb.MIX.outrequest
+mix_tb.MIX.jbus1
+@29
+mix_tb.MIX.jmpbus
 @28
 mix_tb.MIX.fetch
 mix_tb.MIX.execute
@@ -58,9 +64,31 @@ mix_tb.MIX.OUT.TX.tx
 mix_tb.MIX.OUT.TX.shifter[9:0]
 @28
 mix_tb.MIX.OUT.TX.start
-@29
 mix_tb.MIX.OUT.TX.load
+mix_tb.MIX.busy
+@22
+mix_tb.MIX.IN.out[29:0]
+@28
+mix_tb.MIX.IN.start
+mix_tb.MIX.IN.start2
+mix_tb.MIX.IN.stop
+@22
+mix_tb.MIX.IN.wc[3:0]
+mix_tb.MIX.IN.word[29:0]
+@28
+mix_tb.MIX.IN.request
+mix_tb.MIX.IN.busy
+mix_tb.MIX.IN.store
+mix_tb.MIX.IN.lastword
 @820
 mix_tb.MIX.OUT.TX.in[6:0]
+@22
+mix_tb.MIX.IN.word[29:0]
+@28
+mix_tb.MIX.IN.request
+@22
+mix_tb.MIX.IN.addressout[11:0]
+@28
+mix_tb.MIX.IN.store
 [pattern_trace] 1
 [pattern_trace] 0

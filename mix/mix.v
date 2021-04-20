@@ -5,7 +5,8 @@
 `default_nettype none
 module mix(
 	input wire clk_in,
-	output wire tx
+	output wire tx,
+	input wire rx
 );
 	wire reset;
 	wire clk;
@@ -26,18 +27,22 @@ module mix(
 	reg fetch2;
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
-		else if (fetch1 & outload) fetch2 <= 1;
+		else if (fetch1 & outrequest) fetch2 <= 1;
 		else fetch2 <= 0;
-	assign fetch = (fetch1 & ~outload) | fetch2;
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr | ioc1 | in2 | out2 | mov2 | shift2|char2|num2;
+	assign fetch = (fetch1 & ~outrequest) | fetch2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jmpbus|jbus1| ioc1 | in2 | out2 | mov2 | shift2|char2|num2;
 
 	//programm counter
 	reg [11:0] pc;
 	always @(posedge clk)
 		if (fetch) pc <= p;
 	wire [11:0] p;
-		assign p = (reset)? 0 : (jmprout|jmpout)? addressIndex : pc+1;
-	
+		assign p = (reset)? 0 : (jmpbus|jmprout|jmpout)? addressIndex : (fetch2)? npc: pc+1;
+	reg [11:0] npc;
+	always @(posedge clk)
+		if (reset) npc <=0;
+		else if (fetch1 & outrequest) npc <= p;
+
 	//memory 
 	reg [30:0] memory[0:3999];
 	parameter ROMFILE = "rom.bin";
@@ -52,8 +57,8 @@ module mix(
 
 	always @(posedge clk)
 		if (st2) memory[staddress] <= stout;
-		else if (instore) memory[addressIn] <= dataIn;
 		else if (movstore) memory[RegisterI1] <= data;
+		else if (instore) memory[addressIn] <= dataIn;
 	
 	//Register
 	reg [30:0] RegisterA;
@@ -312,6 +317,12 @@ module mix(
 	wire [30:0] stout;
 	wire [11:0] staddress;
 	st ST(.clk(clk),.addressin(addressIndex),.addressout(staddress),.start(st1|stj1|stz1),.stop(st2),.data(data),.field(field),.in(stin),.out(stout));
+	//command 34 -JBUS
+	wire jbus1;
+	assign jbus1 = (command[5:0]==6'd34);
+	wire jmpbus;
+	assign jmpbus = (jbus1 & busy);
+
 	//command 35 - IOC
 	wire ioc1;
 	assign ioc1 = (command[5:0] ==6'd35);
@@ -321,24 +332,30 @@ module mix(
 	assign in1 = (command[5:0] == 6'd36);
 	wire in2;
 	wire instore;
+	assign instore = requestin&(~st2)&(~movstore);
 	wire [29:0] dataIn;
 	wire [11:0] addressIn;
-	in IN(.rx(),.clk(clk),.addressin(addressIndex),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn));
+	wire busy;
+	wire busyin;
+	assign busy = busyin|busyout;
+	wire requestin;
+	in IN(.busy(busyin),.rx(rx),.clk(clk),.addressin(addressIndex),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn),.request(requestin));
 	
 	//command 37 - OUT
 	wire out1;
 	assign out1 = (command[5:0] == 6'd37);
 	wire out2;
 	wire outload;
-	assign outload = ~movload & ~execute & outrequest;
+	assign outload = (~movload & outrequest&~execute) | (outrequest & fetch1);
 	reg outload2;
 	always @(posedge clk)
 		if (reset) outload2 <= 0;
 		else if (outload) outload2 <= 1;
 		else outload2 <= 0;
 	wire outrequest;
+	wire busyout;
 	wire [11:0] addressOut;
-	out OUT(.tx(tx),.clk(clk),.addressin(addressIndex),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
+	out OUT(.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
 	
 	//command 39 - JMP
 	wire jmp;

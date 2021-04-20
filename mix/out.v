@@ -87,7 +87,7 @@ module out(
 	wire [5:0] nbyte;
 	assign nbyte = (bytecount==0)? word[29:24]: (bytecount==1)? word[23:18]: (bytecount==2)? word[17:12]: (bytecount==3)? word[11:6]: word[5:0];
 	
-	wire [6:0] ascii[0:48];
+	wire [6:0] ascii[0:55];
 	assign ascii[0] = 7'd32;
 	assign ascii[1] = 7'd65;
 	assign ascii[2] = 7'd66;
@@ -137,6 +137,13 @@ module out(
 	assign ascii[46] = 7'd42;
 	assign ascii[47] = 7'd47;
 	assign ascii[48] = 7'd61;
+	assign ascii[49] = 7'd36;
+	assign ascii[50] = 7'd60;
+	assign ascii[51] = 7'd62;
+	assign ascii[52] = 7'd64;
+	assign ascii[53] = 7'd59;
+	assign ascii[54] = 7'd58;
+	assign ascii[55] = 7'd39;
 	wire [7:0] byte8;
 	assign byte8 = (bytecount==5)? 7'd13: (bytecount==6)? 7'd10: ascii[nbyte];
 		

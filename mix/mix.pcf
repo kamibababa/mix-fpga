@@ -9,7 +9,7 @@ set_io clk_in J3
 #set_io but[1] P13 # BUT2 on board
 #set_io led[0] M12 # LED1 on board
 #set_io led[1] R16 # LED2 on board
-#set_io rx L11	# UEXT
+set_io rx L11	# UEXT
 set_io tx T16	# UEXT
 
 
