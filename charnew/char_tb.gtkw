@@ -1,22 +1,21 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Sat Apr 17 14:11:48 2021
+[*] Sun Apr 18 08:19:59 2021
 [*]
-[dumpfile] "/home/micha/git/gitlab/mix-fpga/div10/char_tb.vcd"
-[dumpfile_mtime] "Sat Apr 17 14:11:29 2021"
-[dumpfile_size] 4139
-[savefile] "/home/micha/git/gitlab/mix-fpga/div10/char_tb.gtkw"
-[timestart] 1057600
+[dumpfile] "/home/micha/git/gitlab/mix-fpga/charnew/char_tb.vcd"
+[dumpfile_mtime] "Sun Apr 18 08:19:04 2021"
+[dumpfile_size] 14922
+[savefile] "/home/micha/git/gitlab/mix-fpga/charnew/char_tb.gtkw"
+[timestart] 199500
 [size] 1280 703
 [pos] -1 -1
-*-17.000000 1310000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.000000 430800 430800 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] char_tb.
+[treeopen] char_tb.UUT.
 [sst_width] 238
 [signals_width] 221
 [sst_expanded] 1
 [sst_vpaned_height] 174
-@24
-char_tb.a[59:0]
 @28
 char_tb.start
 char_tb.UUT.clk
@@ -34,10 +33,21 @@ char_tb.UUT.stop
 char_tb.UUT.counter[3:0]
 @24
 char_tb.UUT.in1[29:0]
-@25
 char_tb.UUT.q[29:0]
 @22
+char_tb.UUT.div.in[29:0]
+char_tb.UUT.div.out[29:0]
+@28
+char_tb.UUT.div.q
+@22
+char_tb.UUT.div.r[4:0]
+@25
+char_tb.UUT.div.out[29:0]
+@24
+char_tb.UUT.div.in[29:0]
+@28
 char_tb.UUT.r[5:0]
+@22
 char_tb.UUT.in[29:0]
 @28
 char_tb.UUT.start

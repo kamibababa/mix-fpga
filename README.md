@@ -11,7 +11,7 @@ iCE-MIX has a terminal connector routet to unit U19. The terminal connector spea
 
 ## Implemented commands
 
-Most commands are already implemented (s. list) with execution time corresponding to Knuth's specifications (except for DIV, which can easily be fixed).
+All commands are already implemented (s. list) with execution time corresponding to Knuth's specifications (except for DIV, which will be fixed in future revisions).
 
 | OP  | Menmonic | Remarks |
 | -   | -   | -  |
@@ -20,7 +20,7 @@ Most commands are already implemented (s. list) with execution time correspondin
 | 2   | SUB | ok | 
 | 3   | MUL | ok | 
 | 4   | DIV | 13 cycles vs. 12 of original MIX | 
-| 5(0)   | NUM | todo | 
+| 5(0)   | NUM | ok | 
 | 5(1)   | CHAR | ok | 
 | 5(2)  | HLT | ok | 
 | 6   | SHIFT | ok | 
@@ -29,7 +29,7 @@ Most commands are already implemented (s. list) with execution time correspondin
 | 24 - 33  | ST | ok | 
 | 34(19)   | JBUS(19) | ok (only U19) | 
 | 35(19)   | IOC(19) | ok (only U19) | 
-| 36(19)   | IN(19) | todo | 
+| 36(19)   | IN(19) | ok (only U19) | 
 | 37(19)   | OUT(19) | ok (only U19) | 
 | 38(19)   | JRED(19) | ok (only U19) | 
 | 39 - 47   | JMP | ok | 
@@ -128,9 +128,6 @@ Connect iCE40-fpga to UART and press reset. In your terminal programm you will s
 * `screen /dev/ttyACM0`
 
 ## Things to come...
-* Build UART-RX for terminal unit U19 and implement command IN(19)
-* implement command NUM 5(1)
-* adjust DIV to run in 12 cycles
 * design a case (3D-Printer)
 * add GO-button
 * write bootloader, that reads programmcode from U19
