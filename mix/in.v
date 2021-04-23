@@ -53,7 +53,12 @@ module in(
 		else if (nextword) request <= 1;
 	
 	assign out = word;
-
+	reg crlf;
+	always @(posedge clk)
+		if (reset|(nextblock&store)) crlf <= 0;
+		else if (iscrlf) crlf <= 1;
+	wire iscrlf;
+	assign iscrlf = ready & (byte8==8'd13);
 	wire lastword;
 	assign lastword = (wc == 13);
 
@@ -66,8 +71,11 @@ module in(
 	assign nextword = nextbyte & (bytecount == 4);
 	
 	wire nextbyte;
-	assign nextbyte = (busy & ready);
+	assign nextbyte = (~isctrl& busy & ready)|(~request & crlf);
 
+	wire isctrl;
+	assign isctrl = ready & (byte8[7:4]==4'd0);
+	
 	reg [3:0] wc;
 	always @(posedge clk)
 		if (reset|nextblock) wc <= 0;
@@ -87,7 +95,7 @@ module in(
 	wire ready;
 	UartRX RX(.reset(reset),.rx(rx),.clk(clk),.out(byte8),.stop(ready));
 	wire [5:0] bytemix;
-	assign bytemix = byte6[{~byte8[6],byte8[4:0]}];
+	assign bytemix = crlf? 6'd0: byte6[{~byte8[6],byte8[4:0]}];
 	wire [5:0] byte6[0:63];
 	assign byte6[6'd0] = 6'd52; //@
 	assign byte6[6'd1] = 6'd1;

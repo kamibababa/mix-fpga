@@ -1,11 +1,11 @@
 * EXAMPLE PROGRAM ... TABLE OF PRIMES
 *
-L	EQU	50	The number of primes to find
+L	EQU	500	The number of primes to find
 TERM	EQU	19	Unit number of the line printer
-PRIME	EQU	1000	Memory area for table of primes
+PRIME	EQU	199	Memory area for table of primes
 BUF0	EQU	2000	Memory area for BUFFER[0]
 BUF1	EQU	BUF0+25	Memory area for BUFFER[1]
-	ORIG	0
+	ORIG	3000
 START	IOC	0(TERM)	Skip to new page
 	LD1	=1-L=
 	LD2	=3=
@@ -24,13 +24,13 @@ START	IOC	0(TERM)	Skip to new page
 	JMP	2B
 2H	OUT	TITLE(TERM)
 	ENT4	BUF1+10
-	ENT5	-5
+	ENT5	-50
 2H	INC5	L+1
 4H	LDA	PRIME,5
 	CHAR
 	STX	0,4(1:4)
 	DEC4	1
-	DEC5	5
+	DEC5	50
 	J5P	4B
 	OUT	0,4(TERM)
 	LD4	24,4

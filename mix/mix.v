@@ -30,7 +30,7 @@ module mix(
 		else if (fetch1 & outrequest) fetch2 <= 1;
 		else fetch2 <= 0;
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jmpbus|jbus1| ioc1 | in2 | out2 | mov2 | shift2|char2|num2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jmpbus|jbus1| ioc1 | in2 | out2 | mov2 | shift2 | char2|num2;
 
 	//programm counter
 	reg [11:0] pc;
@@ -268,14 +268,14 @@ module mix(
 	char CHAR(.clk(clk),.start(char1),.stop(char2),.in(RegisterA[29:0]),.out(charout));
 	//command 5(2) - NUM
 	wire num1;
-	assign num1 = (command == 6'd5) & (field == 6'd2);
+	assign num1 = (command == 6'd5) & (field == 6'd0);
 	wire num2;
 	wire [29:0] numout;
 	num NUM(.clk(clk),.start(num1),.stop(num2),.in({RegisterA[29:0],RegisterX[29:0]}),.out(numout));
 	
 	//command 7 - SHIFT
 	wire shift1;
-	assign shift1 = (command == 6'd7);
+	assign shift1 = (command == 6'd6);
 	wire shift2;
 	wire [29:0] shiftaout;
 	wire [29:0] shiftxout;

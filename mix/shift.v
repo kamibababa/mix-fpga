@@ -9,7 +9,6 @@ module shift(
 	output [29:0] outx,
 	output stop
 );
-
 wire sla1;
 assign sla1 = (start & (field == 6'd0));
 wire sra1;
@@ -52,7 +51,7 @@ assign s1 = (m==12'd1);
 
 reg s0;
 always @(posedge clk)
-	if (m==12'd0) s0 <= 1;
+	if (m[11:1]==11'd0) s0 <= 1;
 	else s0 <= 0;
 reg s2;
 always @(posedge clk)

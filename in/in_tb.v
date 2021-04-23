@@ -70,7 +70,14 @@ initial begin
 	#1 starttx = 0;
 	#1000 starttx = 1;
 	#1 starttx = 0;
+	in = 7'd13;
 	#1000 starttx = 1;
+	#1 starttx = 0;
+	in=7'd10;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	in=7'd65;
 	#1 starttx = 0;
 	#1000 starttx = 1;
 	#1 starttx = 0;
@@ -94,10 +101,7 @@ initial begin
 	#1 starttx = 0;
 	#1000 starttx = 1;
 	#1 starttx = 0;
-	#1000 starttx = 1;
-	#1 starttx = 0;
-	#1000 starttx = 1;
-	#1 starttx = 0;
+	in=8'd10;
 	#1000 starttx = 1;
 	#1 starttx = 0;
 	#20

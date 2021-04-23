@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Mon Apr 19 16:11:31 2021
+[*] Thu Apr 22 16:15:59 2021
 [*]
 [dumpfile] "/home/micha/git/gitlab/mix-fpga/in/in_tb.vcd"
-[dumpfile_mtime] "Mon Apr 19 16:11:13 2021"
-[dumpfile_size] 3877484
+[dumpfile_mtime] "Thu Apr 22 16:15:48 2021"
+[dumpfile_size] 3995088
 [savefile] "/home/micha/git/gitlab/mix-fpga/in/in_tb.gtkw"
-[timestart] 0
+[timestart] 2666880000
 [size] 1280 703
 [pos] -1 -1
-*-32.000000 2376050000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-23.000000 2684350000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] in_tb.
 [treeopen] in_tb.IN.
 [sst_width] 238
@@ -49,9 +49,14 @@ in_tb.IN.addressout[11:0]
 in_tb.IN.busy
 @30
 in_tb.IN.out[29:0]
-@29
-in_tb.IN.request
 @28
+in_tb.IN.request
+in_tb.IN.crlf
+@29
+in_tb.IN.nextblock
+@28
+in_tb.IN.lastword
+in_tb.IN.store
 in_tb.IN.store
 in_tb.IN.ready
 [pattern_trace] 1

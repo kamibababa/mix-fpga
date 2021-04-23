@@ -1,174 +1,95 @@
-//-------------------------------------------------------------------
-//-- leds_tb.v
-//-- Testbench
-//-------------------------------------------------------------------
-//-- Michael Schröder
-//-- GPL license
-//-------------------------------------------------------------------
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
-`timescale 1ns / 1ns
+`timescale 100 ns / 10 ns
 
 module mix_tb();
 
 //-- Simulation time: 1us (10 * 100ns)
-parameter DURATION = 70000;
+parameter DURATION = 100000;
 
 //-- Clock signal. It is not used in this simulation
 reg clk = 0;
 always #0.5 clk = ~clk;
-wire [11:0] pc;
-wire [30:0] regA;
-wire [30:0] regX;
-wire [11:0] regJ;
-wire [12:0] regI1;
-wire [12:0] regI2;
-wire [12:0] regI3;
-wire [12:0] regI4;
-wire [12:0] regI5;
-wire [12:0] regI6;
-wire tx;
+reg reset = 1;
+reg [6:0] in=7'd65;
+reg starttx;
+UartTX TX(.clk(clk),.tx(rx),.load(starttx),.in(in));
+reg [11:0] ain;
+wire rx;
 //-- Instantiate the unit to test
-mix MIX (
-	.clk_in(clk),
-	.tx(tx)
-//	.RegisterX(regX)
-	//.RegisterJ(regJ),
-	//.RegisterI1(regI1),
-	//.RegisterI2(regI2),
-	//.RegisterI3(regI3),
-//	.RegisterI4(regI4),
-//	.RegisterI5(regI5),
-//	.RegisterI6(regI6)
-);
+mix MIX(
+	   .clk_in(clk),
+	   .rx(rx)
+         );
+
 
 initial begin
 
   //-- File were to store the simulation results
   $dumpfile(`DUMPSTR(`VCD_OUTPUT));
   $dumpvars(0, mix_tb);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-	#2 $display("| %d | %o | %o | %o | ",pc,regA,regX,regJ);
-   	#(DURATION) $display("End of simulation");
+  	#1 ain =12;
+  	#3 reset = 0;
+	#1000 starttx = 1;in=7'd65;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd66;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd67;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd68;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd69;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd49;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd48;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd50;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd48;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd48;
+	#1 starttx = 0;
+	#1000 starttx = 1;in=7'd13;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	in = 7'd13;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	in=7'd10;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	in=7'd65;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	in=8'd10;
+	#1000 starttx = 1;
+	#1 starttx = 0;
+	#20
+   #(DURATION) $display("End of simulation");
   $finish;
 end
 
