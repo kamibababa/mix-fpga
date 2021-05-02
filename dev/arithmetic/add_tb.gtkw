@@ -1,0 +1,100 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Fri Apr 30 16:56:02 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/mix-fpga/dev/add/add_tb.vcd"
+[dumpfile_mtime] "Fri Apr 30 16:54:42 2021"
+[dumpfile_size] 2299
+[savefile] "/home/micha/git/gitlab/mix-fpga/dev/add/add_tb.gtkw"
+[timestart] 6
+[size] 1123 600
+[pos] 653 0
+*-2.668868 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] add_tb.
+[sst_width] 238
+[signals_width] 169
+[sst_expanded] 1
+[sst_vpaned_height] 138
+@28
+add_tb.reset
+add_tb.ADD.clk
+@c00024
+add_tb.ADD.in1[30:0]
+@28
+(0)add_tb.ADD.in1[30:0]
+(1)add_tb.ADD.in1[30:0]
+(2)add_tb.ADD.in1[30:0]
+(3)add_tb.ADD.in1[30:0]
+(4)add_tb.ADD.in1[30:0]
+(5)add_tb.ADD.in1[30:0]
+(6)add_tb.ADD.in1[30:0]
+(7)add_tb.ADD.in1[30:0]
+(8)add_tb.ADD.in1[30:0]
+(9)add_tb.ADD.in1[30:0]
+(10)add_tb.ADD.in1[30:0]
+(11)add_tb.ADD.in1[30:0]
+(12)add_tb.ADD.in1[30:0]
+(13)add_tb.ADD.in1[30:0]
+(14)add_tb.ADD.in1[30:0]
+(15)add_tb.ADD.in1[30:0]
+(16)add_tb.ADD.in1[30:0]
+(17)add_tb.ADD.in1[30:0]
+(18)add_tb.ADD.in1[30:0]
+(19)add_tb.ADD.in1[30:0]
+(20)add_tb.ADD.in1[30:0]
+(21)add_tb.ADD.in1[30:0]
+(22)add_tb.ADD.in1[30:0]
+(23)add_tb.ADD.in1[30:0]
+(24)add_tb.ADD.in1[30:0]
+(25)add_tb.ADD.in1[30:0]
+(26)add_tb.ADD.in1[30:0]
+(27)add_tb.ADD.in1[30:0]
+(28)add_tb.ADD.in1[30:0]
+(29)add_tb.ADD.in1[30:0]
+(30)add_tb.ADD.in1[30:0]
+@1401200
+-group_end
+@24
+add_tb.ADD.in2[30:0]
+@c00024
+add_tb.ADD.out[30:0]
+@28
+(0)add_tb.ADD.out[30:0]
+(1)add_tb.ADD.out[30:0]
+(2)add_tb.ADD.out[30:0]
+(3)add_tb.ADD.out[30:0]
+(4)add_tb.ADD.out[30:0]
+(5)add_tb.ADD.out[30:0]
+(6)add_tb.ADD.out[30:0]
+(7)add_tb.ADD.out[30:0]
+(8)add_tb.ADD.out[30:0]
+(9)add_tb.ADD.out[30:0]
+(10)add_tb.ADD.out[30:0]
+(11)add_tb.ADD.out[30:0]
+(12)add_tb.ADD.out[30:0]
+(13)add_tb.ADD.out[30:0]
+(14)add_tb.ADD.out[30:0]
+(15)add_tb.ADD.out[30:0]
+(16)add_tb.ADD.out[30:0]
+(17)add_tb.ADD.out[30:0]
+(18)add_tb.ADD.out[30:0]
+(19)add_tb.ADD.out[30:0]
+(20)add_tb.ADD.out[30:0]
+(21)add_tb.ADD.out[30:0]
+(22)add_tb.ADD.out[30:0]
+(23)add_tb.ADD.out[30:0]
+(24)add_tb.ADD.out[30:0]
+(25)add_tb.ADD.out[30:0]
+(26)add_tb.ADD.out[30:0]
+(27)add_tb.ADD.out[30:0]
+(28)add_tb.ADD.out[30:0]
+(29)add_tb.ADD.out[30:0]
+(30)add_tb.ADD.out[30:0]
+@1401200
+-group_end
+@28
+add_tb.ADD.overflow
+add_tb.ADD.start
+add_tb.ADD.stop
+[pattern_trace] 1
+[pattern_trace] 0

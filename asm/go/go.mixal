@@ -1,0 +1,24 @@
+	ORIG 	3000
+	JMP	START
+TITLE	ALF	"WELCO"
+	ALF	"ME TO"
+	ALF	" MIX."
+	ALF	" 1U ="
+	ALF	" 30NS"
+	ALF	". U19"
+	ALF	" @115"
+	ALF	"200 B"
+	ALF	"AUD ("
+	ALF	"8N1)."
+	ALF	"     "
+	ALF	"     "
+	ALF	"     "
+	ALF	"     "
+	ORIG	3091
+START	OUT 	TITLE(19)
+WAIT1	JBUS	WAIT1(19)
+NEXT	IN	0(16)
+WAIT	JBUS	WAIT(16)
+	JMP	0	
+	END	START
+

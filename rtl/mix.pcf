@@ -1,0 +1,17 @@
+# in the pcf (physical constrain file) 
+# the external pins of the fpga are defined
+# compare to the schematic of the board and the datasheet of fpga
+
+set_io clk_in J3				
+#set_io rst J4 # GPIO 20
+
+#set_io but[0] K11 # BUT1 on board
+#set_io but[1] P13 # BUT2 on board
+set_io hlt M12 # LED1 on board
+#set_io led2 R16 # LED2 on board
+#set_io rx L11	# UEXT
+#set_io tx T16	# UEXT
+set_io rx E4	# UEXT
+set_io tx B2	# UEXT
+
+

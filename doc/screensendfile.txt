@@ -1,0 +1,18 @@
+Hopefully you have already solved this problem yourself, but I'll answer in case anyone else have the same problem.
+
+GNU screen has a command called readreg which you can use to read a file into a register. After a register is filled with data you can paste that data using the paste command.
+Inside screen
+
+Inside screen you press Ctr + a and then : to execute a command. Then you simply write and press enter:
+
+readreg p /path/to/thefile
+
+After you have executed the command you should se a message saying Slurped X character into buffer.
+
+You can then paste the data in that buffer by again pressing Ctr + a and then :, then write and press enter:
+
+paste p
+
+Note: p is the name of the register
+
+And you're done.

@@ -1,17 +1,15 @@
 # iCE-MIX
 
-Have you ever heard of Don Knuths (hypothetical) first polyunsaturated computer, the 1009? In this project we will build a binary version of the MIX-Computer as described in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth on an fpga-board.
+Have you ever heard of Don Knuths (hypothetical) first polyunsaturated computer MIX, the 1009? In this project we will build a binary version of the MIX-Computer as described in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth running on an fpga-board.
 
-The implementation is called iCE-MIX because it uses the iCE40HX8K fpga from Lattice. We use the development board iCE40HX8K-EVB from the company Olimex. The whole project uses only FOSS free and open source hard- and software.
+The implementation is called iCE-MIX because it uses the iCE40HX8K fpga from Lattice. We use the development board iCE40HX8K-EVB from the company Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hard- and software.
 
 ## Hardware details
 iCE-MIX runs on iCE40HX8K-EVB clocked at 33MHz. The basic unit of time 1u corresponds to 30ns, so according to Knuth it's a relatively high priced machine.
 
-iCE-MIX has a terminal connector routet to unit U19. The terminal connector speakts USB-UART @115200 baud and does transloation of Knuth's 6bit character bytes to ASCII in hardware. 
-
-## Implemented commands
-
-All commands are already implemented (s. list) with execution time corresponding to Knuth's specifications (except for DIV, which will be fixed in future revisions).
+iCE-MIX has all I/O units connected to the USB-connector as UART streams. You can connect iCE-MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
+ 
+All commands are implemented (s. list) with execution times corresponding to Knuth's specifications.
 
 | OP  | Menmonic | Remarks |
 | -   | -   | -  |
@@ -19,7 +17,7 @@ All commands are already implemented (s. list) with execution time corresponding
 | 1   | ADD | ok | 
 | 2   | SUB | ok | 
 | 3   | MUL | ok | 
-| 4   | DIV | 13 cycles vs. 12 of original MIX | 
+| 4   | DIV | ok | 
 | 5(0)   | NUM | ok | 
 | 5(1)   | CHAR | ok | 
 | 5(2)  | HLT | ok | 
@@ -27,22 +25,181 @@ All commands are already implemented (s. list) with execution time corresponding
 | 7   | MOVE | ok | 
 | 8 - 23   | LD(N) | ok | 
 | 24 - 33  | ST | ok | 
-| 34(19)   | JBUS(19) | ok (only U19) | 
-| 35(19)   | IOC(19) | ok (only U19) | 
-| 36(19)   | IN(19) | ok (only U19) | 
-| 37(19)   | OUT(19) | ok (only U19) | 
-| 38(19)   | JRED(19) | ok (only U19) | 
+| 34(19)   | JBUS(19) | ok (only USB-UART) | 
+| 35(19)   | IOC(19) | ok (only USB-UART) | 
+| 36(19)   | IN(19) | ok (only USB-UART) | 
+| 37(19)   | OUT(19) | ok (only USB-UART) | 
+| 38(19)   | JRED(19) | ok (only USB-UART) | 
 | 39 - 47   | JMP | ok | 
 | 48 - 55   | INC,DEC,ENT,ENN | ok | 
 | 56 - 63  | CMP | ok | 
 
-## Test
+## The Go-button
+iCE-MIX comes with the "Go button" attached to USB-UART. So after pressing the Go button MIX-programms can be uploaded by entering the "punched cards" on USB-UART.
 
-iCE-MIX has been tested to run the programm p, which computes the first 500 primes and outputs them on unit 19 (UART).
+## Running the first programm on iCE-MIX
+We will run programm p (s. TAOCP p. xxx) on iCE-MIX. Programm p computes the first 500 primes and outputs them in a table on U19.
 
-The program runs on fpga and outputs the result on the terminal connector (U19).
+Programm p is stored as mixal programm in `p.mixal`.
+```
+* EXAMPLE PROGRAM ... TABLE OF PRIMES
+*
+L		EQU		500		The number of primes to find
+TERM	EQU		19		Unit number of the line printer
+BUF0	EQU		2000	Memory area for BUFFER[0]
+BUF1	EQU		BUF0+25	Memory area for BUFFER[1]
+PRIME	EQU		BUF1+24
+		ORIG	3000
+START	IOC		0(TERM)	Skip to new page
+		LD1		=1-L=
+		LD2		=3=
+2H		INC1	1
+		ST2		PRIME+L,1
+		J1Z		2F
+4H		INC2	2
+		ENT3	2
+6H		ENTA	0
+		ENTX	0,2
+		DIV		PRIME,3
+		JXZ		4B
+		CMPA	PRIME,3
+		INC3	1
+		JG		6B
+		JMP		2B
+2H		OUT		TITLE(TERM)
+		ENT4	BUF1+10
+		ENT5	-50
+2H		INC5	L+1
+4H		LDA		PRIME,5
+		CHAR
+		STX		0,4(1:4)
+		DEC4	1
+		DEC5	50
+		J5P		4B
+		OUT		0,4(TERM)
+		LD4		24,4
+		J5N		2B
+		HLT
+* INITIAL CONTENTS OF TABLES AND BUFFERS
+		ORIG	PRIME+1
+		CON		2
+		ORIG	BUF0-5
+TITLE	ALF		"FIRST"
+		ALF		" FIVE"
+		ALF		" HUND"
+		ALF		"RED P"
+		ALF		"RIMES"
+		ORIG	BUF0+24
+		CON		BUF1+10
+		ORIG	BUF1+24
+		CON		BUF0+10
+		END		START
+```
 
-The following list has been recorded with `cat /dec/ttyACM0 > prime.out`
+Translate the mixal program with "mixasm" tools.
+
+`$mixasm p.mixal -l`
+
+```
+*** p.mixal: Kompilerzusammenfassung ***
+
+-----------------------------------------------------------------
+Src     Address  Compiled word           Symbolic rep
+-----------------------------------------------------------------
+043     01995   + 06 09 19 22 23 	ALF	"FIRST"
+044     01996   + 00 06 09 25 05 	ALF	" FIVE"
+045     01997   + 00 08 24 15 04 	ALF	" HUND"
+046     01998   + 19 05 04 00 17 	ALF	"RED P"
+047     01999   + 19 09 14 05 22 	ALF	"RIMES"
+049     02024   + 00 00 00 31 51 	CON	2035
+051     02049   + 00 00 00 31 26 	CON	2010
+000     02050   - 00 00 00 07 51 	CON	1073742323
+000     02051   + 00 00 00 00 03 	CON	0003
+009     03000   + 00 00 00 19 35 	CON	1251
+010     03001   + 32 02 00 05 09 	CON	537395529
+011     03002   + 32 03 00 05 10 	CON	537657674
+012     03003   + 00 01 00 00 49 	CON	262193
+013     03004   + 39 53 01 05 26 	CON	668209498
+014     03005   + 47 08 00 01 41 	CON	790626409
+015     03006   + 00 02 00 00 50 	CON	524338
+016     03007   + 00 02 00 02 51 	CON	524467
+017     03008   + 00 00 00 02 48 	CON	0176
+018     03009   + 00 00 02 02 55 	CON	8375
+019     03010   + 32 01 03 05 04 	CON	537145668
+020     03011   + 46 62 00 01 47 	CON	788004975
+021     03012   + 32 01 03 05 56 	CON	537145720
+022     03013   + 00 01 00 00 51 	CON	262195
+023     03014   + 47 00 00 06 39 	CON	788529575
+024     03015   + 46 59 00 00 39 	CON	787218471
+025     03016   + 31 11 00 19 37 	CON	522978533
+026     03017   + 31 51 00 02 52 	CON	533463220
+027     03018   - 00 50 00 02 53 	CON	1086849205
+028     03019   + 07 53 00 00 53 	CON	131334197
+029     03020   + 32 01 05 05 08 	CON	537153864
+030     03021   + 00 00 00 01 05 	CON	0069
+031     03022   + 00 00 04 12 31 	CON	17183
+032     03023   + 00 01 00 01 52 	CON	262260
+033     03024   + 00 50 00 01 53 	CON	13107317
+034     03025   + 47 12 00 02 45 	CON	791675053
+035     03026   + 00 00 04 19 37 	CON	17637
+036     03027   + 00 24 04 05 12 	CON	6308172
+037     03028   + 47 11 00 00 45 	CON	791412781
+038     03029   + 00 00 00 02 05 	CON	0133
+-----------------------------------------------------------------
+
+*** Startadresse:	3000
+*** Endadresse:	2050
+
+*** Symboltabelle
+START               :  3000
+BUF0                :  2000
+BUF1                :  2025
+PRIME               :  2049
+TITLE               :  1995
+TERM                :  19
+L                   :  500
+
+*** Ende der Zusammenfassung ***
+
+```
+
+Write the bytes on punchcards with. `$.\mls2card < p.mls > p.card`. The first two lines contain the bootloading routine stored as chars. The next lines contain the programm-code of programm p. The last lines is the "transfer card", which tells iCE-MIX to start programm execution at memory cell 3000.
+
+```
+ M R6 Y R6    I C R4 Z EH A  F F CF 0  E   EU Z IH G BB   EJ  CA. Y EU
+   EH E BA   EU 1A-H S BB 0ALH 1ALN  ABG V  E  CEU Y EH E BB J B. A  9
+0000251995010310184700016113330002196420032009422503211840860000000000
+0000312024000000203500000000000000000000000000000000000000000000000000
+00004320490000002010000000049R0000000003000000000000000000000000000000
+0000563000000000125105373955290537657674000026219306682094980790626409
+0000663006000052433800005244670000000176000000837505371456680788004975
+0000763012053714572000002621950788529575078721847105229785330533463220
+0000863018001310738J01313341970537153864000000006900000171830000262260
+0000063024001310731707916750530000017637000630817207914127810000000133
+TRANS03000000000000000000000000000000000000000000000000000000000000000
+```
+
+
+Power iCE-MIX with USB cable connected to your computer.
+
+Start a screen session
+```
+$screen /dev/ttyUSB0
+```
+
+Press the "Go button" on iCE-MIX
+
+Read cards into a screen-buffer 
+```
+<in screen terminal> Ctr-a : readreg p p.card <enter>
+```
+
+Send buffer to iCE-MIX
+```
+<in screen terminal> Ctrl-a : paste p <enter>
+```
+
+After a few nanoseconds iCE-MIX spits out the following list on U19:
 
 ```
 FIRST FIVE HUNDRED PRIMES                                                 
@@ -98,36 +255,41 @@ FIRST FIVE HUNDRED PRIMES
      0229 0541 0863 1223 1583 1987 2357 2741 3181 3571                    
 ```
 
+## Build your own MIX
+The project runs on iCE40-HX8K-EVB fpga from Olimex Ltd. The whole project uses only FOSS soft- and hardware. With little modifications it should run on any fpga board out in the wild.
 
-## How to prepare MIXAL-programms
-To run mixal programms on iCE40 you first have to translate the mixal programm to a binary representation:
-* cd into the folder mixal `cd mixal`
-* compile the MIXAL-programms with `mixasm p.mixal -l`
-* translate the list file to binary `./mls2bin.py < p.mls > p.bin`
+### requirement
+1. fpga board (iCE40-HX8K), programmer device (Olimexino 32u4), idc10 cable (cable-IDC10) and USB-UART-board (BB-CH340T). See https://www.olimex.com/
+2. fpga toolchain. The project was developed with `apio`, a software suite using project http://www.clifford.at/icestorm/ from Clifford Wof.
+	
+	```
+	$pip install -U apio
+	```
+3.  gtkwave for simulation of fpga
+	```
+	$sudo apt install gtkwave
+	```
+7.  assembler and simulator for MIX.
+	```
+	$sudo apt install mdk
+	```
+4.  terminal to connect to USB-UART
+	```
+	$sudo apt install screen
+	```
+	
+### build the project
 
-Now the binary file must be preloaded into memory of iCE-MIX. We will compile the whole verilog project with the included rom file.
-
-* copy binary to mix-folder `cp p.bin ../mix/rom.bin`
-* now cd into the mix-folder `cd ../mix`
-* run `apio build -v` to syntesize the MIX circuit with memory preloaded with binary file `rom.bin`. Notice the amount of resources used on iCE40:
-
+Build the project
 ```
-Info: Device utilisation:
-Info: 	         ICESTORM_LC:  7188/ 7680    93%
-Info: 	        ICESTORM_RAM:    32/   32   100%
-Info: 	               SB_IO:     2/  256     0%
-Info: 	               SB_GB:     8/    8   100%
-Info: 	        ICESTORM_PLL:     1/    2    50%
-Info: 	         SB_WARMBOOT:     0/    1     0%
+$apio build -v
 ```
-* run `apio upload` to upload bitstream file to fpga-board.
+Connect the fpga board with olimexino-32u4 programmer to upload the bitstream file:
+```
+$ apio upload
+```
+Print the case and mount the boards inside.
 
-Now iCE40-fpga IS a MIX-computer with the programm stored in memory beginning at address 0.
 
-Connect iCE40-fpga to UART and press reset. In your terminal programm you will see the output of MIX on in/out unit 19 (Terminal).
-* `screen /dev/ttyACM0`
-
-## Things to come...
-* design a case (3D-Printer)
-* add GO-button
-* write bootloader, that reads programmcode from U19
+### comments and suggestions ...
+... are welcome by mi.schroeder@netcologne.de
