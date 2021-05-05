@@ -1,0 +1,34 @@
+* BOOTLOADER - U19
+
+BUFF	EQU	29		Buffer area is 0029-0041
+	ORIG	0
+LOC	IN	16(16)		Read in second card.
+READ	IN	BUFF(16)	Read next card.
+	LD1	0(0:0)		rI1 <- 0.
+	JBUS	*(16)		Wait for read to finish.
+	LDA	BUFF+1		rA <- columns 6-10.
+N1	SLA	1
+	SRAX	6		rAX <- colums 7-10.
+N30	NUM	30
+	STA	LOC		LOC <- starting location.
+	LDA	BUFF+1(1:1)
+	SUB	N30(0:2)
+LOOP	LD3	LOC		rI3 <- LOC
+	JAZ	0,3		Jump, if transfer card.
+	STA	BUFF		BUFF <- count.
+	LDA	LOC
+	ADD	N1(0:2)
+	STA	LOC		LOC <- LOC + 1,
+	LDA	BUFF+3,1(5:5)
+	SUB	N25(0:2)	rA(0) <- sign
+	STA	0,3(0:0)	store sign
+	LDA	BUFF+2,1	
+	LDX	BUFF+3,1
+N25	NUM	25		rA(1:4) <- magnitude.
+	MOVE	0,1(2)		rI1 <- rI1 + 2
+	STA	0,3(1:5)	Store value (inkl. sign)
+	LDA	BUFF
+	SUB	N1(0:2)		Decrease the count.
+	JAP	LOOP		Repeat until count is zero.
+	JMP	READ		Now read a new card.
+	END	0

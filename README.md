@@ -1,15 +1,37 @@
-# iCE-MIX
+# MIX-fpga
 
 Have you ever heard of Don Knuths (hypothetical) first polyunsaturated computer MIX, the 1009? In this project we will build a binary version of the MIX-Computer as described in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth running on an fpga-board.
 
-The implementation is called iCE-MIX because it uses the iCE40HX8K fpga from Lattice. We use the development board iCE40HX8K-EVB from the company Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hard- and software.
+The presented implementation is based on the fpga development board iCE40HX8K-EVB from the company Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hard- and software, so everybody can build their own MIX following the instructions in `build`
 
-## Hardware details
-iCE-MIX runs on iCE40HX8K-EVB clocked at 33MHz. The basic unit of time 1u corresponds to 30ns, so according to Knuth it's a relatively high priced machine.
+![](pics/MIX_toast.jpg)
 
-iCE-MIX has all I/O units connected to the USB-connector as UART streams. You can connect iCE-MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
- 
-All commands are implemented (s. list) with execution times corresponding to Knuth's specifications.
+
+## inside
+
+The MIX computer is composed of two little boards.
+1. iCE40HX8K-EVB, the fpga development board from olimex.com
+2. USB-serial adapter. Used to power the board with 5V and to in-/output data over serial interface.
+
+![](pics/MIX_inside.jpg)
+
+## Specifications
+
+### clock
+MIX runs on iCE40HX8K-EVB clocked at 25MHz. The basic unit of time 1u corresponds to 40ns, so according to Knuth it's a relatively high priced machine.
+
+### I/O units
+In our MIX implementation all character based I/O units (U16-U20) are connected to the USB-connector and can be accessed as UART streams. You can connect MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
+![](pics/MIX_usb.jpg)
+
+### commands
+All commands exept the floating point arithmetic are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can easily be extended in various ways:
+1. add more commands:
+	* Floating point arithmetic
+	* logic operators (AND,OR,XOR,NOT), etc.
+2. add more hardware:
+	* add leds to run the traffic light example
+	* add more I/O units
 
 | OP  | Menmonic | Remarks |
 | -   | -   | -  |
@@ -25,183 +47,25 @@ All commands are implemented (s. list) with execution times corresponding to Knu
 | 7   | MOVE | ok | 
 | 8 - 23   | LD(N) | ok | 
 | 24 - 33  | ST | ok | 
-| 34(19)   | JBUS(19) | ok (only USB-UART) | 
-| 35(19)   | IOC(19) | ok (only USB-UART) | 
-| 36(19)   | IN(19) | ok (only USB-UART) | 
-| 37(19)   | OUT(19) | ok (only USB-UART) | 
-| 38(19)   | JRED(19) | ok (only USB-UART) | 
+| 34 -38   | JBUS,IOC,IN,OUT,JRED | ok (USB-UART) | 
 | 39 - 47   | JMP | ok | 
 | 48 - 55   | INC,DEC,ENT,ENN | ok | 
 | 56 - 63  | CMP | ok | 
 
-## The Go-button
-iCE-MIX comes with the "Go button" attached to USB-UART. So after pressing the Go button MIX-programms can be uploaded by entering the "punched cards" on USB-UART.
+### the GO button
+MIX comes with the "GO button" attached to USB-UART. So after pressing the GO button MIX-programms can be uploaded by sending the "punched cards" to USB-UART.
 
-## Running the first programm on iCE-MIX
-We will run programm p (s. TAOCP p. xxx) on iCE-MIX. Programm p computes the first 500 primes and outputs them in a table on U19.
+### build
+MIX has a nice box, which can be printed with a 3D printer. Design files can be found in the directory `box`.
 
-Programm p is stored as mixal programm in `p.mixal`.
-```
-* EXAMPLE PROGRAM ... TABLE OF PRIMES
-*
-L		EQU		500		The number of primes to find
-TERM	EQU		19		Unit number of the line printer
-BUF0	EQU		2000	Memory area for BUFFER[0]
-BUF1	EQU		BUF0+25	Memory area for BUFFER[1]
-PRIME	EQU		BUF1+24
-		ORIG	3000
-START	IOC		0(TERM)	Skip to new page
-		LD1		=1-L=
-		LD2		=3=
-2H		INC1	1
-		ST2		PRIME+L,1
-		J1Z		2F
-4H		INC2	2
-		ENT3	2
-6H		ENTA	0
-		ENTX	0,2
-		DIV		PRIME,3
-		JXZ		4B
-		CMPA	PRIME,3
-		INC3	1
-		JG		6B
-		JMP		2B
-2H		OUT		TITLE(TERM)
-		ENT4	BUF1+10
-		ENT5	-50
-2H		INC5	L+1
-4H		LDA		PRIME,5
-		CHAR
-		STX		0,4(1:4)
-		DEC4	1
-		DEC5	50
-		J5P		4B
-		OUT		0,4(TERM)
-		LD4		24,4
-		J5N		2B
-		HLT
-* INITIAL CONTENTS OF TABLES AND BUFFERS
-		ORIG	PRIME+1
-		CON		2
-		ORIG	BUF0-5
-TITLE	ALF		"FIRST"
-		ALF		" FIVE"
-		ALF		" HUND"
-		ALF		"RED P"
-		ALF		"RIMES"
-		ORIG	BUF0+24
-		CON		BUF1+10
-		ORIG	BUF1+24
-		CON		BUF0+10
-		END		START
-```
+![](pics/MIX_top.jpg)
+![](pics/MIX_gpio.jpg)
 
-Translate the mixal program with "mixasm" tools.
+## mixal
+MIX has been verified with the following programms. The presented outputs have been computed on MIX:
+*  p: Compute the first 500 primes
 
-`$mixasm p.mixal -l`
-
-```
-*** p.mixal: Kompilerzusammenfassung ***
-
------------------------------------------------------------------
-Src     Address  Compiled word           Symbolic rep
------------------------------------------------------------------
-043     01995   + 06 09 19 22 23 	ALF	"FIRST"
-044     01996   + 00 06 09 25 05 	ALF	" FIVE"
-045     01997   + 00 08 24 15 04 	ALF	" HUND"
-046     01998   + 19 05 04 00 17 	ALF	"RED P"
-047     01999   + 19 09 14 05 22 	ALF	"RIMES"
-049     02024   + 00 00 00 31 51 	CON	2035
-051     02049   + 00 00 00 31 26 	CON	2010
-000     02050   - 00 00 00 07 51 	CON	1073742323
-000     02051   + 00 00 00 00 03 	CON	0003
-009     03000   + 00 00 00 19 35 	CON	1251
-010     03001   + 32 02 00 05 09 	CON	537395529
-011     03002   + 32 03 00 05 10 	CON	537657674
-012     03003   + 00 01 00 00 49 	CON	262193
-013     03004   + 39 53 01 05 26 	CON	668209498
-014     03005   + 47 08 00 01 41 	CON	790626409
-015     03006   + 00 02 00 00 50 	CON	524338
-016     03007   + 00 02 00 02 51 	CON	524467
-017     03008   + 00 00 00 02 48 	CON	0176
-018     03009   + 00 00 02 02 55 	CON	8375
-019     03010   + 32 01 03 05 04 	CON	537145668
-020     03011   + 46 62 00 01 47 	CON	788004975
-021     03012   + 32 01 03 05 56 	CON	537145720
-022     03013   + 00 01 00 00 51 	CON	262195
-023     03014   + 47 00 00 06 39 	CON	788529575
-024     03015   + 46 59 00 00 39 	CON	787218471
-025     03016   + 31 11 00 19 37 	CON	522978533
-026     03017   + 31 51 00 02 52 	CON	533463220
-027     03018   - 00 50 00 02 53 	CON	1086849205
-028     03019   + 07 53 00 00 53 	CON	131334197
-029     03020   + 32 01 05 05 08 	CON	537153864
-030     03021   + 00 00 00 01 05 	CON	0069
-031     03022   + 00 00 04 12 31 	CON	17183
-032     03023   + 00 01 00 01 52 	CON	262260
-033     03024   + 00 50 00 01 53 	CON	13107317
-034     03025   + 47 12 00 02 45 	CON	791675053
-035     03026   + 00 00 04 19 37 	CON	17637
-036     03027   + 00 24 04 05 12 	CON	6308172
-037     03028   + 47 11 00 00 45 	CON	791412781
-038     03029   + 00 00 00 02 05 	CON	0133
------------------------------------------------------------------
-
-*** Startadresse:	3000
-*** Endadresse:	2050
-
-*** Symboltabelle
-START               :  3000
-BUF0                :  2000
-BUF1                :  2025
-PRIME               :  2049
-TITLE               :  1995
-TERM                :  19
-L                   :  500
-
-*** Ende der Zusammenfassung ***
-
-```
-
-Write the bytes on punchcards with. `$.\mls2card < p.mls > p.card`. The first two lines contain the bootloading routine stored as chars. The next lines contain the programm-code of programm p. The last lines is the "transfer card", which tells iCE-MIX to start programm execution at memory cell 3000.
-
-```
- M R6 Y R6    I C R4 Z EH A  F F CF 0  E   EU Z IH G BB   EJ  CA. Y EU
-   EH E BA   EU 1A-H S BB 0ALH 1ALN  ABG V  E  CEU Y EH E BB J B. A  9
-0000251995010310184700016113330002196420032009422503211840860000000000
-0000312024000000203500000000000000000000000000000000000000000000000000
-00004320490000002010000000049R0000000003000000000000000000000000000000
-0000563000000000125105373955290537657674000026219306682094980790626409
-0000663006000052433800005244670000000176000000837505371456680788004975
-0000763012053714572000002621950788529575078721847105229785330533463220
-0000863018001310738J01313341970537153864000000006900000171830000262260
-0000063024001310731707916750530000017637000630817207914127810000000133
-TRANS03000000000000000000000000000000000000000000000000000000000000000
-```
-
-
-Power iCE-MIX with USB cable connected to your computer.
-
-Start a screen session
-```
-$screen /dev/ttyUSB0
-```
-
-Press the "Go button" on iCE-MIX
-
-Read cards into a screen-buffer 
-```
-<in screen terminal> Ctr-a : readreg p p.card <enter>
-```
-
-Send buffer to iCE-MIX
-```
-<in screen terminal> Ctrl-a : paste p <enter>
-```
-
-After a few nanoseconds iCE-MIX spits out the following list on U19:
-
-```
+	```
 FIRST FIVE HUNDRED PRIMES                                                 
      0002 0233 0547 0877 1229 1597 1993 2371 2749 3187                    
      0003 0239 0557 0881 1231 1601 1997 2377 2753 3191                    
@@ -252,44 +116,65 @@ FIRST FIVE HUNDRED PRIMES
      0211 0509 0853 1201 1567 1951 2341 2719 3163 3547                    
      0223 0521 0857 1213 1571 1973 2347 2729 3167 3557                    
      0227 0523 0859 1217 1579 1979 2351 2731 3169 3559                    
-     0229 0541 0863 1223 1583 1987 2357 2741 3181 3571                    
+     0229 0541 0863 1223 1583 1987 2357 2741 3181 3571  
+	```
+* e: compute easter dates from 1950-2000
 ```
+	WELCOME TO MIX. 1U = 30NS. U19 @115200 BAUD (8N1).                    
+	 09   APRIL,    01950                                             
+	 25   MARCH,    01951                                             
+	 13   APRIL,    01952                                             
+	 05   APRIL,    01953                                             
+	 18   APRIL,    01954                                             
+	 10   APRIL,    01955                                             
+	 01   APRIL,    01956                                             
+	 21   APRIL,    01957                                             
+	 06   APRIL,    01958                                             
+	 29   MARCH,    01959                                             
+	 17   APRIL,    01960                                             
+	 02   APRIL,    01961                                             
+	 22   APRIL,    01962                                             
+	 14   APRIL,    01963                                             
+	 29   MARCH,    01964                                             
+	 18   APRIL,    01965                                             
+	 10   APRIL,    01966                                             
+	 26   MARCH,    01967                                             
+	 14   APRIL,    01968                                             
+	 06   APRIL,    01969                                             
+	 29   MARCH,    01970                                             
+	 11   APRIL,    01971                                             
+	 02   APRIL,    01972                                             
+	 22   APRIL,    01973                                             
+	 14   APRIL,    01974                                             
+	 30   MARCH,    01975                                             
+	 18   APRIL,    01976                                             
+	 10   APRIL,    01977                                             
+	 26   MARCH,    01978                                             
+	 15   APRIL,    01979                                             
+	 06   APRIL,    01980                                             
+	 19   APRIL,    01981                                             
+	 11   APRIL,    01982                                             
+	 03   APRIL,    01983                                             
+	 22   APRIL,    01984                                             
+	 07   APRIL,    01985                                             
+	 30   MARCH,    01986                                             
+	 19   APRIL,    01987                                             
+	 03   APRIL,    01988                                             
+	 26   MARCH,    01989                                             
+	 15   APRIL,    01990                                             
+	 31   MARCH,    01991                                             
+	 19   APRIL,    01992                                             
+	 11   APRIL,    01993                                             
+	 03   APRIL,    01994                                             
+	 16   APRIL,    01995                                             
+	 07   APRIL,    01996                                             
+	 30   MARCH,    01997                                             
+	 12   APRIL,    01998                                             
+	 04   APRIL,    01999                                             
+	 23   APRIL,    02000                                             
+	```
+* t: control the traffic signal of the corner del Mar Avenue/Berkeley Avenue. MIX is NOT a simulatin/emulation. It's real hardware. So you can drive the LEDs with the output of RegisterX:
+	![](pics/MIX_traffic.jpg)
 
-## Build your own MIX
-The project runs on iCE40-HX8K-EVB fpga from Olimex Ltd. The whole project uses only FOSS soft- and hardware. With little modifications it should run on any fpga board out in the wild.
-
-### requirement
-1. fpga board (iCE40-HX8K), programmer device (Olimexino 32u4), idc10 cable (cable-IDC10) and USB-UART-board (BB-CH340T). See https://www.olimex.com/
-2. fpga toolchain. The project was developed with `apio`, a software suite using project http://www.clifford.at/icestorm/ from Clifford Wof.
-	
-	```
-	$pip install -U apio
-	```
-3.  gtkwave for simulation of fpga
-	```
-	$sudo apt install gtkwave
-	```
-7.  assembler and simulator for MIX.
-	```
-	$sudo apt install mdk
-	```
-4.  terminal to connect to USB-UART
-	```
-	$sudo apt install screen
-	```
-	
-### build the project
-
-Build the project
-```
-$apio build -v
-```
-Connect the fpga board with olimexino-32u4 programmer to upload the bitstream file:
-```
-$ apio upload
-```
-Print the case and mount the boards inside.
-
-
-### comments and suggestions ...
-... are welcome by mi.schroeder@netcologne.de
+## Comments or question
+.. are welcome to mi.schroeder@netcologne.de

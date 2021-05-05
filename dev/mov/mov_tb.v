@@ -19,6 +19,8 @@ initial begin
 data[100] = 31'd12345;
 data[101] = 31'd1245;
 end
+reg [5:0] len;
+
 wire load;
 reg [30:0] datain;
 always @(posedge clk)
@@ -30,7 +32,7 @@ mov MOV(
 	   .start(start),
            .addressin(address),
            .addressout(addresso),
-	   .len(8),
+	   .len(len),
 	   .load(load)
          );
 
@@ -40,9 +42,10 @@ initial begin
   //-- File were to store the simulation results
   $dumpfile(`DUMPSTR(`VCD_OUTPUT));
   $dumpvars(0, mov_tb);
-	#4 start = 1;
-	#2 start = 0;
-	#12
+	#4 start <= 1;len<=6'd10;
+	#2 start <= 0;
+	#200 start <=1; len<=0;
+	#2 start <= 0;
    #(DURATION) $display("End of simulation");
   $finish;
 end

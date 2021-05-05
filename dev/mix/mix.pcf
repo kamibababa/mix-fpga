@@ -1,0 +1,45 @@
+# in the pcf (physical constrain file) 
+# the external pins of the fpga are defined
+# compare to the schematic of the board and the datasheet of fpga
+
+# on the board you find:
+set_io clk_in J3				
+#set_io but[0] K11 	# BUT1 on board
+#set_io but[1] P13 	# BUT2 on board
+set_io hlt M12 		# LED1 on board
+#set_io led[1] R16 	# LED2 on board
+#set_io rx L11		# UEXT
+#set_io tx T16		# UEXT
+
+
+#at the GPIO connector you find
+set_io rx 	E4	# GPIO 5
+set_io tx 	B2	# GPIO 7
+set_io dmred 	F5	# GPIO 9
+set_io bred 	J2	# GPIO 10
+set_io dmamber 	B1	# GPIO 11
+set_io bamber 	H1	# GPIO 12
+set_io dmgreen 	C1	# GPIO 13
+set_io bgreen 	G1	# GPIO 14
+set_io dmdw 	C2	# GPIO 15
+set_io bdw 	J5	# GPIO 16
+set_io dmw 	F4	# GPIO 17
+set_io bw 	H2	# GPIO 18
+set_io button 	D2	# GPIO 19
+#set_io gpio20 	J4	# GPIO 20
+#set_io gpio21 	G5	# GPIO 21
+#set_io gpio22 	G2	# GPIO 22
+#set_io gpio23 	D1	# GPIO 23
+#set_io gpio24 	H4	# GPIO 24
+#set_io gpio25 	G4	# GPIO 25
+#set_io gpio26 	F1 	# GPIO 26
+#set_io gpio27 	E3	# GPIO 27
+#set_io gpio28	H6	# GPIO 28
+#set_io gpio29 	H5	# GPIO 29
+#set_io gpio30 	F2 	# GPIO 30
+#set_io gpio31 	E2	# GPIO 31
+#set_io gpio32 	H3 	# GPIO 32
+#set_io gpio33 	G3 	# GPIO 33
+#set_io gpio34 	F3	# GPIO 34
+
+
