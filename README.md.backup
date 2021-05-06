@@ -25,13 +25,13 @@ In our MIX implementation all character based I/O units (U16-U20) are connected 
 ![](pics/MIX_usb.jpg)
 
 ### commands
-All commands exept the floating point arithmetic are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can easily be extended in various ways:
+All commands exept the floating point arithmetic are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can ()easily) be extended in various ways:
 1. add more commands:
-	* Floating point arithmetic
-	* logic operators (AND,OR,XOR,NOT), etc.
+	* easy: logic operators (AND,OR,XOR,NOT)
+	* not so easy: Floating point arithmetic
 2. add more hardware:
-	* add leds to run the traffic light example
-	* add more I/O units
+	* easy: add leds to run the traffic light example
+	* not so easy: add more I/O units
 
 | OP  | Menmonic | Remarks |
 | -   | -   | -  |
@@ -55,17 +55,19 @@ All commands exept the floating point arithmetic are implemented (s. list) with 
 ### the GO button
 MIX comes with the "GO button" attached to USB-UART. So after pressing the GO button MIX-programms can be uploaded by sending the "punched cards" to USB-UART.
 
-### build
-MIX has a nice box, which can be printed with a 3D printer. Design files can be found in the directory `box`.
+### toast
+MIX comes in a nice case with formfactor of a slice of toast, so your complete MIX computer system will easily fit into your lunch box. The case can be printed with a 3D printer. Design files can be found in the directory `build/toast`.
 
 ![](pics/MIX_top.jpg)
 ![](pics/MIX_gpio.jpg)
 
 ## mixal
 MIX has been verified with the following programms. The presented outputs have been computed on MIX:
-*  p: Compute the first 500 primes
+### program p
+Compute the first 500 primes
 
-	```
+	
+```
 FIRST FIVE HUNDRED PRIMES                                                 
      0002 0233 0547 0877 1229 1597 1993 2371 2749 3187                    
      0003 0239 0557 0881 1231 1601 1997 2377 2753 3191                    
@@ -117,10 +119,12 @@ FIRST FIVE HUNDRED PRIMES
      0223 0521 0857 1213 1571 1973 2347 2729 3167 3557                    
      0227 0523 0859 1217 1579 1979 2351 2731 3169 3559                    
      0229 0541 0863 1223 1583 1987 2357 2741 3181 3571  
-	```
-* e: compute easter dates from 1950-2000
 ```
-	WELCOME TO MIX. 1U = 30NS. U19 @115200 BAUD (8N1).                    
+	
+### program e
+compute easter dates from 1950-2000
+```
+	WELCOME TO MIX. 1U = 40NS. U19 @115200 BAUD (8N1).                    
 	 09   APRIL,    01950                                             
 	 25   MARCH,    01951                                             
 	 13   APRIL,    01952                                             
@@ -172,9 +176,16 @@ FIRST FIVE HUNDRED PRIMES
 	 12   APRIL,    01998                                             
 	 04   APRIL,    01999                                             
 	 23   APRIL,    02000                                             
-	```
-* t: control the traffic signal of the corner del Mar Avenue/Berkeley Avenue. MIX is NOT a simulatin/emulation. It's real hardware. So you can drive the LEDs with the output of RegisterX:
-	![](pics/MIX_traffic.jpg)
+```
+		
 
-## Comments or question
-.. are welcome to mi.schroeder@netcologne.de
+### program t
+MIX can control the traffic signal of the corner del Mar Avenue/Berkeley Avenue. MIX is NOT a simulatin/emulation. It's real hardware. So you can drive the LEDs with the output of RegisterX. Input is done with a push button, which directly connects to the overflow toggle.
+
+![](pics/MIX_traffic.jpg)
+
+## need help?
+In case you find encounter an issue with MIX`:
+* don't panic
+* write an issue to 
+* send me an email to mi.schroeder@netcologne.de
