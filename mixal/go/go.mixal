@@ -4,19 +4,22 @@ TITLE	ALF	"WELCO"
 	ALF	"ME TO"
 	ALF	" MIX."
 	ALF	" 1U ="
-	ALF	" 30NS"
-	ALF	". U19"
-	ALF	" @115"
-	ALF	"200 B"
-	ALF	"AUD ("
-	ALF	"8N1)."
-	ALF	"     "
-	ALF	"     "
-	ALF	"     "
-	ALF	"     "
+	ALF	" 40NS"
+	ALF	". U16"
+	ALF	"-U19 "
+	ALF	"@1152"
+	ALF	"00 BA"
+	ALF	"UD (8"
+	ALF	"N1). "
+	ALF	"DEAR "
+	ALF	"DON, "
+	ALF	"BEST "
+	ALF	"WISHE"
+	ALF	"S, MI"
+	ALF	"CHA  "
 	ORIG	4091
-START	OUT 	TITLE(19)
-WAIT1	JBUS	WAIT1(19)
+START	OUT 	TITLE(18)
+WAIT1	JBUS	WAIT1(18)
 NEXT	IN	0(16)
 WAIT	JBUS	WAIT(16)
 	JMP	0	

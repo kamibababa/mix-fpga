@@ -1,7 +1,7 @@
 * EXAMPLE PROGRAM ... TABLE OF PRIMES
 *
 L	EQU	500	The number of primes to find
-TERM	EQU	19	Unit number of the line printer
+TERM	EQU	18	Unit number of the line printer
 PRIME	EQU	2999
 BUF0	EQU	2000	Memory area for BUFFER[0]
 BUF1	EQU	BUF0+25	Memory area for BUFFER[1]
