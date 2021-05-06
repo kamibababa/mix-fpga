@@ -335,7 +335,7 @@ module mix(
 	wire busyin;
 	assign busy = busyin|busyout;
 	wire requestin;
-	in IN(.busy(busyin),.rx(rx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn),.request(requestin));
+	in IN(.field(field),.busy(busyin),.rx(rx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn),.request(requestin));
 	
 	//command 37 - OUT
 	wire out1;
@@ -351,7 +351,7 @@ module mix(
 	wire outrequest;
 	wire busyout;
 	wire [11:0] addressOut;
-	out OUT(.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
+	out OUT(.field(field),.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
 	
 	//command 39 - JMP
 	wire jmp;

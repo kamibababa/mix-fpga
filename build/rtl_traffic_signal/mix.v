@@ -4,8 +4,8 @@
 `default_nettype none
 module mix(
 	input wire clk_in,
-	input wire rx,
 	output wire tx,
+	input wire rx,
 	output wire hlt,
 	input wire button,
 	output wire dmgreen,
@@ -31,12 +31,11 @@ module mix(
 	assign bw = RegisterX[1:0] == 2'd1;
 	assign bdw = RegisterX[1:0] == 2'd2;
 
-
 	// reset and clock signals
 	wire reset;
 	wire clk;
 	clk CLK(.in(clk_in),.reset(reset),.out(clk));
-	
+
 	// the go button
 	reg go;
 	always @(posedge clk)
@@ -91,7 +90,6 @@ module mix(
 	always @(posedge clk)
 		if (reset) RegisterA <= 31'd0;
 		else if (ld2 & rA2) RegisterA <= ldout;
-		else if (ldn2 & rA2) RegisterA <= {~ldnout[30],ldnout[29:0]};
 		else if (add2) RegisterA <= addout;
 		else if (sub2) RegisterA <= subout;
 		else if (mul2) RegisterA <= {mulsign,mulout[59:30]};
@@ -104,44 +102,37 @@ module mix(
 	always @(posedge clk)
 		if (reset) RegisterI1 <= 13'd0;
 		else if (ld2 & r12) RegisterI1 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r12) RegisterI1 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r1) RegisterI1 <= {ideout[30],ideout[11:0]};
 		else if (movstore) RegisterI1 <= RegisterI1 + 1;
 	reg [12:0] RegisterI2;
 	always @(posedge clk)
 		if (reset) RegisterI2 <= 13'd0;
 		else if (ld2 & r22) RegisterI2 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r22) RegisterI2 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r2) RegisterI2 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI3;
 	always @(posedge clk)
 		if (reset) RegisterI3 <= 13'd0;
 		else if (ld2 & r32) RegisterI3 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r32) RegisterI3 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r3) RegisterI3 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI4;
 	always @(posedge clk)
 		if (reset) RegisterI4 <= 13'd0;
 		else if (ld2 & r42) RegisterI4 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r42) RegisterI4 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r4) RegisterI4 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI5;
 	always @(posedge clk)
 		if (reset) RegisterI5 <= 13'd0;
 		else if (ld2 & r52) RegisterI5 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r52) RegisterI5 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r5) RegisterI5 <= {ideout[30],ideout[11:0]};
 	reg [12:0] RegisterI6;
 	always @(posedge clk)
 		if (reset) RegisterI6 <= 13'd0;
 		else if (ld2 & r62) RegisterI6 <= {ldout[30],ldout[11:0]};
-		else if (ldn2 & r62) RegisterI6 <= {~ldnout[30],ldnout[11:0]};
 		else if (ide & r6) RegisterI6 <= {ideout[30],ideout[11:0]};
 	reg [30:0] RegisterX;
 	always @(posedge clk)
 		if (reset) RegisterX <= 31'd0;
 		else if (ld2 & rX2) RegisterX <= ldout;
-		else if (ldn2 & rX2) RegisterX <= {~ldnout[30],ldnout[29:0]};
 		else if (ide & rX) RegisterX <= ideout;
 		else if (mul2) RegisterX <= {mulsign,mulout[29:0]};
 		else if (div2) RegisterX <= {RegisterA[30],divR};
@@ -288,17 +279,6 @@ module mix(
 	wire divsign;
 	div DIV(.clk(clk),.start(div1),.stop(div2),.divisor(value),.quotient(divQ),.dividend({RegisterA,RegisterX[29:0]}),.overflow(divof),.rest(divR),.sign(divsign));	
 
-	//command 5(2) - HLT
-	wire hlt1;
-	assign hlt1 = (command ==6'd5) & (field ==6'd2);
-	hlt HLT(.clk(clk),.start(hlt1),.out(hlt));
-
-	//command 5(1) - CHAR
-	wire char1;
-	assign char1 = (command == 6'd5) & (field == 6'd1);
-	wire char2;
-	wire [59:0] charout;
-	char CHAR(.clk(clk),.start(char1),.stop(char2),.in(RegisterA[29:0]),.out(charout));
 	//command 5(0) - NUM
 	wire num1;
 	assign num1 = (command == 6'd5) & (field == 6'd0);
@@ -306,7 +286,19 @@ module mix(
 	wire [29:0] numout;
 	num NUM(.clk(clk),.start(num1),.stop(num2),.in({RegisterA[29:0],RegisterX[29:0]}),.out(numout));
 	
-	//command 7 - SHIFT
+	//command 5(1) - CHAR
+	wire char1;
+	assign char1 = (command == 6'd5) & (field == 6'd1);
+	wire char2;
+	wire [59:0] charout;
+	char CHAR(.clk(clk),.start(char1),.stop(char2),.in(RegisterA[29:0]),.out(charout));
+	
+	//command 5(2) - HLT
+	wire hlt1;
+	assign hlt1 = (command ==6'd5) & (field ==6'd2);
+	hlt HLT(.clk(clk),.start(hlt1),.out(hlt));
+	
+	//command 6 - SHIFT
 	wire shift1;
 	assign shift1 = (command == 6'd6);
 	wire shift2;
@@ -323,19 +315,14 @@ module mix(
 	wire [11:0] movaddress;
 	mov MOV(.clk(clk),.start(mov1),.stop(mov2),.len(field),.addressin(addressIndex[11:0]),.addressout(movaddress),.load(movload),.store(movstore));
 
-	//command 8-15 - LD
+	//command 8-24 - LD(N)
 	wire ld1;
+	wire ldn1;
 	assign ld1 = (command[5:3] == 3'd1);
+	assign ldn1 = (command[5:3] == 3'd2);
 	wire ld2;
 	wire [30:0] ldout;
-	ld LD(.clk(clk),.start(ld1),.stop(ld2),.field(field),.in(data),.out(ldout));
-	
-	//command 16-24 - LDN
-	wire ldn1;
-	assign ldn1 = (command[5:3] == 3'd2);
-	wire ldn2;
-	wire [30:0] ldnout;
-	ld LDN(.clk(clk),.start(ldn1),.stop(ldn2),.field(field),.in(data),.out(ldnout));
+	ld LD(.clk(clk),.start(ld1|ldn1),.stop(ld2),.field(field),.neg(ldn1),.in(data),.out(ldout));
 	
 	//command 24-33 - ST
 	wire st1;
@@ -372,7 +359,7 @@ module mix(
 	wire busyin;
 	assign busy = busyin|busyout;
 	wire requestin;
-	in IN(.busy(busyin),.rx(rx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn),.request(requestin));
+	in IN(.field(field),.busy(busyin),.rx(rx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn),.request(requestin));
 	
 	//command 37 - OUT
 	wire out1;
@@ -388,7 +375,7 @@ module mix(
 	wire outrequest;
 	wire busyout;
 	wire [11:0] addressOut;
-	out OUT(.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
+	out OUT(.field(field),.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
 	
 	//command 39 - JMP
 	wire jmp;
