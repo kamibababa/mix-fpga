@@ -1,16 +1,15 @@
 # Running program t on MIX
-We will run programm t of exercise 20 in chapter 1.3.2 TAOCP (p. 161) on MIX. Programm t controls the traffic signal at corner of Del Mare Boulevard and Berkeley Avenue. This project will connect LEDs directly to the X-Register and a push button to the  Overflow toggle. This will be done extending the fpga design and routing the appropriate signals to the GPIO connector at the back of MIX.
-
-**Remarks**: The project is an example of a real time application, which cannot be emulated/simulated on a common computer, because common computers use timesharing operating systems.
+We will run programm t of exercise 20 in chapter 1.3.2 TAOCP (p. 161) on MIX. Programm t controls the traffic signal at corner of Del Mare Boulevard and Berkeley Avenue. This project will connect LEDs directly to the register rX and a push button to the  Overflow toggle. This will be done extending the fpga design and routing the appropriate signals to the GPIO connector at the back of MIX.
 
 ![](../../pics/MIX_traffic.jpg)
 
 
 ## Extending the fpga desing
-
-Cd into the `rtl` directory.
+Make a copy of the folder `rtl` and cd into it.
 ```
-cd rtl
+cd build
+cp -r rtl rtl_traffic_light
+cd rtl_traffic_light
 ```
 ### mix.pcf
 Add the following lines to physical constraint file `mix.pcf`:
@@ -72,9 +71,10 @@ always @(posedge clk)
 	
 ### leds and button
 Connect leds and button (don't forget resistors) to the appropriate GPIO connectors as described in the `mix.pcf` file. For simplicity only one LED is shown below:
+
 ![](../../pics/led_button.png)
 
-**Attention:** gpio pins 1,2,5,7 are already used by the internal USB-serial converter. 
+**Attention:** gpio pins 1,2,5 and 7 are already used by the internal USB-serial converter. 
 
 ### t.mixal
 Compile t.mixal, upload to MIX and run the traffic signals.
