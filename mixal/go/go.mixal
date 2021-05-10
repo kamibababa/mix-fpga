@@ -1,27 +1,22 @@
-	ORIG 	4000
-	JMP	START
-TITLE	ALF	"WELCO"
-	ALF	"ME TO"
-	ALF	" MIX."
-	ALF	" 1U ="
-	ALF	" 40NS"
-	ALF	". U16"
-	ALF	"-U19 "
-	ALF	"@1152"
-	ALF	"00 BA"
-	ALF	"UD (8"
-	ALF	"N1). "
-	ALF	"DEAR "
-	ALF	"DON, "
-	ALF	"BEST "
-	ALF	"WISHE"
-	ALF	"S, MI"
-	ALF	"CHA  "
-	ORIG	4091
-START	OUT 	TITLE(18)
-WAIT1	JBUS	WAIT1(18)
-NEXT	IN	0(16)
-WAIT	JBUS	WAIT(16)
-	JMP	0	
-	END	START
-
+          ORIG    4000
+          JMP     START
+WELCOME   ALF     "WELCO"
+          ALF     "ME TO"
+          ALF     " MIX."
+          ALF     " 1U ="
+          ALF     " 40NS"
+          ALF     ". U16"
+          ALF     "-U20 "
+          ALF     "TO UA"
+          ALF	  "RT @1"
+          ALF	  "15200"
+          ALF     " BAUD"
+          ALF     " (8N1"
+          ALF     ").   "
+          ORIG    4091
+START     OUT     WELCOME(19)
+          JBUS    *(19)
+NEXT      IN      0(16)
+          JBUS	  *(16)
+          JMP     0	
+          END     START 

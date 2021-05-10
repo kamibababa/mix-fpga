@@ -49,12 +49,12 @@ Src     Address  Compiled word           Symbolic rep
 *** Endadresse:	2050
 
 *** Symboltabelle
+PRINTER             :  18
 START               :  1000
 BUF0                :  2000
 BUF1                :  2025
 PRIME               :  2999
 TITLE               :  1995
-TERM                :  18
 L                   :  500
 
 *** Ende der Zusammenfassung ***
