@@ -9,7 +9,8 @@
 \usepackage{float}
 \usepackage{enumitem}
 \usepackage{amsmath}
-\usepackage{euler}
+%\usepackage{euler}
+\usepackage{hyperref}
 \makeatletter
 \usepackage{multirow}
 \usepackage{isotope}
@@ -22,7 +23,7 @@
 \usepackage{color}
 \usetikzlibrary{circuits.ee.IEC}
 %\usepackage{beramono}
-
+\usepackage{pdfpages}
 \makeatother
 %\usepackage{babel}
 \usepackage{listings}
@@ -34,36 +35,44 @@ tabsize=4,
 frame=leftline,
 numbers=left,
 numberstyle={\tiny}}
-
-\title{MIX Manual}
-
-\author{Michael Schröder}
+\usepackage{siunitx}
+\title{MIX-fpga}
+\author{Michael Schröder \\ \href{mi.schroeder@netcologne.de}{mi.schroeder@netcologne.de}}
+\usepackage[
+type={CC},
+modifier={by-nc-sa},
+version={3.0},
+]{doclicense}
 \begin{document}
+
 \maketitle
-\section{MIX-fpga}
+
+\section{A real MIX}
 
 Have you ever heard of Don Knuths (hypothetical) first polyunsaturated computer MIX, the 1009? In this project we will build a binary version of the MIX-Computer as described in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth running on an fpga-board.
 
-The presented implementation is based on the fpga development board iCE40HX8K-EVB from the company Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hard- and software, so everybody can build their own MIX following the instructions in `build`
+The presented implementation is based on the fpga development board iCE40HX8K-EVB from the company Olimex Ltd.\footnote{\href{www.olimex.com}{www.olimex.com}}, which has the nice property of being completely open source. The whole project uses only FOSS free and open source hard- and software, so everybody can build their own MIX following the instructions on the project site\footnote{\href{www.gitlab.com/x653/mix-fpga}{www.gitlab.com/x653/mix-fpga}}.
+
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../MIX_toast.jpg}
-	\caption{The real MIX made of atoms insted of bits.}
+	\includegraphics[width=0.6\linewidth]{../MIX_real.jpg}
+	\caption{The real MIX}
 	\label{fig:mixtoast}
 \end{figure}
 
-\subsection{inside}
+\subsection{A look inside}
 
 The MIX computer is composed of two little boards.
+
 \begin{enumerate}
-	\item iCE40HX8K-EVB, the fpga development board from olimex.com	
-	\item  USB-serial adapter. Used to power the board with 5V and to in-/output data over serial interface.
+	\item iCE40HX8K-EVB\footnote{\href{www.olimex.com/Products/FPGA/iCE40/iCE40HX8K-EVB}{www.olimex.com/Products/FPGA/iCE40/iCE40HX8K-EVB}}, the fpga development board from the company Olimex Ltd.	
+	\item  USB-serial adapter\footnote{\href{www.olimex.com/Products/Breadboarding/BB-CH340T}{www.olimex.com/Products/Breadboarding/BB-CH340T}}. Used to power the board with 5V and to in-/output data over the serial interface.
 \end{enumerate}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../MIX_inside.jpg}
-	\caption{Watch inside and see the two boards interconnected with wire wrap technique}
+	\includegraphics[width=0.7\linewidth]{../MIX_don.jpg}
+	\caption{Look inside and see the two boards interconnected with wire wrap technique}
 	\label{fig:mixinside}
 \end{figure}
 
@@ -71,426 +80,261 @@ The MIX computer is composed of two little boards.
 \subsection{Specifications}
 
 \subsubsection{clock}
-MIX runs on iCE40HX8K-EVB clocked at 25MHz. The basic unit of time 1u corresponds to 40ns, so according to Knuth it's a relatively high priced machine.
+MIX runs on iCE40HX8K-EVB clocked at \SI{25}{MHz}. The fundamental unit of time $u$ corresponds to $1u = \SI{40}{ns}$, so according to Knuth it's a relatively high priced machine.
 
 \subsubsection{I/O units}
-In our MIX implementation all character based I/O units (U16-U20) are connected to the USB-connector and can be accessed as UART streams. You can connect MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
-\begin{figure}
+In our MIX implementation all character based I/O units (U16 -- U20) are connected to the USB-connector and can be accessed as serial data streams. You can connect MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
+
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{../MIX_usb.jpg}
-	\caption{All I/O is done through a USB to serial adapter @115200 baud}
+	\includegraphics[width=0.4\linewidth]{../MIX_usb.jpg}
+	\includegraphics[width=0.4\linewidth]{../MIX_gpio.jpg}
+	
+	\caption{All character based I/O is done through a USB to serial adapter @115200 baud (8N1). MIX can be expanded through a GPIO connector placed at the rear side }
 	\label{fig:mixusb}
 \end{figure}
 
 
 
-
 \subsubsection{commands}
-All commands exept the floating point arithmetic are implemented with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can (easily) be extended in various ways:
+All commands exept the floating point arithmetic are implemented with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the \textit{sofisticated} commands \lstinline|SRC| and \lstinline|SLC|, which need a fancy modulo 10 computation are executed in the defined timing of two cycles. The system can (easily) be extended in various ways:
+
 \begin{enumerate}
-	\item add more commands:
+	\item more commands:
 	\begin{itemize}
-		\item easy: logic operators (AND,OR,XOR,NOT)
-		\item not so easy: Floating point arithmetic
+		\item easy: add logic operators (\lstinline|AND|, \lstinline|OR|, \lstinline|XOR|, \lstinline|NOT|)
+		\item not so easy: add floating point arithmetic (\lstinline|FADD|, \lstinline|FSUB|, \lstinline|FMUL|, \lstinline|FDIV|)
 		
 	\end{itemize}
-	\item  add more hardware:
+	\item  more hardware:
 	\begin{itemize}
-		\item easy: add leds to run the traffic light example
+		\item easy: add leds to run the traffic light example (s. chapter \ref{traffic} of this manual)
 		\item not so easy: add more I/O units
 	\end{itemize}
 	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.7\linewidth]{../MIX_gpio.jpg}
-		\caption{MIX can be expanded through a GPIO connector placed at the read side.}
-		\label{fig:mixgpio}
-	\end{figure}
+
 \end{enumerate}
 \subsubsection{The GO button}
-MIX comes with the \textit{GO button} attached to USB-UART. So after pressing the GO button MIX-programms can be uploaded by sending the \textit{punched cards} to USB-UART.
+MIX comes with the \textit{GO button} attached to USB-UART. So after pressing the \textit{GO button} MIX-programms can be uploaded by sending the \textit{punched cards} to USB-UART.
 
 \subsubsection{The toast case}
-MIX comes in a nice case with formfactor of a slice of toast, so your complete MIX computer system will easily fit into your lunch box. The case can be printed with a 3D printer. Design files can be found in the directory `build/toast`.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{../MIX_top.jpg}
-	\caption{MIX comes in the practical formfactor of a toast}
-	\label{fig:mixtop}
-\end{figure}
-
-
-\subsubsection{Service}
-In case you find encounter an issue with MIX:
-\begin{itemize}
-	\item don't panic
-	\item send me an email to mi.schroeder@netcologne.de
-\end{itemize}
+MIX comes in a nice case with formfactor of a slice of toast ($\SI{10}{cm} \times \SI{10}{cm} \times \SI{2}{cm}$), so your complete MIX computer system will easily fit into your lunch box. The case can be printed with a 3D printer. Design files can be found in the directory \lstinline|build/toast| of the project site.
 
 \section{Running programs on MIX}
-\subsection{mixasm}
-To run mixal programs with MIX you first have to translate the mixal programs to machine language. This is done with the GNU tansloator `mixasm` distributed with the mix software package  `mdk`. Append the option `-l` to create a listing file `.mls`.
-\subsection{tools}
-To upload the code onto MIX we have to write the listing in a computer readable format. For this you can use the python scripts provided in `tools`:
+\subsection{Requirement}
+To run mixal programs on your MIX you need a few things:
 \begin{itemize}
-	\item \lstinline|mls2card.py|: translate the machine code (.mls) to punchcard format.
-	\item  \lstinline|mls2char.py|: translate to character codes, which can directly be read by MIX. (This is only necessary for the bootloader written on the first two punch cards).
-	\item  \lstinline|mls2bin.py|: translate the .mls file to binary. This is only necessary for the go-button, which must be uploaded into fpga ROM.
+	\item \lstinline|mixasm|: Assembler provided in the package mdk
+	\item \lstinline|python|: Some tools are written in python
+	\item \lstinline|gitlab.com/x653/mix-fpga|: The authors repository of this project
+	\item \lstinline|screen|: a terminal emulator to connect to MIX
+\end{itemize}
+
+Open a terminal and install the required packages:
+
+\begin{lstlisting}[numbers=none,frame=none]
+sudo apt install mdk
+sudo apt install python
+sudo apt install python-pip
+git clone https://gitlab.com/x653/mix-fpga
+\end{lstlisting}
+
+\subsection{mixasm}
+To run mixal programs with MIX you first have to translate the mixal programs to machine language. This is done with the GNU tanslator \lstinline|mixasm| distributed with the mix software package  \lstinline|mdk|.
+
+\begin{lstlisting}[numbers=none,frame=none]
+mixasm <filename>.mixal -l
+\end{lstlisting}
+
+The \lstinline|-l| option is needed to create the listing file \lstinline|<filename>.mls|.
+
+
+\subsection{tools}
+To upload the code onto MIX we have to translate the listing in a computer readable format. For this you can use the python scripts in the subdirector \lstinline|mix-fpga/tools|:
+\begin{itemize}
+	\item \lstinline|mls2card.py|: translate the machine code listing (\lstinline|<filename>.mls|) to punched card format.
+	\item  \lstinline|mls2char.py|: translate the listing to character codes, which can directly be read by MIX. (This is only necessary for the bootloader written on the first two punched cards).
+	\item  \lstinline|mls2bin.py|: translate the listing file to binary. This is only necessary for the program \textit{go-button}, which must be uploaded directly into fpga ROM.
 	 
 \end{itemize}
 
 \subsection{upload and run}
-Finally you can connect to MIX with USB using a terminal emulator (screen)
-\begin{lstlisting}
+Finally you can connect your PC to MIX with a USB cable and start the  terminal emulator (\lstinline|screen|):
+\begin{lstlisting}[numbers=none,frame=none]
 screen /dev/ttyUSB0 115200
 \end{lstlisting}
-
-Within  a screen session you can upload the mixal programs written on punch cards:
-\begin{lstlisting}[language=bash,numbers=none]
-ctr-a : readreg p p.card
-ctrl-a : paste p
+Press the \textit{go button} to start MIX. Within  the screen session you can upload the mixal programs written on punch cards:
+\begin{lstlisting}[language=bash,numbers=none,frame=none]
+<ctr-a> : readreg p p.card
+<ctrl-a> : paste p
 \end{lstlisting}
 
 
-\subsection{The following programms have been tested on MIX:}
-
-Details can be found in the README.md files found in the subfolders:
+\subsection{Verify}
+The following programms in the folder \lstinline|mix-fpga/mixal| have been verified to run on MIX:
 \begin{itemize}
-	\item `p`: compute the first 500 primes
-	\item `e`: compute easter dates
-	\item  `t`: control traffic signals
-	\item  `go`: the go button
-	\item `boot`: the bootloader
-	 
+	\item \lstinline|p|: compute the first 500 primes
+	\item \lstinline|e|: compute easter dates from 1950 -- 2000
+	\item  \lstinline|t|: control traffic signals
+	\item  \lstinline|go|: the go button
+	\item \lstinline|boot|: the bootloader
 \end{itemize}
 
-\section{program p}
-We will run programm p of chapter 1.3.2 TAOCP (p. 148) on MIX. Programm p computes the first 500 primes and outputs them in a table on the line printer U19.
-
-\subsection{p.mixal}
+\section{Example program p}
+We will run programm \lstinline|p| of chapter 1.3.2 TAOCP (p. 148) on MIX. Programm \lstinline|p| computes the first 500 primes and outputs them in a table on the line printer U18.
+\subsection{Prepare the input}
+\subsubsection{p.mixal}
 The mixal program can be found in \lstinline|mixal/p/p.mixal|:
 
-Inpect the file with:
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,frame=none]
+cd mixal/p
 cat p.mixal
-
-* EXAMPLE PROGRAM ... TABLE OF PRIMES
-*
-L		EQU		500		The number of primes to find
-TERM	EQU		19		Unit number of the line printer
-BUF0	EQU		2000	Memory area for BUFFER[0]
-BUF1	EQU		BUF0+25	Memory area for BUFFER[1]
-PRIME	EQU		BUF1+24
-ORIG	3000
-START	IOC		0(TERM)	Skip to new page
-LD1		=1-L=
-LD2		=3=
-2H		INC1	1
-ST2		PRIME+L,1
-J1Z		2F
-4H		INC2	2
-ENT3	2
-6H		ENTA	0
-ENTX	0,2
-DIV		PRIME,3
-JXZ		4B
-CMPA	PRIME,3
-INC3	1
-JG		6B
-JMP		2B
-2H		OUT		TITLE(TERM)
-ENT4	BUF1+10
-ENT5	-50
-2H		INC5	L+1
-4H		LDA		PRIME,5
-CHAR
-STX		0,4(1:4)
-DEC4	1
-DEC5	50
-J5P		4B
-OUT		0,4(TERM)
-LD4		24,4
-J5N		2B
-HLT
-* INITIAL CONTENTS OF TABLES AND BUFFERS
-ORIG	PRIME+1
-CON		2
-ORIG	BUF0-5
-TITLE	ALF		"FIRST"
-ALF		" FIVE"
-ALF		" HUND"
-ALF		"RED P"
-ALF		"RIMES"
-ORIG	BUF0+24
-CON		BUF1+10
-ORIG	BUF1+24
-CON		BUF0+10
-END		START
 \end{lstlisting}
+
+\lstinputlisting{../../mixal/p/p.mixal}
 
 \subsubsection{p.mls}
-First we translate the mixal programm to binary code. This is done with the GNU library \lstinline|mixasm|. The option \lstinline|-l| produces a list file \lstinline|p.mls|
+First we translate the mixal programm to binary code. This is done with \lstinline|mixasm| (included in the GNU library \lstinline|mdk|). Add the option \lstinline|-l| to create the listing file \lstinline|p.mls|.
 
-\begin{lstlisting}
+\textbf{Attention}: Notice the output at line 48: "*** Startadresse: 1000". This might differ depending on the language set in your locales. It will become important in the next step!
+
+\begin{lstlisting}[numbers=none,frame=none]
 mixasm p.mixal -l
 cat p.mls
-
-*** p.mixal: Kompilerzusammenfassung ***
-
------------------------------------------------------------------
-Src     Address  Compiled word           Symbolic rep
------------------------------------------------------------------
-043     01995   + 06 09 19 22 23 	ALF	"FIRST"
-044     01996   + 00 06 09 25 05 	ALF	" FIVE"
-045     01997   + 00 08 24 15 04 	ALF	" HUND"
-046     01998   + 19 05 04 00 17 	ALF	"RED P"
-047     01999   + 19 09 14 05 22 	ALF	"RIMES"
-049     02024   + 00 00 00 31 51 	CON	2035
-051     02049   + 00 00 00 31 26 	CON	2010
-000     02050   - 00 00 00 07 51 	CON	1073742323
-000     02051   + 00 00 00 00 03 	CON	0003
-009     03000   + 00 00 00 19 35 	CON	1251
-010     03001   + 32 02 00 05 09 	CON	537395529
-011     03002   + 32 03 00 05 10 	CON	537657674
-012     03003   + 00 01 00 00 49 	CON	262193
-013     03004   + 39 53 01 05 26 	CON	668209498
-014     03005   + 47 08 00 01 41 	CON	790626409
-015     03006   + 00 02 00 00 50 	CON	524338
-016     03007   + 00 02 00 02 51 	CON	524467
-017     03008   + 00 00 00 02 48 	CON	0176
-018     03009   + 00 00 02 02 55 	CON	8375
-019     03010   + 32 01 03 05 04 	CON	537145668
-020     03011   + 46 62 00 01 47 	CON	788004975
-021     03012   + 32 01 03 05 56 	CON	537145720
-022     03013   + 00 01 00 00 51 	CON	262195
-023     03014   + 47 00 00 06 39 	CON	788529575
-024     03015   + 46 59 00 00 39 	CON	787218471
-025     03016   + 31 11 00 19 37 	CON	522978533
-026     03017   + 31 51 00 02 52 	CON	533463220
-027     03018   - 00 50 00 02 53 	CON	1086849205
-028     03019   + 07 53 00 00 53 	CON	131334197
-029     03020   + 32 01 05 05 08 	CON	537153864
-030     03021   + 00 00 00 01 05 	CON	0069
-031     03022   + 00 00 04 12 31 	CON	17183
-032     03023   + 00 01 00 01 52 	CON	262260
-033     03024   + 00 50 00 01 53 	CON	13107317
-034     03025   + 47 12 00 02 45 	CON	791675053
-035     03026   + 00 00 04 19 37 	CON	17637
-036     03027   + 00 24 04 05 12 	CON	6308172
-037     03028   + 47 11 00 00 45 	CON	791412781
-038     03029   + 00 00 00 02 05 	CON	0133
------------------------------------------------------------------
-
-*** Startadresse:	3000
-*** Endadresse:	2050
-
-*** Symboltabelle
-START               :  3000
-BUF0                :  2000
-BUF1                :  2025
-PRIME               :  2049
-TITLE               :  1995
-TERM                :  19
-L                   :  500
-
-*** Ende der Zusammenfassung ***
-
 \end{lstlisting}
+\lstinputlisting{../../mixal/p/p.mls}
+
 \subsubsection{p.card}
-
-Next we must write the binary code onto punchcards. This can be done with the python script \lstinline|mixal/tools/mls2card.py|.
+Next we must write the binary code onto punched cards. This can be done with the python script \lstinline|mixal/tools/mls2card.py|.
 The python scripts reads the listing file \lstinline|p.mls|, extracts the code and writes it in the file \lstinline|p.card|.
-Every line of \lstinline|p.card| holds 80 chars of a card. The first to cards contain the bootloader discussed in exercise 26 in chapter 1.3.1 of TAOCP (see p. 510). The last cards is the so called transfer card, which tells the bootloader to start execution at memory location 3000.
+Every line of \lstinline|p.card| holds 80 chars of a card. The first to cards contain the bootloader discussed in exercise 26 in chapter 1.3.1 of TAOCP (see p. 510)\footnote{notice the \lstinline|J| in card 2!}. The last cards is the so called transfer card, which tells the bootloader to start execution at memory location 1000.
+
+\textbf{Attention}: You might miss the transfer card because your output has no "*** Startadresse ...".
+In this case edit the python script \lstinline|mls2card.py| and adjust to the apropriate String found in your \lstinline|*.mls| output.
 
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,frame=none]
 ../../tools/mls2card.py < p.mls > p.card
 cat p.card
-M R6 Y R6    I C R4 Z EH A  F F CF 0  E   EU Z IH G BB   EJ  CA. Y EU
-EH E BA   EU 1A-H S BB 0ALH 1ALN  ABG V  E  CEU Y EH E BB J B. A  9
-0000251995010310184700016113330002196420032009422503211840860000000000
-0000312024000000203500000000000000000000000000000000000000000000000000
-00004320490000002010000000049R0000000003000000000000000000000000000000
-0000563000000000125105373955290537657674000026219306682094980790626409
-0000663006000052433800005244670000000176000000837505371456680788004975
-0000763012053714572000002621950788529575078721847105229785330533463220
-0000863018001310738J01313341970537153864000000006900000171830000262260
-0000063024001310731707916750530000017637000630817207914127810000000133
-TRANS03000000000000000000000000000000000000000000000000000000000000000
 \end{lstlisting}
 
-\subsection{go}
+\lstinputlisting{../../mixal/p/p.card}
+
+
+\subsection{How to send the cards to MIX}
+\subsubsection{go button}
 Power MIX with USB cable connected to your computer.
 Start a screen session with 115200 baud (8N1)
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,frame=none]
 screen /dev/ttyUSB0 115200
 \end{lstlisting}
 
-Press the "Go button" on MIX
-
-You should see the welcome message on your terminal:
+Press the \textit{Go button} on MIX. You should see the welcome message on your terminal:
 \begin{lstlisting}
 WELCOME TO MIX. 1U = 40NS. U19 @115200 BAUD (8N1).                    
 \end{lstlisting}
 
 \subsubsection{input the cards to U16}
-You can send the punch cards to MIX within the screen terminal session.
+You can now send the punched cards to MIX within the screen terminal session.
 Read cards into a screen-buffer (called p) and send the buffer to MIX.
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,frame=none]
 <in screen terminal> Ctr-a : readreg p p.card <enter>
 <in screen terminal> Ctrl-a : paste p <enter>
 \end{lstlisting}
 
-After a few nanoseconds MIX spits out the following table to U19:
+After a short amount of time MIX spits out the following table to the printer U18. Notice that output to U18 have 120 characters per line, while output to the terminal U19 is only 70 chars wide.
+\lstinputlisting{../../mixal/p/p.out}
 
-\begin{lstlisting}
-FIRST FIVE HUNDRED PRIMES                                                 
-0002 0233 0547 0877 1229 1597 1993 2371 2749 3187                    
-0003 0239 0557 0881 1231 1601 1997 2377 2753 3191                    
-0005 0241 0563 0883 1237 1607 1999 2381 2767 3203                    
-0007 0251 0569 0887 1249 1609 2003 2383 2777 3209                    
-0011 0257 0571 0907 1259 1613 2011 2389 2789 3217                    
-0013 0263 0577 0911 1277 1619 2017 2393 2791 3221                    
-0017 0269 0587 0919 1279 1621 2027 2399 2797 3229                    
-0019 0271 0593 0929 1283 1627 2029 2411 2801 3251                    
-0023 0277 0599 0937 1289 1637 2039 2417 2803 3253                    
-0029 0281 0601 0941 1291 1657 2053 2423 2819 3257                    
-0031 0283 0607 0947 1297 1663 2063 2437 2833 3259                    
-0037 0293 0613 0953 1301 1667 2069 2441 2837 3271                    
-0041 0307 0617 0967 1303 1669 2081 2447 2843 3299                    
-0043 0311 0619 0971 1307 1693 2083 2459 2851 3301                    
-0047 0313 0631 0977 1319 1697 2087 2467 2857 3307                    
-0053 0317 0641 0983 1321 1699 2089 2473 2861 3313                    
-0059 0331 0643 0991 1327 1709 2099 2477 2879 3319                    
-0061 0337 0647 0997 1361 1721 2111 2503 2887 3323                    
-0067 0347 0653 1009 1367 1723 2113 2521 2897 3329                    
-0071 0349 0659 1013 1373 1733 2129 2531 2903 3331                    
-0073 0353 0661 1019 1381 1741 2131 2539 2909 3343                    
-0079 0359 0673 1021 1399 1747 2137 2543 2917 3347                    
-0083 0367 0677 1031 1409 1753 2141 2549 2927 3359                    
-0089 0373 0683 1033 1423 1759 2143 2551 2939 3361                    
-0097 0379 0691 1039 1427 1777 2153 2557 2953 3371                    
-0101 0383 0701 1049 1429 1783 2161 2579 2957 3373                    
-0103 0389 0709 1051 1433 1787 2179 2591 2963 3389                    
-0107 0397 0719 1061 1439 1789 2203 2593 2969 3391                    
-0109 0401 0727 1063 1447 1801 2207 2609 2971 3407                    
-0113 0409 0733 1069 1451 1811 2213 2617 2999 3413                    
-0127 0419 0739 1087 1453 1823 2221 2621 3001 3433                    
-0131 0421 0743 1091 1459 1831 2237 2633 3011 3449                    
-0137 0431 0751 1093 1471 1847 2239 2647 3019 3457                    
-0139 0433 0757 1097 1481 1861 2243 2657 3023 3461                    
-0149 0439 0761 1103 1483 1867 2251 2659 3037 3463                    
-0151 0443 0769 1109 1487 1871 2267 2663 3041 3467                    
-0157 0449 0773 1117 1489 1873 2269 2671 3049 3469                    
-0163 0457 0787 1123 1493 1877 2273 2677 3061 3491                    
-0167 0461 0797 1129 1499 1879 2281 2683 3067 3499                    
-0173 0463 0809 1151 1511 1889 2287 2687 3079 3511                    
-0179 0467 0811 1153 1523 1901 2293 2689 3083 3517                    
-0181 0479 0821 1163 1531 1907 2297 2693 3089 3527                    
-0191 0487 0823 1171 1543 1913 2309 2699 3109 3529                    
-0193 0491 0827 1181 1549 1931 2311 2707 3119 3533                    
-0197 0499 0829 1187 1553 1933 2333 2711 3121 3539                    
-0199 0503 0839 1193 1559 1949 2339 2713 3137 3541                    
-0211 0509 0853 1201 1567 1951 2341 2719 3163 3547                    
-0223 0521 0857 1213 1571 1973 2347 2729 3167 3557                    
-0227 0523 0859 1217 1579 1979 2351 2731 3169 3559                    
-0229 0541 0863 1223 1583 1987 2357 2741 3181 3571                    
+\subsection{Congratulation}
+You have run your first program on a \textit{real} MIX.
+Now trun the program \lstinline|e| to calculate the easter dates.
+
+\section{Build your own MIX and/or modify the fpga design}
+
+In this section we will show how to build a MIX based on the fpga board iCE40HX8K-EVB. The whole project uses only FOSS soft- and hardware. With little modifications it should run on any fpga board available out in the wild.
+
+\subsection{Requirement}
+\begin{enumerate}
+	\item 
+	fpga board (iCE40HX8K-EVB)
+	\item programmer device (Olimexino 32u4) with idc10 cable (cable-IDC10)
+	\item USB-UART-board (BB-CH340T).  
+	\item fpga toolchain. The project was developed with \lstinline|apio| \footnote{\href{github.com/FPGAwars/apio}{github.com/FPGAwars/apio}}, a software suite based on project icestorm\footnote{\href{www.clifford.at/icestorm}{www.clifford.at/icestorm}} from Clifford Wolf.
+\end{enumerate}
+
+Consider to buy at Olimex Ltd. \footnote{\href{www.olimex.com}{www.olimex.com}}, the company with the highest number of registered OSHW-projects. Install the tools with:
+
+\begin{lstlisting}[numbers=none,frame=none]
+sudo apt install mdk
+sudo pip install -U apio
+apio install -a
+cd tools/iceprogduino
+make
+sudo make install
 \end{lstlisting}
 
-\subsubsection{Congratulation}
-You have run your first program on a \textit{real} MIX.
-Now try the program e to calculate the easter dates.
+\subsection{build and flash the fpga design}
 
-\section{program go}
+Cd into the directory \lstinline|build/rtl| and build the project. Connect the fpga board with olimexino-32u4 programmer to upload the bitstream file. Use two USB cables to power both boards.
+
+\begin{lstlisting}[numbers=none,frame=none]
+cd build/rtl
+apio clean
+apio build -v
+apio upload
+\end{lstlisting}
+
+\subsection{The USB-serial adapter}
+To connect the USB-UART-board (BB-CH340T) with iCE40HX8K-EVB we first have to modify BB-CH340T according to Fig. \ref{fig:detail}: To use USB-Serial adapter as power source we must cut with a cutter knife the pcb track marked in GREEN and solder a bridge BLACK between the right most terminal (VDD) and the 5V pad.
+This will ensure that the right most terminal connector (red cable) get's 5Volt, which will be used to power the fpga board. But the UART signals (green and yellow cables) are still leveled to 3.3V, which corresponds to the in-/output signal level of fpga-connector GPIO1.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{../detail.png}
+	\caption{Cut the pcb track (GREEN) and solder a bridge from 5V pad to the right most connector pin.}
+	\label{fig:detail}
+\end{figure}
+
+The 4 wires are connected to the GPIO connector on the right side of iCE40HX8K-EVB according to the following table. Compare with schematic in the appendix  \ref{sec:schematic}.
+
+\begin{table}[H]
+	\centering
+	
+	\begin{tabular}{|c|c|c|}
+		\hline 
+		color & USB-serial & GPIO (ICE40HX8K-EVB) \\ 
+		\hline 
+		black & GND & 2 \\ 
+		\hline 
+		green & RX & 7 \\ 
+		\hline 
+		yellow & TX & 5 \\ 
+		\hline 
+		red & VDD & 1 \\ 
+		\hline 
+	\end{tabular} 
+\end{table}
+
+
 \subsection{The Go button}
 We will implement the code needed by the go button proposed in  exercise 26 in chapter 1.3.1 of TAOCP (see p. 510).
 
+\subsubsection{prepare the software}
+The mixal program can be found in \lstinline|go.mixal|. It starts at location 4000 (which is implemented in fpga but not used by MIX). The programm spits out the welcome message. The JMP instruction at memory cell 4095 will jmp to location 0 storing a +0000 in the J-Register, because beeing a binary version with 12 bit programmcounter the next execution address without the jmp instruction would equally yield 4095 + 1 = 0000.
 
-\subsection{go.mixal}
-The mixal program can be found in `go.mixal`. It starts at location 4000 (which is implemented in fpga but not used by MIX). The programm spits out the welcome message. The JMP instruction at memory cell 4095 will jmp to location 0 and storing a +0000 in the J-Register, because beeing a binary version with 12 bit programmcounter the next execution address without the jmp instruction would equally yield 4095 + 1 = 0000.
 
-Inpect the file with:
-\begin{lstlisting}
-cat go.mixal
-ORIG 	4000
-JMP		START
-TITLE	ALF		"WELCO"
-ALF		"ME TO"
-ALF		" MIX."
-ALF		" 1U ="
-ALF		" 30NS"
-ALF		". U19"
-ALF		" @115"
-ALF		"200 B"
-ALF		"AUD ("
-ALF		"8N1)."
-ALF		"     "
-ALF		"     "
-ALF		"     "
-ALF		"     "
-ORIG	4091
-START	OUT 	TITLE(19)
-WAIT1	JBUS	WAIT1(19)
-NEXT	IN		0(16)
-WAIT	JBUS	WAIT(16)
-JMP	0	
-END	START
-\end{lstlisting}
+\lstinputlisting{../../mixal/go/go.mixal}
 
-\subsection{boot.mls}
-First we translate the mixal programm to binary code. This is done with the GNU library `mixasm`. The option `-l` produces a list file `boot.mls`
+First we compile the mixal programm to binary code with \lstinline|mixasm|. Then we translate the listing file to a binary representation, which can be directly written to the fpga board.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,frame=none]
 mixasm go.mixal -l
-cat go.mls
-*** go.mixal: Kompilerzusammenfassung ***
-
------------------------------------------------------------------
-Src     Address  Compiled word           Symbolic rep
------------------------------------------------------------------
-002     04000   + 63 59 00 00 39 	JMP	4091,0
-003     04001   + 26 05 13 03 16 	ALF	"WELCO"
-004     04002   + 14 05 00 23 16 	ALF	"ME TO"
-005     04003   + 00 14 09 27 40 	ALF	" MIX."
-006     04004   + 00 31 24 00 48 	ALF	" 1U ="
-007     04005   + 00 33 30 15 22 	ALF	" 30NS"
-008     04006   + 40 00 24 31 39 	ALF	". U19"
-009     04007   + 00 52 31 31 35 	ALF	" @115"
-010     04008   + 32 30 30 00 02 	ALF	"200 B"
-011     04009   + 01 24 04 00 42 	ALF	"AUD ("
-012     04010   + 38 15 31 43 40 	ALF	"8N1)."
-013     04011   + 00 00 00 00 00 	ALF	"     "
-014     04012   + 00 00 00 00 00 	ALF	"     "
-015     04013   + 00 00 00 00 00 	ALF	"     "
-016     04014   + 00 00 00 00 00 	ALF	"     "
-018     04091   + 62 33 00 19 37 	OUT	4001,0(2:3)
-019     04092   + 63 60 00 19 34 	JBUS	4092,0(2:3)
-020     04093   + 00 00 00 16 36 	IN	0,0(2:0)
-021     04094   + 63 62 00 16 34 	JBUS	4094,0(2:0)
-022     04095   + 00 00 00 00 39 	JMP	0,0
------------------------------------------------------------------
-
-*** Startadresse:	4091
-*** Endadresse:	0
-
-*** Symboltabelle
-NEXT                :  4093
-WAIT1               :  4092
-START               :  4091
-WAIT                :  4094
-TITLE               :  4001
-
-*** Ende der Zusammenfassung ***
-\end{lstlisting}
-
-\subsection{go.bin}
-
-Next we must translate the binary code into a binary format readable by the fpga toolchain. This can be done with the python script `tools/mls2bin.py`.
-
-
-\begin{lstlisting}
 ../../tools/mls2bin.py < go.mls > go.bin
 cat go.bin
+\end{lstlisting}
+
+The python scripts reads the listing file \lstinline|go.mls|, extracts the code and writes it in the file \lstinline|go.bin|.
+
+\begin{lstlisting}
 0000000000000000000000000000000
 0000000000000000000000000000000
 0000000000000000000000000000000
@@ -504,19 +348,17 @@ cat go.bin
 0000000000000000000000000100111
 \end{lstlisting}
 
-The python scripts reads the listing file `go.mls`, extracts the code and writes it in the file `go.bin`.
-
-The output contain the program code expressed as binary numbers. These binary numbers can be flashed to the iCE40HX8K-EVB board, so it's stored permanently in the MIX computer. At every reset (press Go button) the code will be executed. The first 4000 zero lines translate to NOP instructions. At the end you find the sequence IN(16),JBUS,JMP...
+The output contain the program code expressed as binary numbers. These binary numbers can be flashed to the iCE40HX8K-EVB board, so it will be stored permanently in the MIX computer. At every reset (press \textit{Go button}) the code will be executed. The first 4000 zero lines translate to NOP instructions. At the end you find the sequence IN(16),JBUS,JMP...
 
 \subsection{rebuild and flash to iCE40HX8K-EVB}
 
 \begin{itemize}
-	\item Copy the binary file into the directory `rtl`, where the fpga description files are.
-	\item Rebuild the fpga project and upload. `apio clean` is needed, because otherwise the the preloaded memory will not be updated.	
+	\item Copy the binary file into the directory \lstinline|rtl|, where the fpga description files are.
+	\item Rebuild the fpga project and upload. An \lstinline|apio clean| is needed, because otherwise the preloaded memory will not be updated.	
 \end{itemize}
 
-\begin{lstlisting}
-cp go.bin ../../rtl/rom.bin
+\begin{lstlisting}[numbers=none,frame=none]
+cp go.bin ../../rtl/go.bin
 apio clean
 apio build -v
 apio upload
@@ -524,10 +366,11 @@ apio upload
 
 \textbf{Tipp:} change the welcome message to ensure the new rom file has been uploaded.
 
+\section{Example program t}
+\label{traffic}
+We will run programm \lstinline|t| of exercise 20 in chapter 1.3.2 TAOCP (p. 161) on MIX. Programm t controls the traffic signal at corner of Del Mare Boulevard and Berkeley Avenue. This project will connect LEDs directly to the register rX and a push button to the  Overflow toggle. This will be done extending the fpga design and routing the appropriate signals to the GPIO connector at the back of MIX.
 
-\section{program t}
-We will run programm t of exercise 20 in chapter 1.3.2 TAOCP (p. 161) on MIX. Programm t controls the traffic signal at corner of Del Mare Boulevard and Berkeley Avenue. This project will connect LEDs directly to the register rX and a push button to the  Overflow toggle. This will be done extending the fpga design and routing the appropriate signals to the GPIO connector at the back of MIX.
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{../MIX_traffic}
 	\caption{Connect LEDs and push button over the GPIO connector directly to register rX to control the traffic light}
@@ -539,7 +382,7 @@ We will run programm t of exercise 20 in chapter 1.3.2 TAOCP (p. 161) on MIX. Pr
 
 Make a copy of the folder \lstinline|rtl| and cd into it.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,frame=none]
 cd build
 cp -r rtl rtl_traffic_light
 cd rtl_traffic_light
@@ -548,44 +391,69 @@ cd rtl_traffic_light
 
 \subsubsection{mix.pcf}
 
-Add the following lines to physical constraint file \lstinline|mix.pcf|.
+Find the following lines in the physical constraint file \lstinline|mix.pcf| and uncomment.
 
 \lstinputlisting{mix.pcf}
 
 \subsubsection{mix.v}
 
-Add the following lines to the hardware description file \lstinline|mix.v| to connect the Register rX with the traffic signals.
+To connect the Register rX with the traffic signals: find the following lines in \lstinline|mix.v| and uncomment:
 
 \lstinputlisting{mix1.v}
 
-Find the code snipped that controls the overflow toggle and add the line commented with "\lstinline|# traffic signal button|". 
+Control the overflow toggle with the button by uncommenting line 7 in the code snippet:
 
 \lstinputlisting{mix2.v}
 
 \subsection{rebuild and flash to iCE40HX8K-EVB}
 
-Rebuild the fpga project and upload. ¸\lstinline|apio clean| is needed, because otherwise the the preloaded memory will not be updated.
+Rebuild the fpga project and upload.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,frame=none]
 apio clean
 apio upload -v
 \end{lstlisting}
 
 \textbf{Tipp}: change the welcome message to ensure the new rom file has been uploaded.
 
-
-\subsection{leds and button}
+\subsection{add leds and button to GPIO}
 Connect leds and button (don't forget resistors) to the appropriate GPIO connectors as described in the \lstinline|mix.pcf| file. For simplicity only one LED is shown below:
-\begin{center}
+
+\begin{figure}[H]
+	\centering
 	\input{schaltung_gpio_led.cir}
-\end{center}
+
+\end{figure}
+
 
 \textbf{Attention}: gpio pins 1,2,5 and 7 are already used by the internal USB-serial converter.
 
 
 \subsection{t.mixal}
-Compile \lstinline|t.mixal|, upload to MIX and run the traffic signals.
+Compile and write \lstinline|t.mixal| to puching card format. Start MIX by pressing the \textit{go button}. Upload \lstinline|t.card| to MIX and see the traffic signals blinking.
 
+
+\section{Service}
+In case you encounter an issue with MIX:
+\begin{itemize}
+	\item don't panic
+	\item plese send an email to the author with a precise description of the problem.
+\end{itemize}
+
+\section{License}
+
+\subsection{mix-fpga}
+The project as a whole is licensed under the GPL 3 and can be found at \href{www.gitlab.com/x653/mix-fpga}{www.gitlab.com/x653/mix-fpga}.
+\subsection{Manual}
+\doclicenseThis
+
+\newpage
+
+\appendix
+
+\section{Schematic iCE40HX8K-EVB}
+\label{sec:schematic}
+\includegraphics[angle=90,scale=0.8]{../iCE40HX8K-EVB.pdf}
 
 
 \end{document}
