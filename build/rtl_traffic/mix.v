@@ -1,4 +1,23 @@
-// MIX - 1009
+/**
+ mix-fpga is a fpga implementation of Knuth's MIX computer.
+ Copyright (C) 2021 Michael Schröder (mi.schroeder@netcologne.de)
+
+ This programm is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
+// MIX
 // Don Knuths computer architecture described in "The Art of Computer Programming"
 
 `default_nettype none
@@ -6,8 +25,6 @@ module mix(
 	input wire clk_in,
 	output wire tx,
 	input wire rx,
-	output wire hlt,
-	input wire button,
 	output wire dmgreen,
 	output wire dmamber,
 	output wire dmred,
@@ -17,7 +34,9 @@ module mix(
 	output wire dmw,
 	output wire dmdw,
 	output wire bw,
-	output wire bdw
+	output wire bdw,
+	input wire button,
+	output wire hlt
 
 );
 	assign dmgreen = RegisterX[19:18] == 2'd1;
@@ -71,7 +90,7 @@ module mix(
 
 	// memory cells
 	reg [30:0] memory[0:4095];
-	parameter ROMFILE = "rom.bin";
+	parameter ROMFILE = "go.bin";
 	initial begin
 		$readmemb(ROMFILE,memory);
 	end
