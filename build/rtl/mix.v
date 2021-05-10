@@ -1,4 +1,23 @@
-// MIX - 1009
+/**
+ mix-fpga is a fpga implementation of Knuth's MIX computer.
+ Copyright (C) 2021 Michael Schröder (mi.schroeder@netcologne.de)
+
+ This programm is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
+// MIX
 // Don Knuths computer architecture described in "The Art of Computer Programming"
 
 `default_nettype none
@@ -6,8 +25,31 @@ module mix(
 	input wire clk_in,
 	output wire tx,
 	input wire rx,
+//	output wire dmgreen,
+//	output wire dmamber,
+//	output wire dmred,
+//	output wire bgreen,
+//	output wire bamber,
+//	output wire bred,
+//	output wire dmw,
+//	output wire dmdw,
+//	output wire bw,
+//	output wire bdw,
+//	input wire button,
 	output wire hlt
+
 );
+//	assign dmgreen = RegisterX[19:18] == 2'd1;
+//	assign dmamber = RegisterX[19:18] == 2'd2;
+//	assign dmred = RegisterX[19:18] == 2'd3;
+//	assign bgreen = RegisterX[13:12] == 2'd1;
+//	assign bamber = RegisterX[13:12] == 2'd2;
+//	assign bred = RegisterX[13:12] == 2'd3;
+//	assign dmw = RegisterX[7:6] == 2'd1;
+//	assign dmdw = RegisterX[7:6] == 2'd2;
+//	assign bw = RegisterX[1:0] == 2'd1;
+//	assign bdw = RegisterX[1:0] == 2'd2;
+
 	// reset and clock signals
 	wire reset;
 	wire clk;
@@ -48,7 +90,7 @@ module mix(
 
 	// memory cells
 	reg [30:0] memory[0:4095];
-	parameter ROMFILE = "rom.bin";
+	parameter ROMFILE = "go.bin";
 	initial begin
 		$readmemb(ROMFILE,memory);
 	end
@@ -185,6 +227,7 @@ module mix(
 	reg greater;
 	always @(posedge clk)
 		if (reset) overflow <= 0;
+//		else if (button) overflow <= 1;		//the traffic signal button controls the overflow toggle
 		else if (add2) overflow <= addof;
 		else if (sub2) overflow <= subof;
 		else if (ide) overflow <= (rA|rX)? ideout[30] : ideout[12];
