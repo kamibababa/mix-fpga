@@ -1,0 +1,43 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Sun May  2 13:25:13 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/mix-fpga/dev/shift/shift_tb.vcd"
+[dumpfile_mtime] "Sun May  2 13:22:16 2021"
+[dumpfile_size] 147702
+[savefile] "/home/micha/git/gitlab/mix-fpga/dev/shift/shift_tb.gtkw"
+[timestart] 0
+[size] 1280 703
+[pos] -39 -39
+*-20.000000 25350000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] shift_tb.
+[sst_width] 238
+[signals_width] 134
+[sst_expanded] 1
+[sst_vpaned_height] 174
+@28
+shift_tb.clk
+shift_tb.start
+@30
+shift_tb.a[29:0]
+@28
+shift_tb.SHIFT.stop
+@24
+shift_tb.SHIFT.m[11:0]
+@28
+shift_tb.SHIFT.start
+shift_tb.SHIFT.stop
+@30
+shift_tb.SHIFT.outa[29:0]
+shift_tb.SHIFT.outx[29:0]
+@28
+shift_tb.SHIFT.c1
+@29
+shift_tb.SHIFT.c0
+@28
+shift_tb.SHIFT.c2
+shift_tb.SHIFT.c4
+shift_tb.SHIFT.c6
+shift_tb.SHIFT.c8
+[pattern_trace] 1
+[pattern_trace] 0

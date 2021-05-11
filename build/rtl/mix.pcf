@@ -1,0 +1,84 @@
+# physical constrain file
+# assign io-pins to pin numbering of iCE40-HX1K on olimex board iCE40-HX1K-EVB
+# compare to the schematic of the board and the datasheet of fpga
+# to use internal pullup set (-pullup yes)
+
+set_io clk_in J3  	# clk in 100 MHz
+set_io but[0] K11 	# BUT1 on board
+set_io but[1] P13 	# BUT2 on board
+set_io hlt M12 		# LED1 on board
+set_io led[1] R16 	# LED2 on board
+
+#at the GPIO connector you find
+set_io rx 	E4	# GPIO 5
+set_io tx 	B2	# GPIO 7
+#set_io dmred 	F5	# GPIO 9
+#set_io bred 	J2	# GPIO 10
+#set_io dmamber 	B1	# GPIO 11
+#set_io bamber 	H1	# GPIO 12
+#set_io dmgreen 	C1	# GPIO 13
+#set_io bgreen 	G1	# GPIO 14
+#set_io dmdw 	C2	# GPIO 15
+#set_io bdw 	J5	# GPIO 16
+#set_io dmw 	F4	# GPIO 17
+#set_io bw 	H2	# GPIO 18
+#set_io button 	D2	# GPIO 19
+#set_io gpio20 	J4	# GPIO 20
+#set_io gpio21 	G5	# GPIO 21
+#set_io gpio22 	G2	# GPIO 22
+#set_io gpio23 	D1	# GPIO 23
+#set_io gpio24 	H4	# GPIO 24
+#set_io gpio25 	G4	# GPIO 25
+#set_io gpio26 	F1 	# GPIO 26
+#set_io gpio27 	E3	# GPIO 27
+#set_io gpio28	H6	# GPIO 28
+#set_io gpio29 	H5	# GPIO 29
+#set_io gpio30 	F2 	# GPIO 30
+#set_io gpio31 	E2	# GPIO 31
+#set_io gpio32 	H3 	# GPIO 32
+#set_io gpio33 	G3 	# GPIO 33
+#set_io gpio34 	F3	# GPIO 34
+
+
+# the following pins refer to the SRAM chip on the iCE40HX8K-EVB board
+# the plan is to use SRAM as U1-U15 I/O block device
+set_io sram_addr[0] N6
+set_io sram_addr[1] T1
+set_io sram_addr[2] P4
+set_io sram_addr[3] R2
+set_io sram_addr[4] N5
+set_io sram_addr[5] T2
+set_io sram_addr[6] P5
+set_io sram_addr[7] R3
+set_io sram_addr[8] R5
+set_io sram_addr[9] T3
+set_io sram_addr[10] R4
+set_io sram_addr[11] M7
+set_io sram_addr[12] N7
+set_io sram_addr[13] P6
+set_io sram_addr[14] M8
+set_io sram_addr[15] T5
+set_io sram_addr[16] R6
+set_io sram_addr[17] P8
+
+set_io sram_cen T6
+set_io sram_oen L9
+set_io sram_wen T7
+
+set_io sram_data[0] T8
+set_io sram_data[1] P7
+set_io sram_data[2] N9
+set_io sram_data[3] T9
+set_io sram_data[4] M9
+set_io sram_data[5] R9
+set_io sram_data[6] K9
+set_io sram_data[7] P9
+set_io sram_data[8] R10
+set_io sram_data[9] L10
+set_io sram_data[10] P10
+set_io sram_data[11] N10
+set_io sram_data[12] T10
+set_io sram_data[13] T11
+set_io sram_data[14] T15
+set_io sram_data[15] T14
+

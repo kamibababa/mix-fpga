@@ -1,0 +1,61 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Tue May  4 20:34:06 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/mix-fpga/dev/mix/mix_tb.vcd"
+[dumpfile_mtime] "Tue May  4 20:33:32 2021"
+[dumpfile_size] 21393134
+[savefile] "/home/micha/git/gitlab/mix-fpga/dev/mix/mix_tb.gtkw"
+[timestart] 715000000
+[size] 1280 703
+[pos] 0 27
+*-28.000000 1006000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] mix_tb.
+[treeopen] mix_tb.MIX.
+[treeopen] mix_tb.MIX.OUT.
+[sst_width] 238
+[signals_width] 276
+[sst_expanded] 1
+[sst_vpaned_height] 184
+@28
+mix_tb.MIX.clk
+mix_tb.MIX.reset
+@24
+mix_tb.MIX.pc[11:0]
+@28
+mix_tb.MIX.NUM.start
+@24
+mix_tb.MIX.command[5:0]
+@30
+mix_tb.MIX.RegisterA[30:0]
+mix_tb.MIX.RegisterI1[12:0]
+mix_tb.MIX.RegisterI2[12:0]
+mix_tb.MIX.RegisterI3[12:0]
+mix_tb.MIX.RegisterI4[12:0]
+mix_tb.MIX.RegisterI5[12:0]
+mix_tb.MIX.RegisterI6[12:0]
+mix_tb.MIX.RegisterJ[11:0]
+mix_tb.MIX.RegisterX[30:0]
+@28
+mix_tb.MIX.greater
+mix_tb.MIX.equal
+mix_tb.MIX.less
+mix_tb.MIX.overflow
+@200
+-BERKLEY
+@28
+mix_tb.MIX.bred
+mix_tb.MIX.bamber
+mix_tb.MIX.bgreen
+mix_tb.MIX.bdw
+mix_tb.MIX.bw
+@200
+-DEL MARE
+@28
+mix_tb.MIX.dmred
+mix_tb.MIX.dmamber
+mix_tb.MIX.dmgreen
+mix_tb.MIX.dmdw
+mix_tb.MIX.dmw
+[pattern_trace] 1
+[pattern_trace] 0

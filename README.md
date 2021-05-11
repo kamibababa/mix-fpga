@@ -1,17 +1,37 @@
-# iCE-MIX
+# MIX-fpga
 
-Have you ever heard of Don Knuths (hypothetical) first polyunsaturated computer, the 1009? In this project we will build a binary version of the MIX-Computer as described in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth on an fpga-board.
+Have you ever heard of Don Knuths (hypothetical) first polyunsaturated computer MIX, the 1009? In this project we will build a binary version of the MIX-Computer as described in "The Art of Computer Programming, Vol. 1" by Donald E. Knuth running on an fpga-board.
 
-The implementation is called iCE-MIX because it uses the iCE40HX8K fpga from Lattice. We use the development board iCE40HX8K-EVB from the company Olimex. The whole project uses only FOSS free and open source hard- and software.
+The presented implementation is based on the fpga development board iCE40HX8K-EVB from the company Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hard- and software, so everybody can build their own MIX following the instructions in `build`
 
-## Hardware details
-iCE-MIX runs on iCE40HX8K-EVB clocked at 33MHz. The basic unit of time 1u corresponds to 30ns, so according to Knuth it's a relatively high priced machine.
+![](pics/MIX_toast.jpg)
 
-iCE-MIX has a terminal connector routet to unit U19. The terminal connector speakts USB-UART @115200 baud and does transloation of Knuth's 6bit character bytes to ASCII in hardware. 
 
-## Implemented commands
+## inside
 
-All commands are already implemented (s. list) with execution time corresponding to Knuth's specifications (except for DIV, which will be fixed in future revisions).
+The MIX computer is composed of two little boards.
+1. iCE40HX8K-EVB, the fpga development board from olimex.com
+2. USB-serial adapter. Used to power the board with 5V and to in-/output data over serial interface.
+
+![](pics/MIX_inside.jpg)
+
+## Specifications
+
+### clock
+MIX runs on iCE40HX8K-EVB clocked at 25MHz. The basic unit of time 1u corresponds to 40ns, so according to Knuth it's a relatively high priced machine.
+
+### I/O units
+In our MIX implementation all character based I/O units (U16-U20) are connected to the USB-connector and can be accessed as UART streams. You can connect MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
+![](pics/MIX_usb.jpg)
+
+### commands
+All commands exept the floating point arithmetic are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can ()easily) be extended in various ways:
+1. add more commands:
+	* easy: logic operators (AND,OR,XOR,NOT)
+	* not so easy: Floating point arithmetic
+2. add more hardware:
+	* easy: add leds to run the traffic light example
+	* not so easy: add more I/O units
 
 | OP  | Menmonic | Remarks |
 | -   | -   | -  |
@@ -19,7 +39,7 @@ All commands are already implemented (s. list) with execution time corresponding
 | 1   | ADD | ok | 
 | 2   | SUB | ok | 
 | 3   | MUL | ok | 
-| 4   | DIV | 13 cycles vs. 12 of original MIX | 
+| 4   | DIV | ok | 
 | 5(0)   | NUM | ok | 
 | 5(1)   | CHAR | ok | 
 | 5(2)  | HLT | ok | 
@@ -27,23 +47,26 @@ All commands are already implemented (s. list) with execution time corresponding
 | 7   | MOVE | ok | 
 | 8 - 23   | LD(N) | ok | 
 | 24 - 33  | ST | ok | 
-| 34(19)   | JBUS(19) | ok (only U19) | 
-| 35(19)   | IOC(19) | ok (only U19) | 
-| 36(19)   | IN(19) | ok (only U19) | 
-| 37(19)   | OUT(19) | ok (only U19) | 
-| 38(19)   | JRED(19) | ok (only U19) | 
+| 34 -38   | JBUS,IOC,IN,OUT,JRED | ok (USB-UART) | 
 | 39 - 47   | JMP | ok | 
 | 48 - 55   | INC,DEC,ENT,ENN | ok | 
 | 56 - 63  | CMP | ok | 
 
-## Test
+### the GO button
+MIX comes with the "GO button" attached to USB-UART. So after pressing the GO button MIX-programms can be uploaded by sending the "punched cards" to USB-UART.
 
-iCE-MIX has been tested to run the programm p, which computes the first 500 primes and outputs them on unit 19 (UART).
+### toast
+MIX comes in a nice case with formfactor of a slice of toast, so your complete MIX computer system will easily fit into your lunch box. The case can be printed with a 3D printer. Design files can be found in the directory `build/toast`.
 
-The program runs on fpga and outputs the result on the terminal connector (U19).
+![](pics/MIX_top.jpg)
+![](pics/MIX_gpio.jpg)
 
-The following list has been recorded with `cat /dec/ttyACM0 > prime.out`
+## mixal
+MIX has been verified with the following programms. The presented outputs have been computed on MIX:
+### program p
+Compute the first 500 primes
 
+	
 ```
 FIRST FIVE HUNDRED PRIMES                                                 
      0002 0233 0547 0877 1229 1597 1993 2371 2749 3187                    
@@ -95,39 +118,73 @@ FIRST FIVE HUNDRED PRIMES
      0211 0509 0853 1201 1567 1951 2341 2719 3163 3547                    
      0223 0521 0857 1213 1571 1973 2347 2729 3167 3557                    
      0227 0523 0859 1217 1579 1979 2351 2731 3169 3559                    
-     0229 0541 0863 1223 1583 1987 2357 2741 3181 3571                    
+     0229 0541 0863 1223 1583 1987 2357 2741 3181 3571  
 ```
-
-
-## How to prepare MIXAL-programms
-To run mixal programms on iCE40 you first have to translate the mixal programm to a binary representation:
-* cd into the folder mixal `cd mixal`
-* compile the MIXAL-programms with `mixasm p.mixal -l`
-* translate the list file to binary `./mls2bin.py < p.mls > p.bin`
-
-Now the binary file must be preloaded into memory of iCE-MIX. We will compile the whole verilog project with the included rom file.
-
-* copy binary to mix-folder `cp p.bin ../mix/rom.bin`
-* now cd into the mix-folder `cd ../mix`
-* run `apio build -v` to syntesize the MIX circuit with memory preloaded with binary file `rom.bin`. Notice the amount of resources used on iCE40:
-
+	
+### program e
+compute easter dates from 1950-2000
 ```
-Info: Device utilisation:
-Info: 	         ICESTORM_LC:  7188/ 7680    93%
-Info: 	        ICESTORM_RAM:    32/   32   100%
-Info: 	               SB_IO:     2/  256     0%
-Info: 	               SB_GB:     8/    8   100%
-Info: 	        ICESTORM_PLL:     1/    2    50%
-Info: 	         SB_WARMBOOT:     0/    1     0%
+	WELCOME TO MIX. 1U = 40NS. U19 @115200 BAUD (8N1).                    
+	 09   APRIL,    01950                                             
+	 25   MARCH,    01951                                             
+	 13   APRIL,    01952                                             
+	 05   APRIL,    01953                                             
+	 18   APRIL,    01954                                             
+	 10   APRIL,    01955                                             
+	 01   APRIL,    01956                                             
+	 21   APRIL,    01957                                             
+	 06   APRIL,    01958                                             
+	 29   MARCH,    01959                                             
+	 17   APRIL,    01960                                             
+	 02   APRIL,    01961                                             
+	 22   APRIL,    01962                                             
+	 14   APRIL,    01963                                             
+	 29   MARCH,    01964                                             
+	 18   APRIL,    01965                                             
+	 10   APRIL,    01966                                             
+	 26   MARCH,    01967                                             
+	 14   APRIL,    01968                                             
+	 06   APRIL,    01969                                             
+	 29   MARCH,    01970                                             
+	 11   APRIL,    01971                                             
+	 02   APRIL,    01972                                             
+	 22   APRIL,    01973                                             
+	 14   APRIL,    01974                                             
+	 30   MARCH,    01975                                             
+	 18   APRIL,    01976                                             
+	 10   APRIL,    01977                                             
+	 26   MARCH,    01978                                             
+	 15   APRIL,    01979                                             
+	 06   APRIL,    01980                                             
+	 19   APRIL,    01981                                             
+	 11   APRIL,    01982                                             
+	 03   APRIL,    01983                                             
+	 22   APRIL,    01984                                             
+	 07   APRIL,    01985                                             
+	 30   MARCH,    01986                                             
+	 19   APRIL,    01987                                             
+	 03   APRIL,    01988                                             
+	 26   MARCH,    01989                                             
+	 15   APRIL,    01990                                             
+	 31   MARCH,    01991                                             
+	 19   APRIL,    01992                                             
+	 11   APRIL,    01993                                             
+	 03   APRIL,    01994                                             
+	 16   APRIL,    01995                                             
+	 07   APRIL,    01996                                             
+	 30   MARCH,    01997                                             
+	 12   APRIL,    01998                                             
+	 04   APRIL,    01999                                             
+	 23   APRIL,    02000                                             
 ```
-* run `apio upload` to upload bitstream file to fpga-board.
+		
 
-Now iCE40-fpga IS a MIX-computer with the programm stored in memory beginning at address 0.
+### program t
+MIX can control the traffic signal of the corner del Mar Avenue/Berkeley Avenue. MIX is NOT a simulatin/emulation. It's real hardware. So you can drive the LEDs with the output of RegisterX. Input is done with a push button, which directly connects to the overflow toggle.
 
-Connect iCE40-fpga to UART and press reset. In your terminal programm you will see the output of MIX on in/out unit 19 (Terminal).
-* `screen /dev/ttyACM0`
+![](pics/MIX_traffic.jpg)
 
-## Things to come...
-* design a case (3D-Printer)
-* add GO-button
-* write bootloader, that reads programmcode from U19
+## need help?
+In case you find encounter an issue with MIX`:
+* don't panic
+* send me an email to mi.schroeder@netcologne.de

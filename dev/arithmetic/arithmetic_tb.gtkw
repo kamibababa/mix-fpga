@@ -1,0 +1,78 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Sat May  1 15:44:35 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/mix-fpga/dev/arithmetic/arithmetic_tb.vcd"
+[dumpfile_mtime] "Sat May  1 15:43:33 2021"
+[dumpfile_size] 25799
+[savefile] "/home/micha/git/gitlab/mix-fpga/dev/arithmetic/arithmetic_tb.gtkw"
+[timestart] 0
+[size] 1280 703
+[pos] -1 -1
+*-3.047380 31 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] arithmetic_tb.
+[sst_width] 238
+[signals_width] 142
+[sst_expanded] 1
+[sst_vpaned_height] 176
+@28
+arithmetic_tb.clk
+arithmetic_tb.reset
+arithmetic_tb.start
+@30
+arithmetic_tb.in1[30:0]
+arithmetic_tb.in2[30:0]
+@200
+-ADD
+@28
+arithmetic_tb.ADD.start
+arithmetic_tb.ADD.stop
+@30
+arithmetic_tb.ADD.out[30:0]
+@24
+arithmetic_tb.ADD.overflow
+@200
+-SUB
+@28
+arithmetic_tb.SUB.start
+arithmetic_tb.SUB.stop
+@30
+arithmetic_tb.SUB.out[30:0]
+@24
+arithmetic_tb.SUB.overflow
+@200
+-MUL
+@28
+arithmetic_tb.MUL.start
+arithmetic_tb.MUL.stop
+@30
+arithmetic_tb.MUL.out[59:0]
+@28
+arithmetic_tb.MUL.sign
+@200
+-DIV
+@28
+arithmetic_tb.DIV.start
+arithmetic_tb.DIV.stop
+@30
+arithmetic_tb.DIV.quotient[29:0]
+@28
+arithmetic_tb.DIV.sign
+@30
+arithmetic_tb.DIV.rest[29:0]
+@28
+arithmetic_tb.DIV.overflow
+@200
+-ADD12
+@30
+arithmetic_tb.ADD12.a[12:0]
+arithmetic_tb.ADD12.b[12:0]
+arithmetic_tb.ADD12.out[12:0]
+@200
+-INC
+@31
+arithmetic_tb.INC.in1[30:0]
+arithmetic_tb.INC.in2[30:0]
+arithmetic_tb.INC.out[30:0]
+[pattern_trace] 1
+[pattern_trace] 0

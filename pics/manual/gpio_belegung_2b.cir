@@ -1,0 +1,91 @@
+% Dieses Dokument ist in der Zusammenarbeit von Informatikreferendaren und
+% ehemaligen Informatikreferendaren der Studienseminare (heute ZfsL) Arnsberg,
+% Hamm und Solingen entstanden.
+%
+% Das Dokument steht unter der Lizenz: Creative Commons by-nc-sa Version 4.0
+% http://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
+%
+% Nach dieser Lizenz darf das Dokument beliebig kopiert und bearbeitet werden,
+% sofern das Folgeprodukt wiederum unter gleichen Lizenzbedingungen vertrieben
+% und auf die ursprünglichen Urheber verwiesen wird.
+% Eine kommerzielle Nutzung ist ausdrücklich ausgeschlossen.
+%
+% Die Namensnennung durch einen Verweis und die Lizenzangabe der ursprünglichen
+% Urheber auf den Materialien für Schülerinnen und Schüler ist erforderlich.
+%
+% Die Sammlung der Dokumente steht unter
+% http://ddi.uni-wuppertal.de/material/materialsammlung/
+% zur Verfügung.
+%
+% Das LaTeX-Paket zum Setzen der Dokumente der Sammlung steht
+% unter  http://www.ctan.org/pkg/schule
+% zur Verfügung.
+
+
+\begin{tikzpicture}
+
+  \begin{scope}
+    \node at (0,0.3cm) {Raspberry Pi};
+    
+    \foreach \y in {1,2,...,20}{
+      \draw (0, -\y * 2.54mm) circle (1.6pt);
+      \draw (2.54mm, -\y * 2.54mm) circle (1.6pt);
+      \pgfmathtruncatemacro{\t}{\y*2-1}
+      \draw (-0.4mm, -\y * 2.54mm) node[left]  {\tiny{\t}};
+      \pgfmathtruncatemacro{\t}{\y*2}
+      \node[right] at (2.94mm, -\y * 2.54mm) {\tiny{\t}};
+    }
+    
+    \pgfmathsetmacro{\x}{-3.7}
+    \begin{scope}[every node/.style={left}]
+      \draw (\x mm,-2.54mm) node[red] {\tiny{3.3V}}
+	++(0,-2.54mm) node {\tiny{SDA}}
+	++(0,-2.54mm) node {\tiny{SCL}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node[red] {\tiny{3.3V}}
+	++(0,-2.54mm) node {\tiny{MOSI}}
+	++(0,-2.54mm) node {\tiny{MISO}}
+	++(0,-2.54mm) node {\tiny{SCKL}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}}
+	++(0,-2.54mm) node {\tiny{ID\_SD}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}};
+    \end{scope}
+    
+    \pgfmathsetmacro{\x}{6.24}
+    \begin{scope}[every node/.style={right}]
+      \draw (\x mm,-2.54mm) node[red] {\tiny{5V}}
+	++(0,-2.54mm) node[red] {\tiny{5V}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}}
+	++(0,-2.54mm) node {\tiny{GPIO/TXD}}
+	++(0,-2.54mm) node {\tiny{GPIO/RXD}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{ID\_SC}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}}
+	++(0,-2.54mm) node {\tiny{GPIO12}}
+	++(0,-2.54mm) node[blue] {\tiny{GND}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}}
+	++(0,-2.54mm) node {\tiny{GPIO}};
+    \end{scope}
+    
+    \draw[rounded corners] (-23mm,0) rectangle (24.54mm,-53.34mm);
+  \end{scope}
+  
+ 
+\end{tikzpicture}

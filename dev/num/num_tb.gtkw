@@ -1,0 +1,34 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Sat Apr 17 09:06:03 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/mix-fpga/num/num_tb.vcd"
+[dumpfile_mtime] "Sat Apr 17 09:05:31 2021"
+[dumpfile_size] 28469
+[savefile] "/home/micha/git/gitlab/mix-fpga/num/num_tb.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] -1 -1
+*-18.000000 454000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] num_tb.
+[sst_width] 238
+[signals_width] 110
+[sst_expanded] 1
+[sst_vpaned_height] 138
+@28
+num_tb.NUM.clk
+num_tb.NUM.start
+@30
+num_tb.NUM.in[59:0]
+@28
+num_tb.NUM.clk
+num_tb.NUM.stop
+num_tb.NUM.run
+@22
+num_tb.NUM.out[29:0]
+@28
+num_tb.NUM.start
+@29
+num_tb.NUM.run
+[pattern_trace] 1
+[pattern_trace] 0
