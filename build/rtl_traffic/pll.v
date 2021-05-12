@@ -36,7 +36,8 @@ module pll(
 	output locked
 	);
 
-SB_PLL40_CORE #(
+/* verilator lint_off PINMISSING */
+	SB_PLL40_CORE #(
 		.FEEDBACK_PATH("SIMPLE"),
 		.DIVR(4'b0000),		// DIVR =  0
 		.DIVF(7'b0000111),	// DIVF =  7

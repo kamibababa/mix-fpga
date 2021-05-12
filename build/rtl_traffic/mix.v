@@ -90,7 +90,7 @@ module mix(
 
 	// memory cells
 	reg [30:0] memory[0:4095];
-	parameter ROMFILE = "go.bin";
+	parameter ROMFILE = "go_traffic.bin";
 	initial begin
 		$readmemb(ROMFILE,memory);
 	end
@@ -457,6 +457,8 @@ module mix(
 	wire cmpl;
 	wire cmpe;
 	wire cmpg;
-	cmp CMP(.clk(clk),.start(cmp1),.stop(cmp2),.in1(rout),.in2(value),.equal(cmpe),.less(cmpl),.greater(cmpg));	
+	wire [30:0] rout_field;
+	field FIELD(.field(field),.in(rout),.out(rout_field));
+	cmp CMP(.clk(clk),.start(cmp1),.stop(cmp2),.in1(rout_field),.in2(value),.equal(cmpe),.less(cmpl),.greater(cmpg));	
 	
 endmodule
