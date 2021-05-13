@@ -1,0 +1,4 @@
+WELCOME TO MIX. 1U = 40NS. U16-U20 TO UART @115200 BAUD (8N1).        
+    (  A    C    F    G  )        (  B    C    D  )        (  A    E    D  )                                            
+    (  F    A    D    E  )        (  B    G    F    A    E  )                  =                                        
+    (  A    D    G  )        (  C    E    B  )                                                                          
