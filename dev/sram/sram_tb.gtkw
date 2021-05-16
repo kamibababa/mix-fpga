@@ -1,0 +1,46 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Sun May 16 13:16:37 2021
+[*]
+[dumpfile] "/home/micha/git/mix-fpga/dev/sram/sram_tb.vcd"
+[dumpfile_mtime] "Sun May 16 13:15:55 2021"
+[dumpfile_size] 2983358
+[savefile] "/home/micha/git/mix-fpga/dev/sram/sram_tb.gtkw"
+[timestart] 0
+[size] 2554 697
+[pos] 0 21
+*-20.000000 7650000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] sram_tb.
+[sst_width] 228
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 174
+@28
+sram_tb.SRAM.clk
+sram_tb.reset
+sram_tb.startW
+sram_tb.SRAM.last
+@22
+sram_tb.SRAM.sram_addr[17:0]
+sram_tb.SRAM.sram_data[15:0]
+@28
+sram_tb.SRAM.sram_cen
+sram_tb.SRAM.sram_oen
+sram_tb.SRAM.sram_wen
+@22
+sram_tb.SRAM.mix_addr_out[11:0]
+@28
+sram_tb.SRAM.mix_read
+@200
+-READ
+@28
+sram_tb.startR
+sram_tb.SRAM.read
+@22
+sram_tb.SRAM.mix_data_out[30:0]
+@28
+sram_tb.SRAM.mix_write
+@23
+sram_tb.SRAM.mix_addr_out[11:0]
+[pattern_trace] 1
+[pattern_trace] 0
