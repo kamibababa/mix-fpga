@@ -36,7 +36,12 @@ module mix(
 	output wire bw,
 	output wire bdw,
 	input wire button,
-	output wire hlt
+	output wire hlt,
+	output [17:0] sram_addr,
+	inout [15:0] sram_data,
+	output sram_cen,
+	output sram_wen,
+	output sram_oen
 
 );
 	assign dmgreen = RegisterX[19:18] == 2'd1;
@@ -65,7 +70,7 @@ module mix(
 	wire fetch;	// fetch instruction
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
 	wire fetch1;	// ready for next fetch
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jmpbus|jbus1| ioc1 | in2 | out2 | mov2 | shift2 | char2|num2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2;
 	reg fetch2;	// fetch after outrequest
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
@@ -79,7 +84,7 @@ module mix(
 
 	// programm counter
 	wire [11:0] p;	//next instruction
-		assign p = (reset)? 0 : (jmpbus|jmprout|jmpout)? addressIndex[11:0] : (fetch2)? npc: pc+1;
+		assign p = (reset)? 0 : (jmpred|jmpbus|jmprout|jmpout)? addressIndex[11:0] : (fetch2)? npc: pc+1;
 	reg [11:0] pc;	//last instruction
 	always @(posedge clk)
 		if (fetch) pc <= p;
@@ -90,7 +95,7 @@ module mix(
 
 	// memory cells
 	reg [30:0] memory[0:4095];
-	parameter ROMFILE = "go_traffic.bin";
+	parameter ROMFILE = "go.bin";
 	initial begin
 		$readmemb(ROMFILE,memory);
 	end
@@ -98,11 +103,12 @@ module mix(
 	always @(posedge clk)
 		data <= memory[address];
 	wire [11:0] address;
-	assign address = (fetch)? p: (outload? addressOut: (movload? movaddress: addressIndex[11:0]));
+	assign address = (fetch)? p: (outload? addressOut: (movload? movaddress: (sram_read? addressSRAM :addressIndex[11:0])));
 	always @(posedge clk)
 		if (st2) memory[staddress] <= stout;
 		else if (movstore) memory[RegisterI1[11:0]] <= data;
 		else if (instore) memory[addressIn[11:0]] <= {1'd0,dataIn};
+		else if (sram_write) memory[addressSRAM] <= dataSRAM;
 	
 	//Register
 	reg [30:0] RegisterA;
@@ -356,22 +362,41 @@ module mix(
 	wire [30:0] stout;
 	wire [11:0] staddress;
 	st ST(.clk(clk),.addressin(addressIndex[11:0]),.addressout(staddress),.start(st1|stj1|stz1),.stop(st2),.data(data),.field(field),.in(stin),.out(stout));
+	
+	//SRAM
+	wire insram;
+	assign insram = (command[5:0]==6'd36) & (field==6'd8);
+	wire outsram;
+	assign outsram = (command[5:0]==6'd37) & (field==6'd8);
+	wire disk2;
+	wire [11:0] addressSRAM;
+	wire [30:0] dataSRAM;
+	wire sram_read;
+	wire sram_write;
+	sram SRAM(.reset(reset),.clk(clk),.block(RegisterX[9:0]),.sram_addr(sram_addr),.sram_data(sram_data),.sram_wen(sram_wen),.sram_oen(sram_oen),.sram_cen(sram_cen),.startW(outsram),.startR(insram),.mix_addr_in(addressIndex[11:0]),
+		.mix_addr_out(addressSRAM),.mix_data_in(data),.mix_data_out(dataSRAM),.mix_read(sram_read),.mix_write(sram_write),.stop(disk2));
+	
 	//command 34 -JBUS
 	wire jbus1;
-	assign jbus1 = (command[5:0]==6'd34);
+	assign jbus1 = (command[5:0]==6'd34) & field[4];
 	wire jmpbus;
 	assign jmpbus = (jbus1 & busy);
-
+	//command 38 - JRED
+	wire jred1;
+	assign jred1 = (command[5:0]==6'd38) & field[4];
+	wire jmpred;
+	assign jmpred = (jred1 & ~busy);
+	
 	//command 35 - IOC
 	wire ioc1;
 	assign ioc1 = (command[5:0] ==6'd35);
 
 	//command 36 - IN
 	wire in1;
-	assign in1 = (command[5:0] == 6'd36);
+	assign in1 = (command[5:0] == 6'd36) & field[4];
 	wire in2;
 	wire instore;
-	assign instore = requestin&(~st2)&(~movstore);
+	assign instore = requestin & (~st2) & (~movstore);
 	wire [29:0] dataIn;
 	wire [11:0] addressIn;
 	wire busy;
@@ -382,7 +407,7 @@ module mix(
 	
 	//command 37 - OUT
 	wire out1;
-	assign out1 = (command[5:0] == 6'd37);
+	assign out1 = (command[5:0] == 6'd37) & field[4];
 	wire out2;
 	wire outload;
 	assign outload = (~movload & outrequest&~execute) | (outrequest & fetch1);
@@ -395,7 +420,9 @@ module mix(
 	wire busyout;
 	wire [11:0] addressOut;
 	out OUT(.field(field),.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
-	
+
+
+
 	//command 39 - JMP
 	wire jmp;
 	assign jmp = (command[5:0] == 6'd39);
