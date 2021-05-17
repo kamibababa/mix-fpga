@@ -61,7 +61,7 @@ module mix(
 
 	// programm counter
 	wire [11:0] p;	//next instruction
-		assign p = (reset)? 0 : (jmpbus|jmprout|jmpout)? addressIndex[11:0] : (fetch2)? npc: pc+1;
+		assign p = (reset)? 1000 : (jmpbus|jmprout|jmpout)? addressIndex[11:0] : (fetch2)? npc: pc+1;
 	reg [11:0] pc;	//last instruction
 	always @(posedge clk)
 		if (fetch) pc <= p;
@@ -72,7 +72,7 @@ module mix(
 
 	// memory cells
 	reg [30:0] memory[0:4095];
-	parameter ROMFILE = "rom.bin";
+	parameter ROMFILE = "r.bin";
 	initial begin
 		$readmemb(ROMFILE,memory);
 	end

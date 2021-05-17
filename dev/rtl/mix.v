@@ -70,7 +70,7 @@ module mix(
 	wire fetch;	// fetch instruction
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
 	wire fetch1;	// ready for next fetch
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jmpbus|jbus1| ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2;
 	reg fetch2;	// fetch after outrequest
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
@@ -84,7 +84,7 @@ module mix(
 
 	// programm counter
 	wire [11:0] p;	//next instruction
-		assign p = (reset)? 0 : (jmpbus|jmprout|jmpout)? addressIndex[11:0] : (fetch2)? npc: pc+1;
+		assign p = (reset)? 0 : (jmpred|jmpbus|jmprout|jmpout)? addressIndex[11:0] : (fetch2)? npc: pc+1;
 	reg [11:0] pc;	//last instruction
 	always @(posedge clk)
 		if (fetch) pc <= p;
@@ -381,7 +381,12 @@ module mix(
 	assign jbus1 = (command[5:0]==6'd34) & field[4];
 	wire jmpbus;
 	assign jmpbus = (jbus1 & busy);
-
+	//command 38 - JRED
+	wire jred1;
+	assign jred1 = (command[5:0]==6'd38) & field[4];
+	wire jmpred;
+	assign jmpred = (jred1 & ~busy);
+	
 	//command 35 - IOC
 	wire ioc1;
 	assign ioc1 = (command[5:0] ==6'd35);
@@ -391,7 +396,7 @@ module mix(
 	assign in1 = (command[5:0] == 6'd36) & field[4];
 	wire in2;
 	wire instore;
-	assign instore = requestin&(~st2)&(~movstore);
+	assign instore = requestin & (~st2) & (~movstore);
 	wire [29:0] dataIn;
 	wire [11:0] addressIn;
 	wire busy;
@@ -415,7 +420,9 @@ module mix(
 	wire busyout;
 	wire [11:0] addressOut;
 	out OUT(.field(field),.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
-	
+
+
+
 	//command 39 - JMP
 	wire jmp;
 	assign jmp = (command[5:0] == 6'd39);

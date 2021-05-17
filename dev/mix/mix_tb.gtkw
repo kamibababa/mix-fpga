@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Tue May  4 20:34:06 2021
+[*] Mon May 17 10:24:26 2021
 [*]
 [dumpfile] "/home/micha/git/gitlab/mix-fpga/dev/mix/mix_tb.vcd"
-[dumpfile_mtime] "Tue May  4 20:33:32 2021"
-[dumpfile_size] 21393134
+[dumpfile_mtime] "Mon May 17 10:21:03 2021"
+[dumpfile_size] 11088407
 [savefile] "/home/micha/git/gitlab/mix-fpga/dev/mix/mix_tb.gtkw"
-[timestart] 715000000
+[timestart] 3625742000
 [size] 1280 703
 [pos] 0 27
-*-28.000000 1006000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-20.000000 3627617000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] mix_tb.
 [treeopen] mix_tb.MIX.
 [treeopen] mix_tb.MIX.OUT.

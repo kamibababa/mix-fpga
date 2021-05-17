@@ -22,7 +22,7 @@ module UartTX(
 	wire is288;
 	assign is288 = baud[5] & baud[8];
 	wire is217;
-	assign is217 = baud[0] & baud[3] & baud[4] & baud[6] & baud[7];
+	assign is217 = baud[0] & baud[3];// & baud[4] & baud[6] & baud[7];
 	
 	reg [4:0] bits;
 	always @(posedge clk)

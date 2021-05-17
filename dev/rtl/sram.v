@@ -5,9 +5,9 @@ module sram(
 	input [9:0] block,
 	output reg [17:0] sram_addr,		// SRAM Address 18 Bit = 256K
 	inout [15:0] sram_data,			// SRAM Data 16 Bit
-	output reg sram_wen,			// SRAM write_enable_not
-	output reg sram_oen,			// SRAM output_enable_not
-	output reg sram_cen, 			// SRAM chip_enable_not
+	output wire sram_wen,			// SRAM write_enable_not
+	output wire sram_oen,			// SRAM output_enable_not
+	output wire sram_cen, 			// SRAM chip_enable_not
 	input wire startW,
 	input wire startR,
 	input wire [11:0] mix_addr_in,
@@ -68,19 +68,24 @@ module sram(
 		if (startW|startR) count <= 2'd0;
 		else if (write|read) count <= count + 1;
 
-
+	reg sram_we;
+	assign sram_wen = ~ sram_we;
 	always @(posedge clk)
-		if (reset) sram_wen <= 1;
-		else if (write & ~count[0]) sram_wen <= 0;
-		else sram_wen <= 1;
+		if (reset) sram_we <= 0;
+		else if (write & ~count[0]) sram_we <= 1;
+		else sram_we <= 0;
+	reg sram_oe;
+	assign sram_oen = ~sram_oe;
 	always @(posedge clk)
-		if (reset) sram_oen <= 1;
-		else if (startR2) sram_oen <= 0;
-		else if (last) sram_oen <= 1;
+		if (reset) sram_oe <= 0;
+		else if (startR2) sram_oe <= 1;
+		else if (last) sram_oe <= 0;
+	reg sram_ce;
+	assign sram_cen=~sram_ce;
 	always @(posedge clk)
-		if (reset) sram_cen <= 1;
-		else if (start2|startR2) sram_cen <= 0;
-		else if (last) sram_cen <= 1;
+		if (reset) sram_ce <= 0;
+		else if (start2|startR2) sram_ce <= 1;
+		else if (last) sram_ce <= 0;
 	reg read;
 	always @(posedge clk)
 		if (reset) read <= 0;
