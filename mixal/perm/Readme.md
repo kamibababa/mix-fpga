@@ -1,34 +1,6 @@
 ## Running program perm on MIX
 We will calculate the produkt of permutations according to TAOCP (p. 168) on MIX.
 
-### Remark for Users of early MIX productions (serial number <= 2)
-
-Dear Don, I'm sorry that the MIX delivered to you has a bug in the fpga design, which comes into play running perm.
-
-The good news: I fixed it.
-
-So to run perm you first have to update the firmware of your MIX. If you ran the traffic light example you probably already updated the firmware.
-
-Otherwise update firmware of your MIX now:
-
-* install iceprogduino (programmer tool)
-* Open the MIX case.
-* Connect the programmer (32u4) and the fpga board with the 10 pin ribbon wire.
-* power both units with USB
-* launch the following commands:
-
-```
-cd tools/iceprogduino
-make
-sudo make install
-cd build/rtl
-iceprogduino hardware.bin
-```
-
-In case you encounter errors due to permission. Run the commands with `sudo`
-
-P.S.: Tell me when you are done, so I can remove this from the Readme file.
-
 ### perm.mixal
 The mixal program can be found in `perm.mixal`:
 

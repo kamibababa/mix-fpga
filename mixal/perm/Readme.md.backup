@@ -27,7 +27,7 @@ iceprogduino hardware.bin
 
 In case you encounter errors due to permission. Run the commands with `sudo`
 
-P.S.: Tell me when you are done, so I can remove the
+P.S.: Tell me when you are done, so I can remove this from the Readme file.
 
 ### perm.mixal
 The mixal program can be found in `perm.mixal`:
