@@ -1,0 +1,329 @@
+## Running program coins on MIX
+We will run programm coins on MIX. Programm coins computes all ways to represent a given amount of money with coins.
+
+
+### coins.mixal
+The mixal program can be found in `coins.mixal`:
+
+Inpect the file with:
+```
+cat coins.mixal
+```
+
+```
+* Count the number of coin combinations
+
+TERM	EQU	19		Terminal uses 14 words or 70 char
+VAL	EQU	4:5		The value of a coin
+AMT	EQU	1:3		The current amount of those coins
+
+* Start of the program.
+	ORIG	1000
+PROG	OUT	PRMPT(TERM)
+* Get the value we want combos for
+        IN	INPT1(TERM)
+	LDA	INPT1		THE NUMBER IS PROBABLY IN THIS WORD
+	LDX	INPT2		WE LOAD 10 CHARS OF INPUT
+	JAP	1F		MAKE SURE THEY ENTERED SOMETHING
+	JXZ	PROG		MAYBE THEY HAD SPACES FIRST?
+1H	CMPX	PRMPT(5:5)	IS THE LAST CHAR A SPACE
+	JNE	3F		IF NOT THEN WE CAN MOVE ON
+	SRAX	1		IF IT IS, SHIFT RIGHT 1 SPOT AND
+	JMP	1B		LOOP BACK TO MAKE SURE
+3H	NUM
+	CMPA	MAX
+	JG	PROG
+	STZ	MAX
+	STA	WANTED
+
+* Get a current value of the coins we have
+CURRVAL	LD6	TYPES		How many kinds of coins
+	LDA	COINS,6(AMT)	Load current amount of first coin
+2H	DEC6	1		Move to next coin
+	ADD	COINS,6(AMT)	Add the amount of the next coin
+	J6NZ	2B		Keep going for all combos
+
+* If less than goal, add a coin
+        CMPA    WANTED		Compare the current value to wanted value
+	JGE	1F		If it's < wanted
+	LDA	COINS(AMT)	{
+	ADD	COINS(VAL)	  add another of the first coin
+	STA	COINS(AMT)        and go back to CURRVAL
+	JMP	CURRVAL		}
+1H	JG	3F		If it's = wanted
+
+* It was equal, print, and the fall through
+	LDX	MAX
+	INCX	1      	        We use this for counting the hits
+	LD6	TYPES		We iterate through the types
+	ENT5	0		This points to the word in PBUFF
+	STX	MAX
+	LDA	MAX
+	CHAR
+	STX	PBUF,5		Print the current number of hits
+1H	INC5	2		Move to the next column
+	ENTA	0
+	LDX	COINS,6(AMT)	Get the number of coins by dividing the amount
+	DIV	COINS,6(VAL)	by the value of 1 coin
+6H	CHAR
+	STX	PBUF,5(3:5)	Print the current amount
+	DEC6	1		Go to the next coin type
+	J6NN	1B		If we go negative, we're done with coins
+	OUT	PBUF(TERM)	Output the line to the console
+
+* Equal or Greater, find first non-zero spot, add one to the next
+* spot up, and then zero it out.
+3H	ENT5	0
+5H	LDA	COINS,5(AMT)	Load current coin value
+	INC5	1		Go to next type of coin
+	CMP5	TYPES		Compare to number of coin types
+	JG	DONE		If greater, we're out of coins
+	JAZ	5B		If current coin value is 0, go to next coin
+	LDA	COINS,5(AMT)	Load next coin up
+	ADD	COINS,5(VAL)	Add it's value to the amount
+	STA	COINS,5(AMT)	Save it
+	DEC5	1		Go back to previous type
+	STZ	COINS,5(AMT)	Zero it out
+	JMP	CURRVAL		Go back to the main loop
+DONE	HLT
+* Tables to keep the values and counts
+* The below can be used to test for 1000 (1:2), 100 (3:4), and 10 (5:5)
+MAX	CON	499	   	MAX AMOUNT OF CENTS BEFORE COUNTER RESETS IS 221
+WANTED	CON	62		THE COMBINATION WE WANT
+TYPES	CON	5		NUMBER OF TYPES - 1
+COINS	CON	1		PENNIES
+	CON	5		NICKLES
+	CON	10		DIMES
+	CON	25		QUARTERS
+	CON	50		HALF-DOLLARS
+	CON	100		DOLLARS
+PRMPT	ALF	"WHAT "
+	ALF	"AMOUN"
+	ALF	"T <IN"
+	ALF	" CENT"
+	ALF	"S> DO"
+	ALF	" YOU "
+	ALF	"WANT "
+	ALF	"MAX 2"
+	ALF	"20:  "
+	ORIG	PRMPT+14
+INPT1	CON	0
+INPT2	CON	0
+* This will be our printline
+	ORIG	PRMPT+28
+PBUF	CON	0		COUNT
+	ALF	"  DLR"
+	ALF	":    "
+	ALF	"  HLF"
+	ALF	":    "
+	ALF	"  QTR"
+	ALF	":    "
+	ALF	"  DMS"
+	ALF	":    "
+	ALF	" NCKL"
+	ALF	":    "
+	ALF	"  PNY"
+	ALF	":    "
+	END	PROG
+```
+
+### coind.mls
+First we translate the mixal programm to binary code. This is done with the GNU library `mixasm`. The option `-l` produces a list file `p.mls`
+
+```
+mixasm coins.mixal -l
+cat coins.mls
+```
+```
+*** coin-opt.mixal: Kompilerzusammenfassung ***
+
+-----------------------------------------------------------------
+Src     Address  Compiled word           Symbolic rep
+-----------------------------------------------------------------
+009     01000   + 16 42 00 19 37 	OUT	1066,0(2:3)
+011     01001   + 16 56 00 19 36 	IN	1080,0(2:3)
+012     01002   + 16 56 00 05 08 	LDA	1080,0
+013     01003   + 16 57 00 05 15 	LDX	1081,0
+014     01004   + 15 46 00 02 40 	JAP	1006,0
+015     01005   + 15 40 00 01 47 	JXZ	1000,0
+016     01006   + 16 42 00 45 63 	CMPX	1066,0(5:5)
+017     01007   + 15 50 00 08 39 	JNE	1010,0
+018     01008   + 00 01 00 03 06 	SRAX	1,0
+019     01009   + 15 46 00 00 39 	JMP	1006,0
+020     01010   + 00 00 00 00 05 	NUM	0,0
+021     01011   + 16 33 00 05 56 	CMPA	1057,0
+022     01012   + 15 40 00 06 39 	JG	1000,0
+023     01013   + 16 33 00 05 33 	STZ	1057,0
+024     01014   + 16 34 00 05 24 	STA	1058,0
+027     01015   + 16 35 00 05 14 	LD6	1059,0
+028     01016   + 16 36 06 11 08 	LDA	1060,6(1:3)
+029     01017   + 00 01 00 01 54 	DEC6	1,0
+030     01018   + 16 36 06 11 01 	ADD	1060,6(1:3)
+031     01019   + 15 57 00 04 46 	J6NZ	1017,0
+034     01020   + 16 34 00 05 56 	CMPA	1058,0
+035     01021   + 16 02 00 07 39 	JGE	1026,0
+036     01022   + 16 36 00 11 08 	LDA	1060,0(1:3)
+037     01023   + 16 36 00 37 01 	ADD	1060,0(4:5)
+038     01024   + 16 36 00 11 24 	STA	1060,0(1:3)
+039     01025   + 15 55 00 00 39 	JMP	1015,0
+040     01026   + 16 20 00 06 39 	JG	1044,0
+043     01027   + 16 33 00 05 15 	LDX	1057,0
+044     01028   + 00 01 00 00 55 	INCX	1,0
+045     01029   + 16 35 00 05 14 	LD6	1059,0
+046     01030   + 00 00 00 02 53 	ENT5	0,0
+047     01031   + 16 33 00 05 31 	STX	1057,0
+048     01032   + 16 33 00 05 08 	LDA	1057,0
+049     01033   + 00 00 00 01 05 	CHAR	0,0
+050     01034   + 17 06 05 05 31 	STX	1094,5
+051     01035   + 00 02 00 00 53 	INC5	2,0
+052     01036   + 00 00 00 02 48 	ENTA	0,0
+053     01037   + 16 36 06 11 15 	LDX	1060,6(1:3)
+054     01038   + 16 36 06 37 04 	DIV	1060,6(4:5)
+055     01039   + 00 00 00 01 05 	CHAR	0,0
+056     01040   + 17 06 05 29 31 	STX	1094,5(3:5)
+057     01041   + 00 01 00 01 54 	DEC6	1,0
+058     01042   + 16 11 00 03 46 	J6NN	1035,0
+059     01043   + 17 06 00 19 37 	OUT	1094,0(2:3)
+063     01044   + 00 00 00 02 53 	ENT5	0,0
+064     01045   + 16 36 05 11 08 	LDA	1060,5(1:3)
+065     01046   + 00 01 00 00 53 	INC5	1,0
+066     01047   + 16 35 00 05 61 	CMP5	1059,0
+067     01048   + 16 32 00 06 39 	JG	1056,0
+068     01049   + 16 21 00 01 40 	JAZ	1045,0
+069     01050   + 16 36 05 11 08 	LDA	1060,5(1:3)
+070     01051   + 16 36 05 37 01 	ADD	1060,5(4:5)
+071     01052   + 16 36 05 11 24 	STA	1060,5(1:3)
+072     01053   + 00 01 00 01 53 	DEC5	1,0
+073     01054   + 16 36 05 11 33 	STZ	1060,5(1:3)
+074     01055   + 15 55 00 00 39 	JMP	1015,0
+075     01056   + 00 00 00 02 05 	HLT	0,0
+078     01057   + 00 00 00 07 51 	CON	0499
+079     01058   + 00 00 00 00 62 	CON	0062
+080     01059   + 00 00 00 00 05 	CON	0005
+081     01060   + 00 00 00 00 01 	CON	0001
+082     01061   + 00 00 00 00 05 	CON	0005
+083     01062   + 00 00 00 00 10 	CON	0010
+084     01063   + 00 00 00 00 25 	CON	0025
+085     01064   + 00 00 00 00 50 	CON	0050
+086     01065   + 00 00 00 01 36 	CON	0100
+087     01066   + 26 08 01 23 00 	ALF	"WHAT "
+088     01067   + 01 14 16 24 15 	ALF	"AMOUN"
+089     01068   + 23 00 50 09 15 	ALF	"T <IN"
+090     01069   + 00 03 05 15 23 	ALF	" CENT"
+091     01070   + 22 51 00 04 16 	ALF	"S> DO"
+092     01071   + 00 28 16 24 00 	ALF	" YOU "
+093     01072   + 26 01 15 23 00 	ALF	"WANT "
+094     01073   + 14 01 27 00 32 	ALF	"MAX 2"
+095     01074   + 32 30 54 00 00 	ALF	"20:  "
+097     01080   + 00 00 00 00 00 	CON	0000
+098     01081   + 00 00 00 00 00 	CON	0000
+101     01094   + 00 00 00 00 00 	CON	0000
+102     01095   + 00 00 04 13 19 	ALF	"  DLR"
+103     01096   + 54 00 00 00 00 	ALF	":    "
+104     01097   + 00 00 08 13 06 	ALF	"  HLF"
+105     01098   + 54 00 00 00 00 	ALF	":    "
+106     01099   + 00 00 18 23 19 	ALF	"  QTR"
+107     01100   + 54 00 00 00 00 	ALF	":    "
+108     01101   + 00 00 04 14 22 	ALF	"  DMS"
+109     01102   + 54 00 00 00 00 	ALF	":    "
+110     01103   + 00 15 03 12 13 	ALF	" NCKL"
+111     01104   + 54 00 00 00 00 	ALF	":    "
+112     01105   + 00 00 17 15 28 	ALF	"  PNY"
+113     01106   + 54 00 00 00 00 	ALF	":    "
+-----------------------------------------------------------------
+
+*** Startadresse:	1000
+*** Endadresse:	1107
+
+*** Symboltabelle
+TYPES               :  1059
+PBUF                :  1094
+DONE                :  1056
+CURRVAL             :  1015
+VAL                 :  37
+INPT1               :  1080
+WANTED              :  1058
+TERM                :  19
+COINS               :  1060
+MAX                 :  1057
+AMT                 :  11
+PROG                :  1000
+PRMPT               :  1066
+INPT2               :  1081
+
+*** Ende der Zusammenfassung ***
+```
+
+### coins.card
+
+Next we must write the binary code onto punchcards. This can be done with the python script `tools/mls2card.py`.
+
+```
+../../tools/mls2card.py < conins.mls > coins.card
+```
+
+The python scripts reads the listing file `coins.mls`, extracts the code and writes it in the file `coins.card`.
+
+Inspect the punchcards
+
+```
+cat coins.card
+```
+Every line holds 80 chars of a card. The first to cards contain the bootloader discussed in exercise 26 in chapter 1.3.1 of TAOCP (see p. 510). The last cards is the so called transfer card, which tells the bootloader to start execution at memory location 1000.
+
+```
+ O O6 Z O6    I C O4 0 EH A  F F CF 0  E   EU 0 IH G BB   EJ  CA. Z EU   EH E BA
+   EU 2A-H S BB  C U 1AEH 2AEN V  E  ABG  CLU Z EH E BB J B. A  9               
+00002710000279446757028311677202831158480283377999026371703202621441110279448447
+00003710070264765991000026234202637169030000000005027708658402621444230277086561
+00004710140277348696027761083002778979280000262262027789792102666007500277348728
+00005710210268960231027787335202778750090277873368026607619902736787590277086543
+00006710280000262199027761083000000001810277086559027708653600000000690286806367
+00007710350000524341000000017602778979350277899588000000006902868079030000262262
+00008710420271319278028678678900000001810277893832000026219702776108770276824487
+00009710490273940584027789383202778954890277893848000026226102778938570266076199
+00010710560000000133000000049900000000620000000005000000000100000000050000000010
+00011710630000000025000000005000000001000438310336002051431903860813590000807895
+00012510700382468368000740710404365326720235253792054495641600000000000000000000
+00013210800000000000000000000000000000000000000000000000000000000000000000000000
+00014710940000000000000001723509059696640000033606090596966400000752190905969664
+00000611010000017302090596966400039452290905969664000007062009059696640000000000
+TRANS010000000000000000000000000000000000000000000000000000000000000000000000000
+```
+
+### go
+Power MIX with USB cable connected to your computer.
+
+Start a screen session with 115200 baud (8N1)
+```
+screen /dev/ttyUSB0 115200
+```
+
+Press the "Go button" on MIX
+
+You should see the welcome message on your terminal:
+
+```
+WELCOME TO MIX. 1U = 30NS. U19 @115200 BAUD (8N1).                    
+```
+
+### input the cards to U16
+You can send the punch cards to MIX within the screen terminal session.
+
+1. Read cards into a screen-buffer (called p) 
+	```
+	<in screen terminal> Ctr-a : readreg c coins.card <enter>
+	```
+
+2. Send buffer to MIX
+	```
+	<in screen terminal> Ctrl-a : paste c <enter>
+	```
+
+After a few nanoseconds MIX spits out the following table to U19:
+
+```
+
+```
+#### Congratulation
+You have run your first program on a "real" MIX.
