@@ -111,7 +111,7 @@ READ                :  1
 Next we must convert the binary code to the char codes of MIX. This can be done with the python script `tools/mls2char.py`.
 
 ```
-../../tools/mls2char.py < boot.mls > boot.char
+../../tools/mls2char.py  boot.mls
 ```
 
 The python scripts reads the listing file `boot.mls`, extracts the code and writes it in the file `boot.char`.
@@ -124,6 +124,7 @@ Inspect the punchcards
 cat boot.char
 ```
 The output contain the bootloader expressed as characters. These characters are stored in location starting at memory address 0 immediately after pressing the Go button. They have to be preponed to every upload of programms. We will store the chars in the script `mls2card.py` so that the script will automatically generate the bootloader as first two punchcards.
+
 ```
  O O6 Z O6    I C O4 0 EH A  F F CF 0  E   EU 0 IH G BB   EJ  CA. Z EU   EH E BA   EU 2A-H S BB  C U 1AEH 2AEN V  E  ABG  CLU Z EH E BB J B. A  9
 ```

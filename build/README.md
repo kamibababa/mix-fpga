@@ -10,6 +10,11 @@ Consider to buy at Olimex Ltd. https://www.olimex.com, the company with the high
 
 	```
 	pip install -U apio
+	apio install ice40
+	apio install scons
+	apio install iverilog
+	apio install yosys
+	sudo apt install gtkwave
 	```
 7.  install assembler and simulator for MIX.
 	```

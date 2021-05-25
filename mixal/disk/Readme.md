@@ -74,7 +74,7 @@ WRITE               :  1001
 Next we must write the binary code onto punchcards. This can be done with the python script `tools/mls2card.py`.
 
 ```
-../../tools/mls2card.py < w.mls > w.card
+../../tools/mls2card.py w.mls
 ```
 
 The python scripts reads the listing file `w.mls`, extracts the code and writes it in the file `w.card`.

@@ -14,9 +14,10 @@ Finally you can connect to MIX with USB using a terminal emulator (screen)
 screen /dev/ttyUSB0 115200
 ```
 Within  a screen session you can upload the mixal programs written on punch cards:
+
 ```
-ctr-a : readreg p p.card
-ctrl-a : paste p
+<ctr-a> : readreg p p.card
+<ctrl-a> : paste p
 ```
 
 

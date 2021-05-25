@@ -15,7 +15,8 @@ screen /dev/ttyUSB0 115200
 ```
 Within  a screen session you can upload the mixal programs written on punch cards:
 ```
-ctr-a : 
+ctr-a : readreg p p.card
+ctrl-a : paste p
 ```
 
 

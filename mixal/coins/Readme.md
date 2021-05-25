@@ -259,7 +259,7 @@ INPT2               :  1081
 Next we must write the binary code onto punchcards. This can be done with the python script `tools/mls2card.py`.
 
 ```
-../../tools/mls2card.py < conins.mls > coins.card
+../../tools/mls2card.py coins.mls
 ```
 
 The python scripts reads the listing file `coins.mls`, extracts the code and writes it in the file `coins.card`.

@@ -90,7 +90,7 @@ TITLE               :  4001
 Next we must translate the binary code into a binary format readable by the fpga toolchain. This can be done with the python script `tools/mls2bin.py`.
 
 ```
-../../tools/mls2bin.py < go.mls > go.bin
+../../tools/mls2bin.py go.mls
 ```
 
 The python scripts reads the listing file `go.mls`, extracts the code and writes it in the file `go.bin`.
@@ -101,6 +101,7 @@ Inspect the binary file `go.bin`
 cat go.bin
 ```
 The output contain the program code expressed as binary numbers. These binary numbers can be flashed to the iCE40HX8K-EVB board, so it's stored permanently in the MIX computer. At every reset (press Go button) the code will be executed. The first 4000 zero lines translate to NOP instructions. At the end you find the sequence IN(16),JBUS,JMP...
+
 ```
 0000000000000000000000000000000
 0000000000000000000000000000000

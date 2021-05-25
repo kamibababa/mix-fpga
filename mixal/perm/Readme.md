@@ -228,7 +228,7 @@ OPEN                :  2458
 Next we must write the binary code onto punched cards. This can be done with the python script `tools/mls2card.py`.
 
 ```
-../../tools/mls2card.py < perm.mls > perm.card
+../../tools/mls2card.py perm.mls
 ```
 
 The python scripts reads the listing file `perm.mls`, extracts the code and writes it in the file `perm.card`.

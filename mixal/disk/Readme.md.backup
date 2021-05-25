@@ -269,5 +269,8 @@ Then check with diff the integrity. Option -w ommites the whitespaces is good be
 ```
 diff -w mem.out rand.card
 ```
-
-
+will output
+```
+1d0
+< WELCOME TO MIX. 1U = 40NS. U16-U20 UART @115200 BAUD. U8 1000 BLOCKS  
+```

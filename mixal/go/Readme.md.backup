@@ -90,7 +90,7 @@ TITLE               :  4001
 Next we must translate the binary code into a binary format readable by the fpga toolchain. This can be done with the python script `tools/mls2bin.py`.
 
 ```
-../../tools/mls2bin.py < go.mls > go.bin
+../../tools/mls2bin.py go.mls
 ```
 
 The python scripts reads the listing file `go.mls`, extracts the code and writes it in the file `go.bin`.
@@ -114,7 +114,7 @@ The output contain the program code expressed as binary numbers. These binary nu
 0111111111110000000010000100010
 0000000000000000000000000100111
 ```
-### flash to iCE40HX8K-EVB
+### rebuild and flash to iCE40HX8K-EVB
 
 * Copy the binary file into the directory `rtl`, where the fpga description files are.
 
@@ -129,5 +129,5 @@ The output contain the program code expressed as binary numbers. These binary nu
 	apio upload
 	```
 	
-	Tipp: chan
+	Tipp: change the welcome message to ensure the new rom file has been uploaded.
 	
