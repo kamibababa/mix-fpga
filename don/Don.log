@@ -1,0 +1,201 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.7.9)  10 MAY 2021 14:18
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**Don.tex
+(./Don.tex
+LaTeX2e <2018-12-01>
+(/usr/share/texlive/texmf-dist/tex/latex/g-brief/g-brief2.cls
+Document Class: g-brief2 2008/07/15 v4.0.2 g-brief2 class
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\VorschubH=\dimen102
+\VorschubV=\dimen103
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/letter.cls
+Document Class: letter 2014/09/29 v1.2z Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
+)
+\longindentation=\dimen104
+\indentedwidth=\dimen105
+\labelcount=\count80
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2018/11/13 3.27 The Babel package
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/switch.def
+File: switch.def 2018/11/13 3.27 Babel switching mechanism
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel-german/ngerman.ldf
+Language: ngerman 2018/12/08 v2.11 German support for babel (post-1996 orthogra
+phy)
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel-german/ngermanb.ldf
+Language: ngermanb 2018/12/08 v2.11 German support for babel (post-1996 orthogr
+aphy)
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2018/11/13 3.27 Babel common definitions
+\babel@savecnt=\count81
+\U@D=\dimen106
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@dirlevel=\count82
+)
+Package babel Info: Making " an active character on input line 121.
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/marvosym/marvosym.sty
+Package: marvosym 2011/07/20 v2.2 Martin Vogel's Symbols font definitions
+)
+(/usr/share/texlive/texmf-dist/tex/latex/eurosym/eurosym.sty
+Package: eurosym 1998/08/06 v1.1 European currency symbol ``Euro''
+\@eurobox=\box27
+))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2018/08/11 v2.0j Standard LaTeX package
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2018/08/11 v2.0j Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/latin9.def
+File: latin9.def 2018/08/11 v1.3c Input encoding file
+)) (./Don.aux)
+\openout1 = `Don.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+
+
+! LaTeX Error: Environment figure undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.87 \begin{figure}
+                   
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+l.89 	\includegraphics
+                      [width=0.7\linewidth]{../poster}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   ]
+l.89 	\includegraphics[width=0.7\linewidth]
+                                           {../poster}
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   ]
+l.89 	\includegraphics[width=0.7\linewidth]
+                                           {../poster}
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+
+! LaTeX Error: \caption outside float.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.90 	\caption
+              {}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: \begin{g-brief} on input line 84 ended by \end{figure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.92 \end{figure}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 99.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 99.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 99.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 99.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 99.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+
+ []
+
+\c@blockzahl=\count83
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+
+] (./Don.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 1583 strings out of 494412
+ 18120 string characters out of 6172416
+ 83026 words of memory out of 5000000
+ 5294 multiletter control sequences out of 15000+600000
+ 14636 words of font info for 34 fonts, out of 8000000 for 9000
+ 59 hyphenation exceptions out of 8191
+ 32i,10n,26p,339b,346s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf/fonts/t
+ype1/public/cm-super/sfbx0800.pfb></usr/share/texmf/fonts/type1/public/cm-super
+/sfbx1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfcc1000.pfb></usr/
+share/texmf/fonts/type1/public/cm-super/sfcc1728.pfb></usr/share/texmf/fonts/ty
+pe1/public/cm-super/sfrm0700.pfb></usr/share/texmf/fonts/type1/public/cm-super/
+sfrm0800.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/s
+hare/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/typ
+e1/public/cm-super/sfrm1440.pfb>
+Output written on Don.pdf (1 page, 128204 bytes).
+PDF statistics:
+ 49 PDF objects out of 1000 (max. 8388607)
+ 35 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+

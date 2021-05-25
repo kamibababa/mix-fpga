@@ -7,6 +7,7 @@ AMT	EQU	1:3		The current amount of those coins
 * Start of the program.
 	ORIG	1000
 PROG	OUT	PRMPT(TERM)
+	JBUS	*(TERM)
 * Get the value we want combos for
         IN	INPT1(TERM)
 	LDA	INPT1		THE NUMBER IS PROBABLY IN THIS WORD

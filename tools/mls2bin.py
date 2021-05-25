@@ -1,8 +1,15 @@
 #!/usr/bin/python3
 import sys
 
+if (len(sys.argv)) != 2:
+    print("usage: {:s} <filename>".format(sys.argv[0]))
+    sys.exit(0)
+else:
+    fin = open(sys.argv[1],"r")
+    fout = open(sys.argv[1].split(".")[0]+".bin","w")
+
 l=0
-for line in sys.stdin:
+for line in fin:
     line2 = line.strip()
     line = line2.split()
     if (len(line)>6) and (line[0].isnumeric()):
@@ -28,8 +35,8 @@ for line in sys.stdin:
                                         
                                         while(l<m):
                                             l=l+1
-                                            print('0000000000000000000000000000000')
-                                        print(format(code,'031b'))
+                                            print('0000000000000000000000000000000',file=fout)
+                                        print(format(code,'031b'),file=fout)
                                         l=l+1
     #else:
         #print("//"+line2)

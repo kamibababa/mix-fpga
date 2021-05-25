@@ -82,8 +82,11 @@ The MIX computer is composed of two little boards.
 \subsubsection{clock}
 MIX runs on iCE40HX8K-EVB clocked at \SI{25}{MHz}. The fundamental unit of time $u$ corresponds to $1u = \SI{40}{ns}$, so according to Knuth it's a relatively high priced machine.
 
-\subsubsection{I/O units}
+\subsubsection{character based I/O units}
 In our MIX implementation all character based I/O units (U16 -- U20) are connected to the USB-connector and can be accessed as serial data streams. You can connect MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
+
+\subsubsection{The block based I/O unit U8}
+A block based device is implemented on I/O unit 8. The device acts as a disk with 1000 blocks à 100 words. The data is stored in the SRAM chip found on the iCE40HX8K-EVB board. The speed of read and write operations is exactly 401 $u$ for reading or writing one complete block of data (no JBUS is needed). The data stored to unit U8 can be retrieved also after a reset (Go-Button). But on a full shutdown, when removing power supply (USB connector) data is lost.
 
 \begin{figure}[H]
 	\centering
@@ -96,7 +99,7 @@ In our MIX implementation all character based I/O units (U16 -- U20) are connect
 
 
 
-\subsubsection{commands}
+\subsubsection{MIX commands}
 All commands exept the floating point arithmetic are implemented with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the \textit{sofisticated} commands \lstinline|SRC| and \lstinline|SLC|, which need a fancy modulo 10 computation are executed in the defined timing of two cycles. The system can (easily) be extended in various ways:
 
 \begin{enumerate}
@@ -125,7 +128,7 @@ MIX comes in a nice case with formfactor of a slice of toast ($\SI{10}{cm} \time
 To run mixal programs on your MIX you need a few things:
 \begin{itemize}
 	\item \lstinline|mixasm|: Assembler provided in the package mdk
-	\item \lstinline|python|: Some tools are written in python
+	\item \lstinline|python3|: Tools to translate mixal code to the various formats are written in python
 	\item \lstinline|gitlab.com/x653/mix-fpga|: The authors repository of this project
 	\item \lstinline|screen|: a terminal emulator to connect to MIX
 \end{itemize}
@@ -134,8 +137,8 @@ Open a terminal and install the required packages:
 
 \begin{lstlisting}[numbers=none,frame=none]
 sudo apt install mdk
-sudo apt install python
-sudo apt install python-pip
+sudo apt install python3
+sudo apt install screen
 git clone https://gitlab.com/x653/mix-fpga
 \end{lstlisting}
 
@@ -163,7 +166,15 @@ Finally you can connect your PC to MIX with a USB cable and start the  terminal 
 \begin{lstlisting}[numbers=none,frame=none]
 screen /dev/ttyUSB0 115200
 \end{lstlisting}
-Press the \textit{go button} to start MIX. Within  the screen session you can upload the mixal programs written on punch cards:
+Press the \textit{go button} to start MIX. You should see the MIX welcome message:
+
+\begin{lstlisting}
+WELCOME TO MIX. 1U = 40NS. U16-U20 TO UART @115200 BAUD (8N1).        
+\end{lstlisting}
+
+If \lstinline|screen| does not open the terminal try with \lstinline|sudo screen|. This might happen, when the user is not allowed to acces the device \lstinline|/dev/ttyUSB0|. Check the user setting of \lstinline|/dev/ttyUSB0| and add the user to the linux group \lstinline|sudo usermod -a -G $USER dialout|.
+
+Within  the screen session you can upload the mixal programs written on punch cards:
 \begin{lstlisting}[language=bash,numbers=none,frame=none]
 <ctr-a> : readreg p p.card
 <ctrl-a> : paste p
@@ -178,6 +189,9 @@ The following programms in the folder \lstinline|mix-fpga/mixal| have been verif
 	\item  \lstinline|t|: control traffic signals
 	\item  \lstinline|go|: the go button
 	\item \lstinline|boot|: the bootloader
+	\item \lstinline|coins|: calculate possible change
+	\item \lstinline|perm|: calculate the product of permutations
+	\item \lstinline|disk|: test the disk unit U8
 \end{itemize}
 
 \section{Example program p}
@@ -214,7 +228,7 @@ In this case edit the python script \lstinline|mls2card.py| and adjust to the ap
 
 
 \begin{lstlisting}[numbers=none,frame=none]
-../../tools/mls2card.py < p.mls > p.card
+../../tools/mls2card.py p.mls
 cat p.card
 \end{lstlisting}
 
@@ -265,9 +279,12 @@ In this section we will show how to build a MIX based on the fpga board iCE40HX8
 Consider to buy at Olimex Ltd. \footnote{\href{www.olimex.com}{www.olimex.com}}, the company with the highest number of registered OSHW-projects. Install the tools with:
 
 \begin{lstlisting}[numbers=none,frame=none]
-sudo apt install mdk
 sudo pip install -U apio
-apio install -a
+apio install -ice40
+apio install -iverilog
+apio install -scons
+apio install -yosys
+sudo apt install gtkwave
 cd tools/iceprogduino
 make
 sudo make install
@@ -276,6 +293,14 @@ sudo make install
 \subsection{build and flash the fpga design}
 
 Cd into the directory \lstinline|build/rtl| and build the project. Connect the fpga board with olimexino-32u4 programmer to upload the bitstream file. Use two USB cables to power both boards.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{../MIX_flash.jpg}
+	\caption{Connect programmer Olimexino-32u4 with fpga board iCE40HX8K-EVB}
+	\label{fig:flash}
+\end{figure}
+
 
 \begin{lstlisting}[numbers=none,frame=none]
 cd build/rtl
@@ -328,7 +353,7 @@ First we compile the mixal programm to binary code with \lstinline|mixasm|. Then
 
 \begin{lstlisting}[numbers=none,frame=none]
 mixasm go.mixal -l
-../../tools/mls2bin.py < go.mls > go.bin
+../../tools/mls2bin.py go.mls
 cat go.bin
 \end{lstlisting}
 
@@ -353,7 +378,7 @@ The output contain the program code expressed as binary numbers. These binary nu
 \subsection{rebuild and flash to iCE40HX8K-EVB}
 
 \begin{itemize}
-	\item Copy the binary file into the directory \lstinline|rtl|, where the fpga description files are.
+	\item Copy the binary file \lstinline|go.bin| into the directory \lstinline|rtl|, where the fpga description files are.
 	\item Rebuild the fpga project and upload. An \lstinline|apio clean| is needed, because otherwise the preloaded memory will not be updated.	
 \end{itemize}
 

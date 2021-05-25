@@ -14,8 +14,6 @@ WELCOME   ALF     "WELCO"
           ALF     "8 100"
           ALF     "0 BLO"
           ALF     "CKS. "
-          ALF     "TRAFF"
-          ALF     "IC.  "
           ORIG    4091
 START     OUT     WELCOME(17)
           JBUS    *(17)

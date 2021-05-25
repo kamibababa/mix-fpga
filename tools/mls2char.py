@@ -1,5 +1,13 @@
 #!/usr/bin/python3
 import sys
+
+if (len(sys.argv)) != 2:
+    print("usage: {:s} <filename>".format(sys.argv[0]))
+    sys.exit(0)
+else:
+    fin = open(sys.argv[1],"r")
+    fout = open(sys.argv[1].split(".")[0]+".char","w")
+
 def charcode(a):
     if (a==0):
         return ' '
@@ -35,9 +43,7 @@ def charcode(a):
         return '/'
     return '#'
 
-
-
-for line in sys.stdin:
+for line in fin:
     line2 = line.strip()
     line = line2.split()
     if (len(line)>6) and (line[0].isnumeric()):
@@ -57,4 +63,4 @@ for line in sys.stdin:
                                     b4=int(line[6])
                                     if (line[7].isnumeric()):
                                         b5=int(line[7])
-                                        print(charcode(b1)+charcode(b2)+charcode(b3)+charcode(b4)+charcode(b5),end='')
+                                        print(charcode(b1)+charcode(b2)+charcode(b3)+charcode(b4)+charcode(b5),file=fout,end='')

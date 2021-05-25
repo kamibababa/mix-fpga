@@ -4,7 +4,7 @@ Have you ever heard of Don Knuths (hypothetical) first polyunsaturated computer 
 
 The presented implementation is based on the fpga development board iCE40HX8K-EVB from the company Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hard- and software, so everybody can build their own MIX following the instructions in `build`
 
-![](pics/MIX_toast.jpg)
+![](pics/MIX_real.jpg)
 
 
 ## inside
@@ -20,12 +20,20 @@ The MIX computer is composed of two little boards.
 ### clock
 MIX runs on iCE40HX8K-EVB clocked at 25MHz. The basic unit of time 1u corresponds to 40ns, so according to Knuth it's a relatively high priced machine.
 
-### I/O units
-In our MIX implementation all character based I/O units (U16-U20) are connected to the USB-connector and can be accessed as UART streams. You can connect MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
+
+### Character based I/O units
+In our MIX implementation all character based I/O units (U16 -- U20) are connected to the USB-connector and can be accessed as serial data streams. You can connect MIX with any PC running a terminal emulator (e.g. screen for linux). The terminal should be set to 115200 baud (8N1). A conversion between ASCII and Knuths character codes is done in hardware according to Knuths specification (see TAOCP p. 128).
+
 ![](pics/MIX_usb.jpg)
 
+
+### The block based I/O unit U8
+A block based device is implemented on I/O unit 8. The device acts as a disk with 1000 blocks à 100 words. The data is stored in the SRAM chip found on the iCE40HX8K-EVB board. The speed of read and write operations is exactly 401 $u$ for reading or writing one complete block of data (no JBUS is needed). The data stored to unit U8 can be retrieved also after a reset (Go-Button). But on a full shutdown, when removing power supply (USB connector) data is lost.
+
+
 ### commands
-All commands exept the floating point arithmetic are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can ()easily) be extended in various ways:
+All commands exept the floating point arithmetic are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can (easily) be extended in various ways:
+
 1. add more commands:
 	* easy: logic operators (AND,OR,XOR,NOT)
 	* not so easy: Floating point arithmetic
@@ -33,32 +41,12 @@ All commands exept the floating point arithmetic are implemented (s. list) with 
 	* easy: add leds to run the traffic light example
 	* not so easy: add more I/O units
 
-| OP  | Menmonic | Remarks |
-| -   | -   | -  |
-| 0   | NOP | ok |
-| 1   | ADD | ok | 
-| 2   | SUB | ok | 
-| 3   | MUL | ok | 
-| 4   | DIV | ok | 
-| 5(0)   | NUM | ok | 
-| 5(1)   | CHAR | ok | 
-| 5(2)  | HLT | ok | 
-| 6   | SHIFT | ok | 
-| 7   | MOVE | ok | 
-| 8 - 23   | LD(N) | ok | 
-| 24 - 33  | ST | ok | 
-| 34 -38   | JBUS,IOC,IN,OUT,JRED | ok (USB-UART) | 
-| 39 - 47   | JMP | ok | 
-| 48 - 55   | INC,DEC,ENT,ENN | ok | 
-| 56 - 63  | CMP | ok | 
-
 ### the GO button
 MIX comes with the "GO button" attached to USB-UART. So after pressing the GO button MIX-programms can be uploaded by sending the "punched cards" to USB-UART.
 
 ### toast
 MIX comes in a nice case with formfactor of a slice of toast, so your complete MIX computer system will easily fit into your lunch box. The case can be printed with a 3D printer. Design files can be found in the directory `build/toast`.
 
-![](pics/MIX_top.jpg)
 ![](pics/MIX_gpio.jpg)
 
 ## mixal
@@ -120,65 +108,7 @@ FIRST FIVE HUNDRED PRIMES
      0227 0523 0859 1217 1579 1979 2351 2731 3169 3559                    
      0229 0541 0863 1223 1583 1987 2357 2741 3181 3571  
 ```
-	
-### program e
-compute easter dates from 1950-2000
-```
-	WELCOME TO MIX. 1U = 40NS. U19 @115200 BAUD (8N1).                    
-	 09   APRIL,    01950                                             
-	 25   MARCH,    01951                                             
-	 13   APRIL,    01952                                             
-	 05   APRIL,    01953                                             
-	 18   APRIL,    01954                                             
-	 10   APRIL,    01955                                             
-	 01   APRIL,    01956                                             
-	 21   APRIL,    01957                                             
-	 06   APRIL,    01958                                             
-	 29   MARCH,    01959                                             
-	 17   APRIL,    01960                                             
-	 02   APRIL,    01961                                             
-	 22   APRIL,    01962                                             
-	 14   APRIL,    01963                                             
-	 29   MARCH,    01964                                             
-	 18   APRIL,    01965                                             
-	 10   APRIL,    01966                                             
-	 26   MARCH,    01967                                             
-	 14   APRIL,    01968                                             
-	 06   APRIL,    01969                                             
-	 29   MARCH,    01970                                             
-	 11   APRIL,    01971                                             
-	 02   APRIL,    01972                                             
-	 22   APRIL,    01973                                             
-	 14   APRIL,    01974                                             
-	 30   MARCH,    01975                                             
-	 18   APRIL,    01976                                             
-	 10   APRIL,    01977                                             
-	 26   MARCH,    01978                                             
-	 15   APRIL,    01979                                             
-	 06   APRIL,    01980                                             
-	 19   APRIL,    01981                                             
-	 11   APRIL,    01982                                             
-	 03   APRIL,    01983                                             
-	 22   APRIL,    01984                                             
-	 07   APRIL,    01985                                             
-	 30   MARCH,    01986                                             
-	 19   APRIL,    01987                                             
-	 03   APRIL,    01988                                             
-	 26   MARCH,    01989                                             
-	 15   APRIL,    01990                                             
-	 31   MARCH,    01991                                             
-	 19   APRIL,    01992                                             
-	 11   APRIL,    01993                                             
-	 03   APRIL,    01994                                             
-	 16   APRIL,    01995                                             
-	 07   APRIL,    01996                                             
-	 30   MARCH,    01997                                             
-	 12   APRIL,    01998                                             
-	 04   APRIL,    01999                                             
-	 23   APRIL,    02000                                             
-```
-		
-
+			
 ### program t
 MIX can control the traffic signal of the corner del Mar Avenue/Berkeley Avenue. MIX is NOT a simulatin/emulation. It's real hardware. So you can drive the LEDs with the output of RegisterX. Input is done with a push button, which directly connects to the overflow toggle.
 
@@ -186,5 +116,14 @@ MIX can control the traffic signal of the corner del Mar Avenue/Berkeley Avenue.
 
 ## need help?
 In case you find encounter an issue with MIX`:
+
 * don't panic
-* send me an email to mi.schroeder@netcologne.de
+* send an email to mi.schroeder@netcologne.de
+
+
+## related links
+
+* [The Art of Computer Programming](https://www-cs-faculty.stanford.edu/~knuth/taocp.html): Donald Knuth's homepage
+
+* [The Art of FPGAs: MIX-FPGA](https://www.hackster.io/news/the-art-of-fpgas-mix-fpga-edc1a7e47939): Article of Whitney Knitter on hackster.io
+* [hackaday.io/x653](https://hackaday.io/x653): Author on hackaday.io
