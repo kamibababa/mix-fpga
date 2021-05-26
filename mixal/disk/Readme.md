@@ -105,6 +105,7 @@ cat w.card rand.card > wr.card
 Power MIX with USB cable connected to your computer.
 
 Start a screen session with 115200 baud (8N1)
+
 ```
 screen /dev/ttyUSB0 115200
 ```
@@ -121,14 +122,16 @@ WELCOME TO MIX. 1U = 30NS. U19 @115200 BAUD (8N1).
 You can send the punch cards to MIX within the screen terminal session.
 
 1. Read cards into a screen-buffer (called p) 
-	```
-	<in screen terminal> Ctr-a : readreg w wr.card <enter>
-	```
+
+```
+<in screen terminal> Ctr-a : readreg w wr.card <enter>
+```
 
 2. Send buffer to MIX
-	```
-	<in screen terminal> Ctrl-a : paste w <enter>
-	```
+	
+```
+<in screen terminal> Ctrl-a : paste w <enter>
+```
 
 This will take a while!
 
@@ -209,7 +212,7 @@ READ                :  1001
 Next we must write the binary code onto punchcards. This can be done with the python script `tools/mls2card.py`.
 
 ```
-../../tools/mls2card.py < r.mls > r.card
+../../tools/mls2card.py r.mls
 ```
 
 The python scripts reads the listing file `w.mls`, extracts the code and writes it in the file `r.card`.
@@ -247,14 +250,16 @@ WELCOME TO MIX. 1U = 30NS. U19 @115200 BAUD (8N1).
 You can send the punch cards to MIX within the screen terminal session.
 
 1. Read cards into a screen-buffer (called r) 
-	```
-	<in screen terminal> Ctr-a : readreg r r.card <enter>
-	```
+
+```
+<in screen terminal> Ctr-a : readreg r r.card <enter>
+```
 
 2. Send buffer to MIX
-	```
-	<in screen terminal> Ctrl-a : paste r <enter>
-	```
+	
+```
+<in screen terminal> Ctrl-a : paste r <enter>
+```
 
 This will take a while! But you should see the retreived random punched cards.
 
