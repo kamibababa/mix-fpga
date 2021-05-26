@@ -129,4 +129,3 @@ In case you find encounter an issue with MIX`:
 * [The Art of Computer Programming](https://www-cs-faculty.stanford.edu/~knuth/taocp.html): Donald Knuth's homepage
 
 * [The Art of FPGAs: MIX-FPGA](https://www.hackster.io/news/the-art-of-fpgas-mix-fpga-edc1a7e47939): Article of Whitney Knitter on hackster.io
-* [hackaday.io/x653](https://hackaday.io/x653): Author on hackaday.io
