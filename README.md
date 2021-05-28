@@ -39,10 +39,39 @@ All commands exept the floating point arithmetic are implemented (s. list) with 
 
 1. add more commands:
 	* easy: logic operators (AND,OR,XOR,NOT)
-	* not so easy: Floating point arithmetic
+	* not so easy: Floating point arithmetic   
+	**work in progress:** FMUL done with timing and rounding! according to Knuth (TOACP Vol. 2)
 2. add more hardware:
-	* easy: add leds to run the traffic light example
-	* not so easy: add more I/O units
+	* easy: add leds to run the traffic light example (done)
+	* not so easy: add block I/O unit (done)
+
+| Command      | Timing | Remark         |
+| -------------|:------:|:---------------|
+| NOP          | 1u     |                |
+| ADD          | 2u     |                |
+| FADD         | ?      | todo         |
+| SUB          | 2u     |                |
+| FSUB         | ?      | todo         |
+| MUL          | 10u    |                |
+| FMUL(6)      | 9u     | done!           |
+| DIV          | 12u    |                |
+| FMUL(6)      | 11u    | todo |
+| MUL          | 10u    |                |
+| NUM,CHAR     | 10u    |                |
+| HLT          | ?      |                |
+| SLA,SRA,SLAX,SRAX,SLC,SRC| 2u     |    |
+| HLT          | ?      |                |
+| MOVE         | (1+2F)u   |                |
+| LD(N)        | 2u   |                |
+| ST,STJ,STZ   | 2u   |                |
+| JBUS,JRED    | 1u   |                |
+| IOC,IN,OUT   | (1+T)u| U16-U20: USB-serial, U8: SRAM               |
+| JMP          | 1u   |                |
+| INC,DEC,ENT,ENN          | 1u   |                | 
+| CMP          | 2u   |                |
+| FCMP         | ?    | todo               |
+
+
 
 ### the GO button
 MIX comes with the "GO button" attached to USB-UART. So after pressing the GO button MIX-programms can be uploaded by sending the "punched cards" to USB-UART.

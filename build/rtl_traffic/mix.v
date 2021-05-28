@@ -70,7 +70,7 @@ module mix(
 	wire fetch;	// fetch instruction
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
 	wire fetch1;	// ready for next fetch
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2 | fdiv2;
 	reg fetch2;	// fetch after outrequest
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
@@ -123,6 +123,8 @@ module mix(
 		else if (char2) RegisterA <= {RegisterA[30],charout[59:30]};
 		else if (num2) RegisterA <= {RegisterA[30],numout};
 		else if (shift2) RegisterA <= {RegisterA[30],shiftaout};
+		else if (fmul2) RegisterA <= fmulout;
+		else if (fdiv2) RegisterA <= fdivout;
 	reg [12:0] RegisterI1;
 	always @(posedge clk)
 		if (reset) RegisterI1 <= 13'd0;
@@ -232,11 +234,12 @@ module mix(
 	reg equal;
 	reg greater;
 	always @(posedge clk)
-		if (reset) overflow <= 0;
+		if (reset|clearof) overflow <= 0;
 		else if (button) overflow <= 1;		//the traffic signal button controls the overflow toggle
 		else if (add2) overflow <= addof;
 		else if (sub2) overflow <= subof;
 		else if (ide) overflow <= (rA|rX)? ideout[30] : ideout[12];
+		else if (fdivof | fmulof) overflow <= 1;
 	always @(posedge clk)
 		if (reset) less <= 0;
 		else if (cmp2) less <= cmpl;
@@ -287,22 +290,40 @@ module mix(
 	sub SUB(.clk(clk),.start(sub1),.stop(sub2),.in1(RegisterA),.in2(value),.out(subout),.overflow(subof));	
 	
 	//command 3 - MUL
+	wire mulc;
+	assign mulc = (command == 6'd3);
+	wire fpu;
+	assign fpu = (field == 6'd6); 
 	wire mul1;
-	assign mul1 = (command == 6'd3);
+	assign mul1 = mulc & ~fpu;
 	wire mul2;
 	wire [59:0] mulout;
 	wire mulsign;
+	wire fmulof;
+	wire [30:0] fmulout;
+	wire fmul2;
+	wire fmul1;
+	assign fmul1 = mulc & fpu;
 	mul MUL(.clk(clk),.start(mul1),.stop(mul2),.in1(RegisterA),.in2(value),.out(mulout),.sign(mulsign));	
-	
+	fmul FMUL(.clk(clk),.start(fmul1),.stop(fmul2),.in1(RegisterA),.in2(data),.out(fmulout),.overflow(fmulof));
+
 	//command 4 - DIV
+	wire divc;
+	assign divc = (command == 6'd4);
 	wire div1;
-	assign div1 = (command == 6'd4);
+	wire fdiv1;
+	assign div1 = divc & ~fpu;
+	assign fdiv1 = divc & fpu;
 	wire div2;
+	wire fdiv2;
 	wire [29:0] divQ;
 	wire [29:0] divR;
 	wire divof;
 	wire divsign;
+	wire fdivof;
+	wire [30:0] fdivout;
 	div DIV(.clk(clk),.start(div1),.stop(div2),.divisor(value),.quotient(divQ),.dividend({RegisterA,RegisterX[29:0]}),.overflow(divof),.rest(divR),.sign(divsign));	
+	//fdiv FDIV(.clk(clk),.start(fdiv1),.stop(fdiv2),.divisor(data),.dividend(RegisterA),.overflow(fdivof),.out(fdivout));
 
 	//command 5(0) - NUM
 	wire num1;

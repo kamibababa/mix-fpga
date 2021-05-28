@@ -1,0 +1,45 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Fri May 28 10:20:02 2021
+[*]
+[dumpfile] "/home/micha/git/gitlab/mix-fpga/dev/fpu/fpu_tb.vcd"
+[dumpfile_mtime] "Fri May 28 10:19:25 2021"
+[dumpfile_size] 14238
+[savefile] "/home/micha/git/gitlab/mix-fpga/dev/fpu/fpu_tb.gtkw"
+[timestart] 66
+[size] 1280 703
+[pos] -1 -1
+*-2.182165 74 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] fpu_tb.
+[sst_width] 228
+[signals_width] 126
+[sst_expanded] 1
+[sst_vpaned_height] 162
+@28
+fpu_tb.clk
+fpu_tb.FMUL.start
+@30
+fpu_tb.in1[30:0]
+fpu_tb.in2[30:0]
+@200
+-FMUL
+@28
+fpu_tb.FMUL.one
+fpu_tb.FMUL.six
+@30
+fpu_tb.FMUL.a[23:0]
+fpu_tb.FMUL.b[23:0]
+fpu_tb.FMUL.prod[47:0]
+fpu_tb.FMUL.expo[6:0]
+fpu_tb.FMUL.ms[47:0]
+@28
+fpu_tb.FMUL.seven
+fpu_tb.FMUL.round
+@30
+fpu_tb.FMUL.mr[24:0]
+@31
+fpu_tb.FMUL.out[30:0]
+@28
+fpu_tb.FMUL.stop
+[pattern_trace] 1
+[pattern_trace] 0

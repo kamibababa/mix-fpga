@@ -41,6 +41,8 @@ module jmpr(
 	assign jnz = (field == 3'd4) & ~z;
 	wire jnp;
 	assign jnp = (field == 3'd5) & (z | in[30]) ;
+	wire jodd;
+	assign jodd = (field == 3'd7) & (in[0]);
 
-	assign out = sel & (jn|jz|jp|jnn|jnz|jnp);
+	assign out = sel & (jn|jz|jp|jnn|jnz|jnp|jodd);
 endmodule
