@@ -13,7 +13,7 @@ def rand_op():
     c='0o'
     for i in range(10):
         if (i==0):
-            c += str(random.randint(2,4))
+            c += str(random.randint(0,7))
         elif (i==1):
             c += str(random.randint(0,7))
         elif (i==3) and (c[4]=='0'):

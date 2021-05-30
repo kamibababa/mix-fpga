@@ -27,14 +27,11 @@ for line in fin:
         d=int(line[30:40])
         p=f(a)*f(b)
         if (d!=c):
-            print("ErroR")
-            print(line)
-            print(oct(a))
-            print(oct(b))
-            print(oct(c))
-            print(oct(d))
-            print(line)
-            print('{:f} * {:f} = {:f} FPU {:0.7f}'.format(f(a),f(b),f(c),f(d)))
+            if (line[40:45] == 'OVER ' and line[45:50]=='OVER '):
+                print ('PASS: OVERFLOW detected')
+            else:
+                print(line)
+                print('ERROR: {:.7E} * {:.7E} = {:.7E} FPU {:.7E} {:.8f}'.format(f(a),f(b),f(c),f(d),f(d)/p))
         else:
             print('PASS: {:.7E} * {:.7E} = {:.7E} FPU {:.7E} {:.8f}'.format(f(a),f(b),f(c),f(d),f(d)/p))
             if (f(d)/p>4):
