@@ -11,66 +11,72 @@ module fdiv(
 	output [30:0] out,
 	output overflow
 );
-	// module is running
-	reg run;
+	reg one;
 	always @(posedge clk)
-		if (start) run <= 1;
-		else if (last) run <= 0;
+		if (start) one <= 1'd1;
+		else one <= 1'd0;
+	reg two;
+	always @(posedge clk)
+		if (one) two <= 1'd1;
+		else two <= 1'd0;
+	reg three;
+	always @(posedge clk)
+		if (two) three <= 1'd1;
+		else three <= 1'd0;
+	reg four;
+	always @(posedge clk)
+		if (three) four <= 1'd1;
+		else four <= 1'd0;
+	reg five;
+	always @(posedge clk)
+		if (four) five <= 1'd1;
+		else five <= 1'd0;
+	reg six;
+	always @(posedge clk)
+		if (five) six <= 1'd1;
+		else six <= 1'd0;
+	reg seven;
+	always @(posedge clk)
+		if (six) seven <= 1'd1;
+		else seven <= 1'd0;
+	reg eight;
+	always @(posedge clk)
+		if (seven) eight <= 1'd1;
+		else eight <= 1'd0;
+	reg nine;
+	always @(posedge clk)
+		if (eight) nine <= 1'd1;
+		else nine <= 1'd0;
+	assign stop = nine;	
+	wire calc;
+	assign calc=one | two | three | four | five | six | seven | eight | nine ;	
 
-	// module is in cycle 2
-	reg start2;
-	always @(posedge clk)
-		if (start) start2 <= 1;
-		else start2 <= 0;
-
-	reg start3;
-	always @(posedge clk)
-		if (start2 & ~i0) start3 <= 1;
-		else start3 <= 0;
-
-	// count the cycles
-	reg [3:0] counter;
-	always @(posedge clk)
-		if (start|last) counter <= 0;
-		else if (start3) counter <= counter + 2;
-		else if (run) counter <= counter + 1;
-	
-	// last cycle is number 7
-	wire last;
-	assign last = (counter == 4'd7);
-	
-	// then stop
-	reg stop;
-	always @(posedge clk)
-		if (last) stop <= 1;
-		else stop <= 0;
-	
 	// overflow is determined on cycle 2, when both operands are available
 	reg overflow;	
 	always @(posedge clk)
-		if (start2) overflow <= (dvsm[29:0] == 30'd0) | ~i0;
+		if (one) overflow <= (dvsm[29:0] == 30'd0) | ~i0;
 	
 	// sign is calculated at cycle 2, when second operand comes into play
 	reg sign;
 	always @(posedge clk)
 		if (start) sign <= dividend[30];
-		else if (start2) sign <= sign ^ divisor[30];
+		else if (one) sign <= sign ^ divisor[30];
 
 
 	// the divisor comes up on cycle number 2
 	reg [23:0] dvs2m;
 	always @(posedge clk)
-		if (start2) dvs2m <= divisor[23:0];
+		if (one) dvs2m <= divisor[23:0];
 	
 	wire [23:0] dvsm;
-	assign dvsm = (start2)? divisor[23:0] : dvs2m;
+	assign dvsm = (one)? divisor[23:0] : dvs2m;
 	
 	// the dividend comes up at start and will be shifted to left by
 	// 3 bits
 	reg [27:0] dvdm;
 	always @(posedge clk)
 		if (start) dvdm <= {4'd0,dividend[23:0]};
-		else if (run) dvdm <= {1'd0,rest,3'd0};
+		else if (calc) dvdm <= {1'd0,rest,3'd0};
 	
 		
 	// calculate the possible rests	
@@ -126,13 +132,13 @@ module fdiv(
 	reg [23:0] quot;
 	always @(posedge clk)
 		if (start) quot <= 24'd0;
-		else if (run) quot <= out;
+		else if (calc) quot <= out;
 
 	assign out  = {sign,e[5:0],quot[20:0],digit};	
 
 	reg [6:0] e;
 	always @(posedge clk)
 		if (start) e <= {1'd0,dividend[29:24]};
-		else if (start2) e <= e - {1'd0,divisor[29:24]} + 7'o040;
-		else if (start3) e <= e + 7'd1;
+		else if (one) e <= e - {1'd0,divisor[29:24]} + 7'o040;
+
 endmodule

@@ -70,8 +70,8 @@ module fmul(
 	reg [6:0] expo;
 	always @(posedge clk)
 		if (start) expo <= {1'd0,in1[29:24]};
-		else if (one) expo <= expo + {1'd0,in2[29:24]} - 7'o040;
-		else expo <= expo;
+		else if (one) expo <= expo + {1'd0,in2[29:24]};
+	        else if (two) expo <= expo - 7'o040;
 	//shift
 
 	wire shift;
@@ -79,7 +79,7 @@ module fmul(
 	wire [6:0] es;
 	wire [47:0] ms;
 	assign ms = shift? {prod[41:0],6'd0}: prod;
-	assign es = expo + {6'd0,shift};
+	assign es = expo - {6'd0,shift};
 
 	//round
 	wire round;
@@ -87,10 +87,10 @@ module fmul(
 	wire [24:0] mr;
 	assign mr = {1'd0,ms[47:24]}+{24'd0,round};
 	wire [6:0] er;
-	assign er = es + {6'd0,mr[24]};
+	assign er = es - {6'd0,mr[24]};
 	wire [23:0] mp;
 	assign mp = mr[24]? {5'd0,mr[24:6]}: {mr[23:0]};
 	// pack
 	assign out = {sign,er[5:0],mp};
-	assign overflow = er[6];
+	assign overflow = stop & er[6];
 endmodule

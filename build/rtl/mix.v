@@ -70,7 +70,7 @@ module mix(
 	wire fetch;	// fetch instruction
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
 	wire fetch1;	// ready for next fetch
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2 | fdiv2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2;
 	reg fetch2;	// fetch after outrequest
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
@@ -124,7 +124,6 @@ module mix(
 		else if (num2) RegisterA <= {RegisterA[30],numout};
 		else if (shift2) RegisterA <= {RegisterA[30],shiftaout};
 		else if (fmul2) RegisterA <= fmulout;
-		else if (fdiv2) RegisterA <= fdivout;
 	reg [12:0] RegisterI1;
 	always @(posedge clk)
 		if (reset) RegisterI1 <= 13'd0;
@@ -239,7 +238,7 @@ module mix(
 		else if (add2) overflow <= addof;
 		else if (sub2) overflow <= subof;
 		else if (ide) overflow <= (rA|rX)? ideout[30] : ideout[12];
-		else if (fdivof | fmulof) overflow <= 1;
+		else if (fmulof) overflow <= 1;
 	always @(posedge clk)
 		if (reset) less <= 0;
 		else if (cmp2) less <= cmpl;
@@ -311,17 +310,12 @@ module mix(
 	wire divc;
 	assign divc = (command == 6'd4);
 	wire div1;
-	wire fdiv1;
 	assign div1 = divc & ~fpu;
-	assign fdiv1 = divc & fpu;
 	wire div2;
-	wire fdiv2;
 	wire [29:0] divQ;
 	wire [29:0] divR;
 	wire divof;
 	wire divsign;
-	wire fdivof;
-	wire [30:0] fdivout;
 	div DIV(.clk(clk),.start(div1),.stop(div2),.divisor(value),.quotient(divQ),.dividend({RegisterA,RegisterX[29:0]}),.overflow(divof),.rest(divR),.sign(divsign));	
 	//fdiv FDIV(.clk(clk),.start(fdiv1),.stop(fdiv2),.divisor(data),.dividend(RegisterA),.overflow(fdivof),.out(fdivout));
 
