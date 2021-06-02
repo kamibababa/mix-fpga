@@ -1,6 +1,22 @@
 #!/bin/python3
 import sys
 import random
+import numpy as np
+
+def arr32(a):
+    return np.float32(a)
+
+def add32(a1, a2):
+    return np.add(a1, a2, dtype=np.float32)
+
+def sub32(a1, a2):
+    return np.subtract(a1, a2, dtype=np.float32)
+
+def mul32(a1, a2):
+    return np.multiply(a1, a2, dtype=np.float32)
+
+def div32(a1, a2):
+    return np.divide(a1, a2, dtype=np.float32)
 
 if (len(sys.argv)) != 2:
     print("usage: {:s} <filename>".format(sys.argv[0]))
@@ -25,19 +41,15 @@ for line in fin:
         b=int(line[10:20])
         c=int(line[20:30])
         d=int(line[30:40])
+        e=int(line[50:60])
+        g=int(line[60:70])
         p=f(a)*f(b)
-        if (d!=c):
-            if (line[40:45] == 'OVER ' and line[45:50]=='OVER '):
-                print ('PASS: OVERFLOW detected')
-            else:
-                print(line)
-                print('ERROR: {:.7E} * {:.7E} = {:.7E} FPU {:.7E} {:.8f}'.format(f(a),f(b),f(c),f(d),f(d)/p))
+        m=f(a)-f(b)
+        if (line[40:45] == 'OVER ' and line[45:50]=='OVER '):
+            print ('PASS: OVERFLOW detected')
+        elif (d==c and e==g):
+            print('PASS: {:.7E} * {:.7E} = {:.7E} FPU {:.7E} {:.7f} {:.8E} {:.8E} {:.7f}'.format(f(a),f(b),f(c),f(d),f(d)/p,f(e),f(g),f(e)/(f(a)+f(b))))
         else:
-            print('PASS: {:.7E} * {:.7E} = {:.7E} FPU {:.7E} {:.8f}'.format(f(a),f(b),f(c),f(d),f(d)/p))
-            if (f(d)/p>4):
-                print(line)
-                print(oct(a))
-                print(oct(b))
-                print(oct(c))
-                print(oct(d))
-        #print('{:0.7f}'.format((f(a)/f(b))/f(d)))
+            print("NOT PASSED")
+            print('PASS: {:.7E} * {:.7E} = {:.7E} FPU {:.7E} {:.7f} {:.8E} {:.8E} {:.7f}'.format(f(a),f(b),f(c),f(d),f(d)/p,f(e),f(g),f(e)/(f(a)+f(b))))
+            print(line)

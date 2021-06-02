@@ -65,3 +65,12 @@ PASS: 1.1125302E-26 * 9.6329599E-31 = 1.0716966E-56 FPU 1.0716966E-56 1.00000062
 ...
 
 ```
+
+## Addendum
+I compared results of FPU of MIX with mul32 of numpy.py in single precision mode.
+
+What the fuck! mul32 of numpy.py does a horrible job.
+
+Some test vectors result in an error of up to 4% compared to double precision calculation, while MIX always gives the right answer with accuracy of 10^-6	 .
+
+The question is: Where does the error of numpy.py come from. Is numpy it compliant with IEEE-754?

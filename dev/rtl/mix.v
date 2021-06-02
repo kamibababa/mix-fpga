@@ -70,7 +70,7 @@ module mix(
 	wire fetch;	// fetch instruction
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
 	wire fetch1;	// ready for next fetch
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2 | fdiv2;
+	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2 | fadd2;
 	reg fetch2;	// fetch after outrequest
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
@@ -124,7 +124,7 @@ module mix(
 		else if (num2) RegisterA <= {RegisterA[30],numout};
 		else if (shift2) RegisterA <= {RegisterA[30],shiftaout};
 		else if (fmul2) RegisterA <= fmulout;
-		else if (fdiv2) RegisterA <= fdivout;
+		else if (fadd2) RegisterA <= faddout;
 	reg [12:0] RegisterI1;
 	always @(posedge clk)
 		if (reset) RegisterI1 <= 13'd0;
@@ -238,8 +238,8 @@ module mix(
 //		else if (button) overflow <= 1;		//the traffic signal button controls the overflow toggle
 		else if (add2) overflow <= addof;
 		else if (sub2) overflow <= subof;
-		else if (ide) overflow <= (rA|rX)? ideout[30] : ideout[12];
-		else if (fdivof | fmulof) overflow <= 1;
+		else if (ide) overflow <= (rA|rX) & ideof;
+		else if (faddof | fmulof) overflow <= 1;
 	always @(posedge clk)
 		if (reset) less <= 0;
 		else if (cmp2) less <= cmpl;
@@ -274,16 +274,27 @@ module mix(
 	assign nop = (execute) & (command == 6'd0);
 	
 	//command 1 - ADD
+	wire addc;
+	assign addc = (command == 6'd1);
 	wire add1;
-	assign add1 = (command == 6'd1);
+	assign add1 = addc & ~fpu;
 	wire add2;
 	wire [30:0] addout;
 	wire addof;
+	wire fadd1;
+	assign fadd1 = (addc | subc)  & fpu;
+	wire fadd2;
+	wire [30:0] faddout;
+	wire faddof;
+	wire [30:0] fop2;
+	assign fop2 = {subc ^ data[30],data[29:0]};
 	add ADD(.clk(clk),.start(add1),.stop(add2),.in1(RegisterA),.in2(value),.out(addout),.overflow(addof));	
-	
+	fadd FADD(.clk(clk),.start(fadd1),.stop(fadd2),.in1(RegisterA),.in2(fop2),.out(faddout),.overflow(faddof));	
 	//command 2 - SUB
 	wire sub1;
-	assign sub1 = (command == 6'd2);
+	wire subc;
+	assign subc = (command == 6'd2);
+	assign sub1 = subc & ~fpu;
 	wire sub2;
 	wire [30:0] subout;
 	wire subof;

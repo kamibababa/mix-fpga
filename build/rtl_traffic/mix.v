@@ -237,7 +237,7 @@ module mix(
 		else if (button) overflow <= 1;		//the traffic signal button controls the overflow toggle
 		else if (add2) overflow <= addof;
 		else if (sub2) overflow <= subof;
-		else if (ide) overflow <= (rA|rX)? ideout[30] : ideout[12];
+		else if (ide) overflow <= (rA|rX) & ideof;
 		else if (fmulof) overflow <= 1;
 	always @(posedge clk)
 		if (reset) less <= 0;

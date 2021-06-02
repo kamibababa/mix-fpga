@@ -24,6 +24,12 @@ fdiv FDIV(
 	.dividend(in1),
 	.divisor(in2)
 );
+fadd FADD(
+	.clk(clk),
+	.start(start),
+	.in1(in1),
+	.in2(in2)
+);
 
 initial begin
   $dumpfile("fpu_tb.vcd");
@@ -35,6 +41,9 @@ initial begin
 	#2 start <= 1'd0;
       	#24
   	#2 start <= 1'd1; in1 <= {1'd1,6'o55,24'o55555555}; in2 <= {1'd0,6'o33,24'o33333333};   //0o1614132675667050 
+	#2 start <= 1'd0;
+      	#24
+  	#2 start <= 1'd1; in1 <= {1'd1,6'o00,24'o00000000}; in2 <= {1'd0,6'o33,24'o33333333};   //0o1614132675667050 
 	#2 start <= 1'd0;
       	#24
 
