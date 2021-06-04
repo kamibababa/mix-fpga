@@ -286,10 +286,8 @@ module mix(
 	wire fadd2;
 	wire [30:0] faddout;
 	wire faddof;
-	wire [30:0] fop2;
-	assign fop2 = {subc ^ data[30],data[29:0]};
 	add ADD(.clk(clk),.start(add1),.stop(add2),.in1(RegisterA),.in2(value),.out(addout),.overflow(addof));	
-	fadd FADD(.clk(clk),.start(fadd1),.stop(fadd2),.in1(RegisterA),.in2(fop2),.out(faddout),.overflow(faddof));	
+	fadd FADD(.clk(clk),.sub(subc),.start(fadd1),.stop(fadd2),.in1(RegisterA),.in2(data),.out(faddout),.overflow(faddof));	
 	//command 2 - SUB
 	wire sub1;
 	wire subc;

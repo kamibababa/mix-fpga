@@ -5,18 +5,15 @@ We test the hardware fpu by running a test programm on MIX, which reads 666 test
 We use card (80 char) as input and tty (70 char) as output. So we won't see corrupted card input due to USB delay.
 
 ### progress
-Up to now FMUL works! It executes in 9u as required by Knuth (compare TAOCP Vol. 2)
+Up to now FADD,FSUB and FMUL work! The timings are: 4u, 4u and 9u as required by Knuth (compare TAOCP Vol. 2)
 
 ### Testing the FPU
 
-#### fpu.mixasm
-This is the assembler programm to test the hardware fpu. It reads testvectors containing two operands a and b. Then it calculates a*b twice. First with assembler routing according to Knuth. Then with FPU in hardware.
+#### fpu_a.mixal, fpu_s.mixal, fpu_m.mixal 
+This are the assembler programs to test the hardware fpu. They read testvectors containing two operands a and b. Then they calculate a+b,a-b or a*b twice. First with assembler routine according to Knuth TAOCP Vol. 2. Then with FPU in hardware.
 
-The assembler routines of floating point arithmetic need a special command `JOX`: jump if registerX is odd.
-This is easily implemented in hardware as command JMP(7).
-While mixasm does support JMP(7) it does not support floating point arithemtic.
-
-**Attention**: mixasm does not support field modifier 6 on command FMUL. So after using assembler `mixasm -l` edit the `.mls` file, find the FMUL command and add manualy a 06 on byte 4 of command.
+The assembler routines of floating point arithmetic need a special command `JXO`: jump if registerX is odd.
+This has been implemented in hardware as command JMP(7).
 
 #### fpu_rand.py
 The python script generates testvectors composed of two randomly  generated floating point numbers a and b.
@@ -24,28 +21,27 @@ The python script generates testvectors composed of two randomly  generated floa
 #### prepare input
 ```
 fpu_rand.py 666
-mixasm fpu.mixal -l
-<edit fpu.mls and set field modifier of FMUL command to 06>
-../../tools/mls2card.py fpu.mls
-cat fpu.card rand.card > fpu_rand.card
+mixasm fpu_a.mixal -l
+../../tools/mls2card.py fpu_a.mls
+cat fpu_a.card rand.card > fpu_a_rand.card
 ```
-run the test programm on MIX
+#### run the test on MIX
 
 ```
-screen /dev/ttyUSB0 115200
-<press go button on MIX>
-<ctrl-a> : readreg f fpu_rand.card
-<ctrl-a> paste f
+cat /dev/ttyUB0 > fpu_a.out
+<in other terminal>
+cat fpu_a_rand.card > /dev/ttyUSB0
 ```
 
-#### fpu_ver.py
-The python script `fpu_ver.py` verifies the output of MIX programm. `PASS: <a> * <b> = <Knuths routing> FPU <result of FPU> <accuracy compared to double precision python>`  
+#### Verify the output
+
+The python script `fpu_a_ver.py` verifies the output of MIX fpu programs. `PASS: <a> * <b> = <Knuths routine> FPU <result of FPU> <accuracy compared to double precision python>`  
 
 ```
-./fpu_ver.py fpu.out
+./fpu_a_ver.py fpu.out
 ```
 
-All 666 Vectors passed the test.
+All 666 Vectors passed all tests (FADD,FSUB,FMUL).
 
 ```
 WELCOME TO MIX. 1U = 40NS. U16-U20 UART @115200 BAUD. U8 1000 BLOCKS  
@@ -65,12 +61,3 @@ PASS: 1.1125302E-26 * 9.6329599E-31 = 1.0716966E-56 FPU 1.0716966E-56 1.00000062
 ...
 
 ```
-
-## Addendum
-I compared results of FPU of MIX with mul32 of numpy.py in single precision mode.
-
-What the fuck! mul32 of numpy.py does a horrible job.
-
-Some test vectors result in an error of up to 4% compared to double precision calculation, while MIX always gives the right answer with accuracy of 10^-6	 .
-
-The question is: Where does the error of numpy.py come from. Is numpy it compliant with IEEE-754?

@@ -39,9 +39,9 @@ All commands exept the floating point arithmetic are implemented (s. list) with 
 
 1. add more commands:
 	* easy: logic operators (AND,OR,XOR,NOT)
-	* easy: jump odd (JO)
+	* easy: JXO jump if rX is odd (done)
 	* not so easy: Floating point arithmetic   
-	**work in progress:** FMUL done!
+	**work in progress:** FADD,FSUB,FMUL done!
 2. add more hardware:
 	* easy: add leds to run the traffic light example (done)
 	* not so easy: add block I/O unit (done)
@@ -50,11 +50,11 @@ All commands exept the floating point arithmetic are implemented (s. list) with 
 | -------------|:------:|:---------------|
 | NOP          | 1u     |                |
 | ADD          | 2u     |                |
-| FADD         | ?      | todo         |
+| FADD         | 4u     | done! see dev/rtl|
 | SUB          | 2u     |                |
-| FSUB         | ?      | todo         |
+| FSUB         | 4u     | done! see dev/rtl         |
 | MUL          | 10u    |                |
-| FMUL         | 9u     | done!           |
+| FMUL         | 9u     | done! see dev/rtl         |
 | DIV          | 12u    |                |
 | FMUL         | 11u    | todo |
 | MUL          | 10u    |                |

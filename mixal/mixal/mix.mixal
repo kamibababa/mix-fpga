@@ -1,0 +1,289 @@
+TAPE       EQU 8
+*
+*          TAPE BUFFER VARIABLES
+*
+BUF1       ORIG *+100             BUFFERS
+BUF2       ORIG *+100
+STOREBUF   CON  BUF1              POINTER TO BUFFER FOR STORING
+TAPEBUF    CON  BUF2              POINTER TO BUFFER FOR OUTPUT
+TAPEBUFPTR CON  BUF1              CURRENT WORD POINTER
+TAPECNTR   CON  100               NUMBER OF WORDS LEFT
+*
+*
+*          SUBROUTINE FINISHBUF
+*
+*          LOADER WORDS TO BE WRITTEN TO TAPE FOR
+*          LOADING ARE STORED IN A BUFFER UNTIL 100
+*          WORDS ARE ACCUMULATED. THEN THIS ROUTINE
+*          IS CALLED TO DUMP THE BUFFER TO TAPE. DOUBLE
+*          BUFFERING IS USED.
+*
+FINISHBUF  STJ  FIBEXIT
+           ST1  FIBSAVE1(0:2)     SAVE REGISTERS
+           ST2  FIBSAVE2(0:2)
+*
+           LD1  STOREBUF          CURRENT BUFFER
+           OUT  0,1(TAPE)         WRITE BUFFER TO TAPE
+           LD2  TAPEBUF           SWITCH BUFFER POINTERS
+           ST2  STOREBUF
+           ST2  TAPEBUFPTR        AND RESET POINTER
+           ST1  TAPEBUF
+*
+FIBSAVE1   ENT1 *                 RESTORE REGISTERS
+FIBSAVE2   ENT2 *
+FIBEXIT    JMP  *
+*
+*
+*          SUBROUTINE TAPEOUT
+*
+*          THIS SUBROUTINE ACCEPTS ONE WORD TO BE
+*          WRITTEN TO THE TAPE FOR THE LOADER AND
+*          STORES IT IN THE BUFFER UNTIL THE BUFFER IS
+*          FULL. THEN IT CALLS FINISHBUF TO EMPTY
+*          THE BUFFER.
+*
+*          INPUT WORD IS IN THE A REGISTER
+*
+TAPEOUT    STJ  TOEXIT            SAVE REGISTERS
+           ST1  TOSAVE1(0:2)
+*
+           LD1  TAPEBUFPTR        NEXT WORD POINTER
+           STA  0,1               SAVE WORD
+           INC1 1
+           ST1  TAPEBUFPTR        UPDATE POINTER
+*
+           LD1  TAPECNTR          CHECK FOR FULL BUFFER
+           DEC1 1
+           J1P  STILLROOM
+           JMP  FINISHBUF         BUFFER FULL
+           ENT1 100               RESET COUNTER
+*
+STILLROOM  ST1  TAPECNTR          RESTORE COUNTER
+*
+TOSAVE1    ENT1 *
+TOEXIT     JMP  *
+*
+
+*
+*          GENERATE
+*
+*          GENERATE A WORD OF LOADER OUTPUT.
+*          THE LOADER WORD IS IN VALUE. REGISTER I6 HAS
+*          THE ADDRESS OF THE LOCATION WHERE IT SHOULD
+*          BE LOADED. IF THIS WORD IS A CONTINUATION
+*          OF THE CURRENT BUFFER, IT IS SIMPLY STORED.
+*          IF THE WORD IS NONCONTIGUOUS OR FILLS THE
+*          BUFFER, THE BUFFER IS EMPTIED.
+*
+GNSAVEA    ORIG *+1
+*
+GENERATE   STJ  GENEXIT
+           STA  GNSAVEA
+           ST1  GNSAVE1(0:2)
+*
+           CMP6 NXTLOADLOC        CHECK IF CONTIGUOUS
+           JNE  FINISHBLCK        IF NOT, FINISH OLD BLOCK
+*
+           LD1  LDRBLOCK(4:5)     NUMBER OF WORDS
+           INC1 1
+           ST1  LDRBLOCK(4:5)
+*
+           LDA  VALUE
+           STA  LDRBLOCK,1        STORE GENERATED WORD
+*
+           INC6 1                 INCREASE LOCATION COUNTER
+           ST6  NXTLOADLOC
+*
+           CMP1 BLCKLENGTH        CHECK FOR END OF BLOCK
+           JGE  FINISHBLCK        IF SO, FINISH BLOCK
+           LDA  GNSAVEA
+GNSAVE1    ENT1 *                 RESTORE REGISTER
+GENEXIT    JMP  *
+*
+*
+*          SUBROUTINE FINISHBLCK
+*
+*          OUTPUT TO THE LOADER THE BLOCK IN LDRBLOCK.
+*          NUMBER OF WORDS IS IN BYTE 4:5 OF FIRST WORD.
+*          (MAY BE ZERO, IN WHICH CASE IGNORE CALL).
+*          COMPUTE CHECKSUM AND OUTPUT IT TOO
+*
+CHECKSUM   ORIG *+1
+FLBSAVEA   ORIG *+1
+FINISHBLCK STJ  FLBEXIT
+           STA  FLBSAVEA
+           ST1  FLBSAVE1(0:2)
+*
+           LD1  LDRBLOCK(4:5)
+           J1Z  FLBQUIT           IF BLOCK IS EMPTY
+*
+           STZ  CHECKSUM          INITIALIZE CHECKSUM
+           ENT1 0                 INDEX AND COUNTER
+*
+BLOCKOUT   LDA  LDRBLOCK,1
+           JMP  TAPEOUT           OUTPUT EACH WORD
+           ADD  CHECKSUM(1:5)
+           STA  CHECKSUM(1:5)     AND COMPUTE CHECKSUM
+*
+           INC1 1
+           CMP1 LDRBLOCK(4:5)     CHECK ALL WORD OUT
+           JLE  BLOCKOUT
+*
+           LDA  CHECKSUM(1:5)     OUTPUT CHECKSUM
+           JMP  TAPEOUT
+*
+           JOV  *+1               TURN OVERFLOW OFF (IF ON)
+*
+FLBQUIT    STZ  LDRBLOCK          NEW HEADER WORD
+           ST6  LDRBLOCK(0:2)
+*
+           LDA  FLBSAVEA          RESTORE REGISTERS
+FLBSAVE1   ENT1 *
+FLBEXIT    JMP  *
+*
+*
+SYM        ORIG *+2               SYMBOL
+LETTER     ORIG *+1               NUMERIC=ZERO
+*
+*
+*          SUBROUTINE GETSYM
+*
+*          GET THE NEXT SYMBOL FROM CARD(15) AND PACK
+*          IT INTO SYM UNTIL A DELIMITER. I5 WILL BE
+*          MOVED TO POINT TO THE DELIMITER. LETTER IS
+*          ZERO IF NO LETTER FOUND.
+*
+GSSAVEA    ORIG *+1
+GSSAVEX    ORIG *+1
+*
+GETSYM     STJ  GSEXIT            SAVE REGISTERS
+           STA  GSSAVEA
+           STX  GSSAVEX
+           ST1  GSSAVE1(0:2)
+           ST2  GSSAVE2(0:2)
+*
+           ENT1 10                MAXIMUM NUMBER OF CHARACTERS
+           STZ  LETTER
+           ENTX 0
+           ENTA 0                 BLANK AX
+*
+SCANSYM    LD2  CARD,5
+           CMP2 CHARA(5:5)        MUST BE AT LEAST A
+           JL   ENDSYM
+           CMP2 CHAR9(5:5)        AND NOT MORE THAN 9
+           JG   ENDSYM
+           CMP2 CHARO(5:5)        ALSO CHECK IF 0..9
+           JGE  *+2
+           STJ  LETTER(4:5)       LETTER FOUND
+*
+           DEC1 1                 DECREMENT NUMBER OF CHARACTERS
+           J1N  *+3
+           SLAX 1
+           INCX 0,2               ADD NEW CHARACTER TO SYMBOL
+           INC5 1                 NEXT COLUMN
+           JMP  SCANSYM
+*
+SYMERROR   JMP  BADSYM            BAD SYMBOL (TOO LONG)
+           JMP  GSQUIT            NO JUSTIFICATION NEEDED
+*
+ENDSYM     J1N  SYMERROR          CHECK IF TOO LONG
+           LD2  LETTER            CHECK IF NEED JUSTIFY.
+           J2Z  *+2
+           SLAX 0,1               REGISTER 1 HAS COUNT
+*
+GSQUIT     STA  SYM               SAVE SYMBOL
+           STX  SYM+1
+*
+           LDA  GSSAVEA
+           LDX  GSSAVEX
+GSSAVE1    ENT1 *
+GSSAVE2    ENT2 *
+GSEXIT     JMP  *
+*
+LABEL      ORIG *+2               SPACE FOR LABEL (IF ANY)
+OP         ORIG *+1               AND OPCODE
+*
+*
+*          SUBROUTINE GETFIELDS
+*
+*          GET THE FIELDS FOR THE ASSEMBLY LANGUAGE.
+*          FIELDS ARE LABEL, OPCODE AND OPERAND. LABEL
+*          MAY BE MISSING. REGISTER I5 IS LEFT
+*          POINTING JUST BEFORE THE OPERAND.
+*          THE EXPRESSION ROUTINE WILL SKIP ONE COLUMN
+*          TO BEGIN EVALUATION, SO LEAVE I5 ONE BEFORE
+*          THE START OF THE OPERAND.
+*
+*          FIXED FIELD
+*
+GFSAVEA    ORIG *+1
+*
+GETFIELDS  STJ  GFEXIT            SAVE REGISTERS
+           STA  GFSAVEA
+           ST1  GFSAVE1(0:2)
+*
+           STZ  LABEL             DEFAULT IS BLANK LABEL
+           LDA  CARD              CHECK COLUMN ONE
+           JAZ  NOLABEL
+           ENT5 0                 COLUMN OF LABEL
+           JMP  GETSYM
+*
+           LDA  LETTER            ERROR CHECKING
+           JANZ LEGALLABEL
+           JMP  BADSYM            NUMERIC SYMBOL
+           JMP  NOLABEL
+*
+LEGALLABEL ENT1 LABEL             MOVE LABEL FROM SYM
+           MOVE SYM(2)
+*
+NOLABEL    ENT5 11                OPCODE
+           JMP  GETSYM
+           LDA  SYM(1:4)          FOUR CHAR OPCODE
+           STA  OP
+*
+           ENT5 15                READY FOR OPERAND
+*                                 (COLUMN 17)
+*
+           LDA  GFSAVEA
+GFSAVE1    ENT1 *
+GFEXIT     JMP  *
+*
+OPTAB      EQU  *
+           ALF  ADD A
+           ADD
+           ALF  ALF D
+           CON  0
+           ALF  CHARA
+           CHAR
+           ALF  CMPAA
+           CMPA
+           ALF  CMPXA
+           CMPX
+           ALF  CMP1A
+           CMP1
+           ALF  CMP2A
+           CMP2
+           ...
+           ALF  ENT6A
+           ENT6
+           ALF  EQU E
+           CON  0
+*
+HLTINDEX   EQU  *-OPTAB/2         INDEX OF HLT
+           ALF  "HLT A"
+           HLT
+           ALF  "IN  A"
+           IN
+           ALF  "INCAA"
+           INCA
+*              drei punkte ...
+           ALF  "ST6 A"
+           ST6
+           ALF  "SUB A"
+           SUB
+*
+NUMBEROPS  EQU  *-OPTAB/2         2 LOCATIONS PER ENTRY
+*
+OPTYPE     CON  0
+*
+VALUE      ORIG *+1
