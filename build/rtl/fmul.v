@@ -10,35 +10,21 @@ module fmul(
 	output stop,
 	output wire overflow
 );
-	reg one;
+	wire stop;
+	assign stop = last;
+	reg run;
 	always @(posedge clk)
-		if (start) one <= 1'd1;
-		else one <= 1'd0;
-	reg two;
+		if (start) run <= 1;
+		else if (last) run <= 0;
+	
+	reg [3:0] count;
 	always @(posedge clk)
-		if (one) two <= 1'd1;
-		else two <= 1'd0;
-	reg three;
-	always @(posedge clk)
-		if (two) three <= 1'd1;
-		else three <= 1'd0;
-	reg four;
-	always @(posedge clk)
-		if (three) four <= 1'd1;
-		else four <= 1'd0;
-	reg five;
-	always @(posedge clk)
-		if (four) five <= 1'd1;
-		else five <= 1'd0;
-	reg six;
-	always @(posedge clk)
-		if (five) six <= 1'd1;
-		else six <= 1'd0;
-	reg seven;
-	always @(posedge clk)
-		if (six) seven <= 1'd1;
-		else seven <= 1'd0;
-	assign stop = seven;	
+		if (start|last) count <= 4'd0;
+		else if (run) count <= count + 1;
+	wire last;
+	assign last = count == 4'd7;
+	wire one;
+	assign one = run & (count==4'd0);
 	// sign of product
 	reg sign;
 	always @(posedge clk)
@@ -50,10 +36,8 @@ module fmul(
 	reg [23:0] a;
 	always @(posedge clk)
 		if (start) a <= in1[23:0];
-		else if (one|two|three|four|five) a <= {a[19:0],4'd0};
+		else if (run) a <= {a[20:0],3'd0};
 
-	wire calc;
-	assign calc = one | two | three | four | five | six;
 	// b is second factor, available at second cycle (start2)
 	reg [23:0] b2;
 	always @(posedge clk)
@@ -63,19 +47,20 @@ module fmul(
 	assign b = (one)? in2[23:0] : b2;
 
 	// out computes the product
-	reg [47:0] prod;
+	wire [47:0] prod;
+	assign prod = {oldprod[44:0],3'd0} + a[23:21] * b[23:0];
+	reg [47:0] oldprod;
 	always @(posedge clk)
-		if (start) prod <= 48'd0;
-		else if (calc) prod <= {prod[43:0],4'd0} + a[23:20] * b[23:0];
+		if (start) oldprod <= 48'd0;
+		else if (run) oldprod <= prod;
 	reg [6:0] expo;
 	always @(posedge clk)
 		if (start) expo <= {1'd0,in1[29:24]};
-		else if (one) expo <= expo + {1'd0,in2[29:24]};
-	        else if (two) expo <= expo - 7'o040;
+		else if (one) expo <= expo + {1'd0,in2[29:24]}-7'o040;
+	
 	//shift
-
 	wire shift;
-	assign shift = seven & (prod[47:42]==6'd0);
+	assign shift = last & (prod[47:42]==6'd0);
 	wire [6:0] es;
 	wire [47:0] ms;
 	assign ms = shift? {prod[41:0],6'd0}: prod;
@@ -83,7 +68,7 @@ module fmul(
 
 	//round
 	wire round;
-	assign round = seven & ms[23] & ~((ms[22:0]==23'd0)&~ms[24]);
+	assign round = last & ms[23] & ~((ms[22:0]==23'd0)&ms[24]); // ms[22:18] == 5'd0
 	wire [24:0] mr;
 	assign mr = {1'd0,ms[47:24]}+{24'd0,round};
 	wire [6:0] er;
@@ -91,6 +76,8 @@ module fmul(
 	wire [23:0] mp;
 	assign mp = mr[24]? {5'd0,mr[24:6]}: {mr[23:0]};
 	// pack
-	assign out = {sign,er[5:0],mp};
-	assign overflow = stop & er[6];
+	wire zero;
+	assign zero = last & (prod[47:18]==30'd0);
+	assign out = {sign,zero? 6'd0 : er[5:0],mp};
+	assign overflow = ~zero & last & er[6];
 endmodule
