@@ -17,34 +17,38 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-// jmp - command 39
-//
 
-`default_nettype none
-module jmpr(
-	input wire sel,
-	input wire [30:0] in,
-	output wire out,
-	input wire [2:0] field
-);
-	wire z;
-	assign z = (in[29:0] == 30'd0);
-	wire jn;
-	assign jn = (field == 3'd0) & ~z & in[30];
-	wire jz;
-	assign jz = (field == 3'd1) & z;
-	wire jp;
-	assign jp = (field == 3'd2) & ~z & ~ in[30];
-	wire jnn;
-	assign jnn = (field == 3'd3) & (z | ~in[30]);
-	wire jnz;
-	assign jnz = (field == 3'd4) & ~z;
-	wire jnp;
-	assign jnp = (field == 3'd5) & (z | in[30]) ;
-	wire jeven;
-	assign jeven = (field == 3'd7) & (~in[0]);
-	wire jodd;
-	assign jodd = (field == 3'd7) & (in[0]);
+/**
+ * PLL configuration
+ *
+ * This Verilog module was generated automatically
+ * using the icepll tool from the IceStorm project.
+ * Use at your own risk.
+ *
+ * Given input frequency:       100.000 MHz
+ * Requested output frequency:   25.000 MHz
+ * Achieved output frequency:    25.000 MHz
+ */
 
-	assign out = sel & (jn|jz|jp|jnn|jnz|jnp|jeven|jodd);
+module pll(
+	input  clock_in,
+	output clock_out,
+	output locked
+	);
+
+/* verilator lint_off PINMISSING */
+	SB_PLL40_CORE #(
+		.FEEDBACK_PATH("SIMPLE"),
+		.DIVR(4'b0000),		// DIVR =  0
+		.DIVF(7'b0000111),	// DIVF =  7
+		.DIVQ(3'b101),		// DIVQ =  5
+		.FILTER_RANGE(3'b101)	// FILTER_RANGE = 5
+	) uut (
+		.LOCK(locked),
+		.RESETB(1'b1),
+		.BYPASS(1'b0),
+		.REFERENCECLK(clock_in),
+		.PLLOUTGLOBAL(clock_out)
+		);
+
 endmodule

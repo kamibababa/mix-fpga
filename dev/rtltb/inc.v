@@ -1,3 +1,4 @@
+
 /**
  mix-fpga is a fpga implementation of Knuth's MIX computer.
  Copyright (C) 2021 Michael Schröder (mi.schroeder@netcologne.de)
@@ -16,55 +17,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-
-
-// ADD - command 1
-
 `default_nettype none
-module add(
-	input wire clk,
-	input wire start,
-	output reg stop,
-	input wire subtract,
+module inc(
 	input wire [30:0] in1,
 	input wire [30:0] in2,
 	output wire [30:0] out,
 	output wire overflow
 );
-	// takes two cylces
-	always @(posedge clk)
-		if (start) stop <= 1;
-		else stop <= 0;
-
-	reg sub;
-	always @(posedge clk)
-		if (start) sub <= subtract;
-
-	// summand1 must be cached at first cycle
-	reg [30:0] a;
-	always @(posedge clk)
-		if (start) a <= in1;
-	
-	// summand2 is available at second cycle
-	wire [30:0] b;
-	assign b = {sub^in2[30],in2[29:0]};
-
 	// let's do the possible additions: sum=a+b, d1=a-b, d2=b-a 
 	wire [30:0] sum;
-	assign sum = {1'd0,a[29:0]} + {1'd0,b[29:0]};
+	assign sum = {1'd0,in1[29:0]} + {1'd0,in2[29:0]};
 	wire [30:0] d1;
-	assign d1 = {1'd0,a[29:0]} - {1'd0,b[29:0]};
+	assign d1 = {1'd0,in1[29:0]} - {1'd0,in2[29:0]};
 	wire [30:0] d2;
-	assign d2 = {1'd0,b[29:0]} - {1'd0,a[29:0]};
+	assign d2 = {1'd0,in2[29:0]} - {1'd0,in1[29:0]};
 	
 	// and choose the right one according to the signs of a and b
-	assign {overflow,out} = a[30]?
-			(b[30]?
+	assign {overflow,out} = in1[30]?
+			(in2[30]?
 				({sum[30],1'd1,sum[29:0]}):	//a+b = -(|a|+|b|) = - sum
 				(~d1[30]?			//a+b = |b|-|a|		
 			      		({2'b01,d1[29:0]}):	//    = - d1
 					({2'b00,d2[29:0]}))):	//    = d2
-			(b[30]?
+			(in2[30]?
 				(d1[30]? 			//a+b = |a|-|b|
 					({2'b01,d2[29:0]}):	//    = -d2
 					({2'b00,d1[29:0]})): 	//    = d1

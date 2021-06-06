@@ -26,6 +26,8 @@ module fdiv(
 	assign last = count == 4'd9;
 	wire one;
 	assign one = run & (count==4'd0);
+	wire two;
+	assign two = run & (count==4'd1);
 	
 	// sign is calculated at cycle 2, when second operand comes into play
 	reg sign;
@@ -63,7 +65,7 @@ module fdiv(
 	// 3 bits
 	reg [27:0] dvdm;
 	always @(posedge clk)
-		if (start & dividend[23:21]==3'd0) dvdm <= {4'd0,dividend[21:0],3'd0};
+		if (start & dividend[23:21]==3'd0) dvdm <= {4'd0,dividend[20:0],3'd0};
 		else if (start) dvdm <= {4'd0,dividend[23:0]};
 		else if (run) dvdm <= {1'd0,rest,3'd0};
 		
@@ -110,7 +112,7 @@ module fdiv(
 			(i3)? d3[23:0]:
 			(i2)? d2[23:0]:
 			(i1)? d1[23:0]:
-			dvdm;
+			dvdm[23:0];
 
 	// this gives one octal digit of the quotient
 	wire [2:0] digit;
@@ -126,6 +128,7 @@ module fdiv(
 	always @(posedge clk)
 		if (start) e <= {1'd0,dividend[29:24]};
 		else if (one) e <= e - {1'd0,divisor[29:24]} + 7'o040;
+		else if (two & leadingnulls & ~leadingnulld) e <= e + 7'o1;
 	
 	wire [29:0] mout;
 	assign mout = (leadingnulld^leadingnulls)? {3'd0,quot[26:0]}:{quot[26:0],digit};
@@ -138,7 +141,7 @@ module fdiv(
 	
 	//round
 	wire round;
-	assign round =(mouts[8] & ~((mout[7:0]==8'd0) & mouts[1] & rest[24:0]==25'd0)); 
+	assign round = (mouts[8] & ~((mout[7:0]==8'd0) & mouts[1] & rest[23:0]==24'd0)); 
 	wire [23:0] moutr;
 	assign moutr = round? mouts[32:9]+24'd1:mouts[32:9];
 

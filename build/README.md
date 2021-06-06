@@ -9,7 +9,7 @@ Consider to buy at Olimex Ltd. https://www.olimex.com, the company with the high
 2. fpga toolchain. The project was developed with apio (https://github.com/FPGAwars/apio), a software suite based on project icestorm (http://www.clifford.at/icestorm/) from Clifford Wolf.
 
 	```
-	pip install -U apio
+	sudo pip3 install -U apio
 	apio install ice40
 	apio install scons
 	apio install iverilog
@@ -46,8 +46,8 @@ Consider to buy at Olimex Ltd. https://www.olimex.com, the company with the high
  
 The 4 wires are connected to the GPIO connector on the right side of iCE40HX8K-EVB according to the following table. Compare with schematic in `pics/iCE40HX8K-EVB_RevB.pdf`.
 
-|color| USB-Serial  | GPIO (iCE40-HX8K-EVB) | 
-|-|-|-|
+| color | USB-Serial  | GPIO (iCE40-HX8K-EVB)| 
+|-----|-----|-----|
 |black | GND   | 2   |
 | green | RX  | 7 |
 | yellow | TX | 5 |

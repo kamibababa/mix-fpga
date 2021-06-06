@@ -17,34 +17,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-// jmp - command 39
-//
+// address transfer operators - command 48 - 55
+// field inc(0), dec(1), ent(2), enn(3)
 
 `default_nettype none
-module jmpr(
-	input wire sel,
+module ide(
 	input wire [30:0] in,
-	output wire out,
-	input wire [2:0] field
+	input wire [12:0] m,
+	output wire [30:0] out,
+	output wire overflow,
+	input wire [1:0] field
 );
-	wire z;
-	assign z = (in[29:0] == 30'd0);
-	wire jn;
-	assign jn = (field == 3'd0) & ~z & in[30];
-	wire jz;
-	assign jz = (field == 3'd1) & z;
-	wire jp;
-	assign jp = (field == 3'd2) & ~z & ~ in[30];
-	wire jnn;
-	assign jnn = (field == 3'd3) & (z | ~in[30]);
-	wire jnz;
-	assign jnz = (field == 3'd4) & ~z;
-	wire jnp;
-	assign jnp = (field == 3'd5) & (z | in[30]) ;
-	wire jeven;
-	assign jeven = (field == 3'd7) & (~in[0]);
-	wire jodd;
-	assign jodd = (field == 3'd7) & (in[0]);
+	assign {overflow,out} = field[1]?
+			(field[0]?
+				({1'd0,~m[12],18'd0,m[11:0]}):
+				({1'd0, m[12],18'd0,m[11:0]})):
+			(field[0]?
+				({odec,decr}):
+				({oinc,incr}));
 
-	assign out = sel & (jn|jz|jp|jnn|jnz|jnp|jeven|jodd);
+	wire [30:0] decr;
+	wire [30:0] incr;
+	wire odec;
+	wire oinc;
+	inc INC(.in1(in),.in2({m[12],18'd0,m[11:0]}),.out(incr),.overflow(oinc));
+	dec DEC(.in1(in),.in2({m[12],18'd0,m[11:0]}),.out(decr),.overflow(odec));
+
 endmodule

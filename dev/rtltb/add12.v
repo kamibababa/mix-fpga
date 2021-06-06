@@ -1,4 +1,3 @@
-
 /**
  mix-fpga is a fpga implementation of Knuth's MIX computer.
  Copyright (C) 2021 Michael Schröder (mi.schroeder@netcologne.de)
@@ -17,34 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-// jmp - command 39
-//
+
+
+//12 bit adder
 
 `default_nettype none
-module jmpr(
-	input wire sel,
-	input wire [30:0] in,
-	output wire out,
-	input wire [2:0] field
+module add12(
+	input wire [12:0] a,
+	input wire [12:0] b,
+	output wire [12:0] out
 );
-	wire z;
-	assign z = (in[29:0] == 30'd0);
-	wire jn;
-	assign jn = (field == 3'd0) & ~z & in[30];
-	wire jz;
-	assign jz = (field == 3'd1) & z;
-	wire jp;
-	assign jp = (field == 3'd2) & ~z & ~ in[30];
-	wire jnn;
-	assign jnn = (field == 3'd3) & (z | ~in[30]);
-	wire jnz;
-	assign jnz = (field == 3'd4) & ~z;
-	wire jnp;
-	assign jnp = (field == 3'd5) & (z | in[30]) ;
-	wire jeven;
-	assign jeven = (field == 3'd7) & (~in[0]);
-	wire jodd;
-	assign jodd = (field == 3'd7) & (in[0]);
 
-	assign out = sel & (jn|jz|jp|jnn|jnz|jnp|jeven|jodd);
+	assign out = a[12]?				
+			(b[12]?					
+				({1'd1,sum[11:0]}):		// a+b = -(|a| + |b|)
+				(~d1[12]?			// a+b = |b| - |a|
+			      		({1'b1,d1[11:0]}):	//     = - (|a|-|b|) 
+					({1'b0,d2[11:0]}))):	//     = + (|b|-|a|)
+			(b[12]?					//     
+				(~d1[12]? 			// a+b = |a| - |b|	
+					({1'b0,d1[11:0]}):	//     = 
+					({1'b1,d2[11:0]})):     //     = 
+				({1'd0,sum[11:0]}));
+
+	wire [12:0] sum;
+	assign sum = {1'd0,a[11:0]} + {1'd0,b[11:0]};
+	wire [12:0] d1;
+	assign d1 = {1'd0,a[11:0]} - {1'd0,b[11:0]};
+	wire [12:0] d2;
+	assign d2 = {1'd0,b[11:0]} - {1'd0,a[11:0]};
+
 endmodule
