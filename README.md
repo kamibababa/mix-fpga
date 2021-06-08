@@ -19,7 +19,7 @@ The MIX computer is composed of two little boards.
 ![](pics/MIX_inside.jpg)
 
 ### Clock
-MIX runs on iCE40HX8K-EVB clocked at 25MHz. The basic unit of time 1u corresponds to 40ns, so according to Knuth it's a relatively high priced machine.
+MIX runs on iCE40HX8K-EVB clocked at 23.8MHz. The basic unit of time 1u corresponds to 42ns, so according to Knuth it's a relatively high priced machine.
 
 
 ### Character based I/O units
