@@ -47,6 +47,6 @@ for line in fin:
         if (d==c):
             print('PASS: {:.7E} * {:.7E} = KNUTH {:.7E} FPU {:.7E} PYHTON {:.7E} ACC {:.7f}'.format(f(a),f(b),f(c),f(d),p,f(c)/p))
         else:
-            print('FAIL: {:.7E} * {:.7E} = KNUTH {:.7E} FPU {:.7E} PYHTON {:.7E} ACC {:.12f} {:.12f}'.format(f(a),f(b),f(c),f(d),p,f(c)/p,f(d)/p))
+            print('FAIL: {:.7E} * {:.7E} = KNUTH {:.7E} FPU {:.7E} PYHTON {:.7E} ACC {:.9f} {:.9f}'.format(f(a),f(b),f(c),f(d),p,f(c)/p,f(d)/p))
             print(line)
             print('{:10o} {:10o} {:10o} {:10o}'.format(a,b,c,d))

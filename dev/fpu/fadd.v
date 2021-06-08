@@ -141,9 +141,9 @@ module fadd(
 	wire round;
 	assign round = ms[29] & ~((ms[28:0]==29'd0)&ms[30]);
 	wire [24:0] mr;
-	assign mr = {1'd0,ms[53:30]}+{24'd0,round};
-	wire [6:0] er;
-	assign er = es - {6'd0,mr[24]};
+	assign mr = {1'd0,ms[53:30]} + {24'd0,round};
+	wire [6:0] er; 
+	assign er = es + {6'd0,mr[24]};
 	wire [23:0] mp;
 	assign mp = mr[24]? {5'd0,mr[24:6]}: {mr[23:0]};
 	// pack

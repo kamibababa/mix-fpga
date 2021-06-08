@@ -4,7 +4,7 @@ module char_tb();
 reg clk = 1;
 always #0.5 clk = ~clk;
 
-reg [29:0] a=60'o7777777777;
+reg [29:0] a=60'o0601111500;
 reg start = 0;
 //-- Instantiate the unit to test
 char CHAR(

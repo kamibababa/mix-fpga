@@ -10,7 +10,7 @@ The presented implementation is based on the fpga development board iCE40HX8K-EV
 ![](pics/MIX_real.jpg)
 
 
-## inside
+## Inside
 
 The MIX computer is composed of two little boards.
 1. iCE40HX8K-EVB, the fpga development board from olimex.com
@@ -18,9 +18,7 @@ The MIX computer is composed of two little boards.
 
 ![](pics/MIX_inside.jpg)
 
-## Specifications
-
-### clock
+### Clock
 MIX runs on iCE40HX8K-EVB clocked at 25MHz. The basic unit of time 1u corresponds to 40ns, so according to Knuth it's a relatively high priced machine.
 
 
@@ -34,59 +32,69 @@ In our MIX implementation all character based I/O units (U16 -- U20) are connect
 A block based device is implemented on I/O unit 8. The device acts as a disk with 1000 blocks à 100 words. The data is stored in the SRAM chip found on the iCE40HX8K-EVB board. The speed of read and write operations is exactly 401 $u$ for reading or writing one complete block of data (no JBUS is needed). The data stored to unit U8 can be retrieved also after a reset (Go-Button). But on a full shutdown, when removing power supply (USB connector) data is lost.
 
 
-### commands
-All commands exept the floating point arithmetic are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can (easily) be extended in various ways:
+### Commands
+All commands described in TAOCP Vol. 1 are implemented (s. list) with execution times corresponding to Knuth's specifications. Special care is given to the correct timings. Even the "sofisticated" commands SRC and SLC, which need a modulo 10 computation are executed in the defined timing of two cycles. The system can (easily) be extended in various ways:
 
 1. add more commands:
-	* easy: logic operators (AND,OR,XOR,NOT)
-	* easy: JXO jump if rX is odd (done)
-	* not so easy: Floating point arithmetic   
-	**work in progress:** FADD,FSUB,FMUL done!
+	* logic operators: AND, OR, XOR, NOT (todo)
+	* JrE,JrO jump if Register r is even/odd (done)
+	* Floating point arithmetic: FADD, FSUB, FMUL, FDIV (done)
 2. add more hardware:
-	* easy: add leds to run the traffic light example (done)
-	* not so easy: add block I/O unit (done)
+	* add leds to run the traffic light example (done)
+	* add block I/O unit (done)
 
-| Command      | Timing | Remark         |
-| -------------|:------:|:---------------|
-| NOP          | 1u     |                |
-| ADD          | 2u     |                |
-| FADD         | 4u     | done! see dev/rtl|
-| SUB          | 2u     |                |
-| FSUB         | 4u     | done! see dev/rtl         |
-| MUL          | 10u    |                |
-| FMUL         | 9u     | done! see dev/rtl         |
-| DIV          | 12u    |                |
-| FMUL         | 11u    | todo |
-| MUL          | 10u    |                |
-| NUM,CHAR     | 10u    |                |
-| HLT          | ?      |                |
-| SLA,SRA,SLAX,SRAX,SLC,SRC| 2u     |    |
-| HLT          | ?      |                |
-| MOVE         | (1+2F)u   |                |
-| LD(N)        | 2u   |                |
-| ST,STJ,STZ   | 2u   |                |
-| JBUS,JRED    | 1u   |                |
-| IOC,IN,OUT   | (1+T)u| U16-U20: USB-serial, U8: SRAM               |
-| JMP          | 1u   |                |
-| INC,DEC,ENT,ENN          | 1u   |                | 
-| CMP          | 2u   |                |
-| FCMP         | ?    | todo               |
+| Command | OP  | Field | Timing |
+| --------|-----|-------|--------|
+| NOP     | 0   | 0     | 1u     |
+| ADD     | 1   | 0:5   | 2u     |
+| FADD    | 1   | 6     | 4u     |
+| SUB     | 2   | 0:5   | 2u     |
+| FSUB    | 2   | 6     | 4u     |
+| MUL     | 3   | 0:5   | 10u    |
+| FMUL    | 3   | 6     | 9u     |
+| DIV     | 4   | 0:5   | 12u    |
+| FDIV    | 4   | 6     | 11u    |
+| NUM,CHAR| 5   | 0,1   | 10u    |
+| HLT     | 5   | 2     | ?      |
+| SLA,SRA,SLAX,SRAX,SLC,SRC| 6  | 0-5|  2u     |
+| MOVE    | 7   | F     | (1+2F)u|
+| LDr     | 8-15| 0:5   | 2u     |
+| LDNr    |16-23| 0:5   | 2u     |
+| STr     |24-31| 0:5   | 2u     |
+| STJ     | 32  | 0:2   | 2u     |
+| STZ     | 33  | 0:5   | 2u     |
+|JBUS,JRED|34,38| U     | 1u     |
+| IOC     | 35  | U     | 1u     |
+| IN,OUT  |36,37| U     | (1+T)u |
+| JMP,JSJ,JOV,JNOV,JL,JE,JG,JGE,JNE,JLE| 39  |0-9  | 1u   | 
+| JrN,JrZ,JrP,JrNN,JrNZ,JrNP,JrE,JrO | 40-47| 0-7 | 1u |
+| INCr,DECr,ENTr,ENNr  | 48-53   |0-3     | 1u   |
+| CMPr|54-63|0:5          | 2u   |
 
 
-
-### the GO button
+### The GO button
 MIX comes with the "GO button" attached to USB-UART. So after pressing the GO button MIX-programms can be uploaded by sending the "punched cards" to USB-UART.
 
-### toast
+### Toast
 MIX comes in a nice case with formfactor of a slice of toast, so your complete MIX computer system will easily fit into your lunch box. The case can be printed with a 3D printer. Design files can be found in the directory `build/toast`.
 
 ![](pics/MIX_gpio.jpg)
 
-## mixal
-MIX has been verified with the following programms. The presented outputs have been computed on MIX:
-### program p
-Compute the first 500 primes
+## Verify
+MIX has been verified with the following programms.
 
+* 1.3.2p table first 500 primes
+* 1.3.2e easter dates
+* 1.3.3a product of permutation
+* 1.3.1 go button
+* 1.3.2 traffic lights
+* fpu test
+* coins
+* test disk
+* echo
+
+### Example 1: Program p
+Compute the first 500 primes
 	
 ```
 FIRST FIVE HUNDRED PRIMES                                                 
@@ -142,10 +150,34 @@ FIRST FIVE HUNDRED PRIMES
      0229 0541 0863 1223 1583 1987 2357 2741 3181 3571  
 ```
 			
-### program t
+### Example 2: Program t
 MIX can control the traffic signal of the corner del Mar Avenue/Berkeley Avenue. MIX is NOT a simulatin/emulation. It's real hardware. So you can drive the LEDs with the output of RegisterX. Input is done with a push button, which directly connects to the overflow toggle.
 
 ![](pics/MIX_traffic.jpg)
+
+### Example 3: FPU test
+
+The FPU test consists of a mixal programm, which calculates floating point arithmetic (a+b,a-b,a*b,a/b) in two modes. Mode 1: using Knuth's floating point routines written in mixal as described in TAOCP Vol. 2. Mode 2: using hardware FPU implemented in fpga by the author. The test is considerd as PASS, when both calculations yield equal results.
+
+The floating point unit of MIX passed all 666 test vectors. A small python script `fpu_ver.py` translates the test output into a human readable form:
+
+```
+PASS  a=4.6262671E+34 b=1.7221547E+43 add=1.7221547E+43 sub=1.7221547E+43 mul= OVERFLOW     div=2.6863241E-09
+PASS  a=2.5752075E+05 b=9.2271205E+44 add=9.2271205E+44 sub=9.2271205E+44 mul=2.3761750E+50 div=2.7909101E-40
+PASS  a=2.6534631E+03 b=1.5976225E-39 add=2.6534631E+03 sub=2.6534631E+03 mul=4.2392327E-36 div=1.6608823E+42
+PASS  a=9.0378624E+24 b=5.0501368E+20 add=9.0383673E+24 sub=9.0373574E+24 mul=4.5642428E+45 div=1.7896266E+04
+PASS  a=6.9119667E-16 b=1.2909244E+45 add=1.2909244E+45 sub=1.2909244E+45 mul=8.9228276E+29 div= OVERFLOW    
+PASS  a=2.3828292E+46 b=1.9916564E-59 add=2.3828292E+46 sub=2.3828292E+46 mul=4.7457784E-13 div= OVERFLOW    
+PASS  a=6.5266299E+37 b=3.8120098E-47 add=6.5266299E+37 sub=6.5266299E+37 mul=2.4879583E-09 div= OVERFLOW    
+PASS  a=3.8722704E+48 b=1.0729227E-06 add=3.8722704E+48 sub=3.8722704E+48 mul=4.1546470E+42 div=3.6090848E+54
+PASS  a=6.2388017E-07 b=1.7556096E-42 add=6.2388017E-07 sub=6.2388017E-07 mul=1.0952900E-48 div=3.5536382E+35
+PASS  a=3.2433888E-24 b=5.7628567E+20 add=5.7628567E+20 sub=5.7628567E+20 mul=1.8691188E-03 div=5.6280914E-45
+PASS  a=1.4488148E-17 b=4.5634270E-01 add=4.5634270E-01 sub=4.5634270E-01 mul=6.6115620E-18 div=3.1748393E-17
+PASS  a=4.2651094E+03 b=5.7188816E+55 add=5.7188816E+55 sub=5.7188816E+55 mul= OVERFLOW     div=7.4579483E-53
+PASS  a=5.0304785E+02 b=8.3459865E-40 add=5.0304785E+02 sub=5.0304785E+02 mul=4.1984306E-37 div=6.0274242E+41
+PASS  a=1.1925260E-29 b=2.0343117E-24 add=2.0343236E-24 sub=2.0342999E-24 mul=2.4259698E-53 div=5.8620644E-06
+...
+```
 
 ## need help?
 In case you find encounter an issue with MIX`:

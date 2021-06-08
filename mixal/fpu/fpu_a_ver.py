@@ -49,3 +49,7 @@ for line in fin:
         else:
             print('FAIL: {:.7E} * {:.7E} = KNUTH {:.7E} FPU {:.7E} PYHTON {:.7E} ACC {:.7f}'.format(f(a),f(b),f(c),f(d),p,f(d)/p))
             print(line)
+            print(oct(a))
+            print(oct(b))
+            print(oct(c))
+            print(oct(d))

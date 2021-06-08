@@ -1,22 +1,3 @@
-
-/**
- mix-fpga is a fpga implementation of Knuth's MIX computer.
- Copyright (C) 2021 Michael Schröder (mi.schroeder@netcologne.de)
-
- This programm is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
- */
 // CHAR - command 5(1)
 
 `default_nettype none
@@ -79,7 +60,7 @@ module char(
 	assign out = {digit[5:0],out1[59:6]};
 	wire [5:0] digit;
 	assign digit = r + 6'd30;
-	reg [59:0] out1=60'd0;
+	reg [59:0] out1;
 	always @(posedge clk)
 		if (start) out1 <= {digit[5:0],54'd0};
 		else if (run) out1 <= out;

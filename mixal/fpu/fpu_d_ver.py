@@ -43,11 +43,12 @@ for line in fin:
         d=int(line[30:40])
         o1=line[40:45]
         o2=line[45:50]
-        p=f(a)*f(b)
+        p=f(a)/f(b)
         if (line[40:45] == 'OVER ' and line[45:50]=='OVER '):
             print ('PASS: OVERFLOW detected')
         elif (d==c):
             print('PASS: {:.7E} * {:.7E} = KNUTH {:.7E} FPU {:.7E} PYHTON {:.7E} ACC {:.7f}'.format(f(a),f(b),f(c),f(d),p,f(d)/p))
         else:
-            print('FAIL: {:.7E} * {:.7E} = KNUTH {:.7E} FPU {:.7E} PYHTON {:.7E} ACC {:.8f} {:.8f}'.format(f(a),f(b),f(c),f(d),p,f(c)/p,f(d)/p))
-            print(line)
+            print('FAIL: {:.7E} * {:.7E} = KNUTH {:.7E} FPU {:.7E} PYHTON {:.7E} ACC {:.7f}'.format(f(a),f(b),f(c),f(d),p,f(d)/p))
+            print('{:010o}'.format(a))
+            print('{:010o}'.format(b))
