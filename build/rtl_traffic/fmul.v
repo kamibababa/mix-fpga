@@ -68,14 +68,16 @@ module fmul(
 
 	//round
 	wire round;
-	assign round = last & ms[23] & ~((ms[22:0]==23'd0)&~ms[24]);
+	assign round = last & ms[23] & ~((ms[22:0]==23'd0)&ms[24]); // ms[22:18] == 5'd0
 	wire [24:0] mr;
 	assign mr = {1'd0,ms[47:24]}+{24'd0,round};
 	wire [6:0] er;
-	assign er = es - {6'd0,mr[24]};
+	assign er = es + {6'd0,mr[24]};
 	wire [23:0] mp;
 	assign mp = mr[24]? {5'd0,mr[24:6]}: {mr[23:0]};
 	// pack
-	assign out = {sign,er[5:0],mp};
-	assign overflow = last & er[6];
+	wire zero;
+	assign zero = last & (prod[47:18]==30'd0);
+	assign out = {sign,zero? 6'd0 : er[5:0],mp};
+	assign overflow = ~zero & last & er[6];
 endmodule

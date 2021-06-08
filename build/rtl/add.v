@@ -25,6 +25,7 @@ module add(
 	input wire clk,
 	input wire start,
 	output reg stop,
+	input wire subtract,
 	input wire [30:0] in1,
 	input wire [30:0] in2,
 	output wire [30:0] out,
@@ -35,6 +36,10 @@ module add(
 		if (start) stop <= 1;
 		else stop <= 0;
 
+	reg sub;
+	always @(posedge clk)
+		if (start) sub <= subtract;
+
 	// summand1 must be cached at first cycle
 	reg [30:0] a;
 	always @(posedge clk)
@@ -42,7 +47,7 @@ module add(
 	
 	// summand2 is available at second cycle
 	wire [30:0] b;
-	assign b = in2;
+	assign b = {sub^in2[30],in2[29:0]};
 
 	// let's do the possible additions: sum=a+b, d1=a-b, d2=b-a 
 	wire [30:0] sum;

@@ -34,8 +34,7 @@ module cmp(
 	input wire [30:0] in1,
 	input wire [30:0] in2,
 	output wire greater,
-	output wire less,
-	output wire equal
+	output wire less
 );
 	always @(posedge clk)
 		if (start) stop <= 1;
@@ -46,24 +45,25 @@ module cmp(
 	wire [30:0] b;
 	assign b = in2;
 	wire [30:0] sub1;
-	assign sub1 = a[29:0] - b[29:0];
+	assign sub1 = {1'd0,a[29:0]} - {1'd0,b[29:0]};
 	wire [30:0] sub2;
-	assign sub2 = b[29:0] - a[29:0];
+	assign sub2 = {1'd0,b[29:0]} - {1'd0,a[29:0]};
 	
-	assign equal = (~(sub1[30]|sub2[30])) & ((a[30] & b[30]) | (~a[30] & ~b[30]));
-	
+	wire zero;
+	assign zero = (a[29:0]==30'd0)&(in2[29:0]==30'd0);
+
 	assign greater = a[30]?
 				(b[30]?
 					(sub1[30]):
 					(0)):
 				(b[30]?
-					(1):
+					~zero:
 					(sub2[30]));
 	
 	assign less = a[30]?
 				(b[30]?
 					(sub2[30]):
-					(1)):
+					~zero):
 				(b[30]?
 					(0):
 					(sub1[30]));

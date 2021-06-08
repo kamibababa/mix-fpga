@@ -231,25 +231,24 @@ module mix(
 	//flags
 	reg overflow;
 	reg less;
-	reg equal;
+	wire equal;
+	assign equal = ~(less|greater);
 	reg greater;
 	always @(posedge clk)
 		if (reset|clearof) overflow <= 0;
 //		else if (button) overflow <= 1;		//the traffic signal button controls the overflow toggle
-		else if (add2) overflow <= addof;
-		else if (ide) overflow <= (rA|rX) & ideof;
-		else if (fadd2) overflow <= faddof;
-	       	else if (fmul2) overflow <=  fmulof;
-		else if (fdiv2) overflow <= fdivof;
+		else if (add2 & addof) overflow <= 1;
+		else if (div2 & divof) overflow <= 1;
+		else if (ide & (rA|rX) & ideof) overflow <= 1;
+		else if (fadd2 & faddof) overflow <= 1;
+	       	else if (fmul2 & fmulof) overflow <=  1;
+		else if (fdiv2 & fdivof) overflow <= 1;
 	always @(posedge clk)
 		if (reset) less <= 0;
 		else if (cmp2) less <= cmpl;
 	always @(posedge clk)
 		if (reset) greater <= 0;
 		else if (cmp2) greater <= cmpg;
-	always @(posedge clk)
-		if (reset) equal <= 1;
-		else if (cmp2) equal <= cmpe;
 
 	//Command
 	wire [5:0] command;
@@ -507,10 +506,9 @@ module mix(
 	assign cmp1 = (command[5:3] == 3'd7);
 	wire cmp2;
 	wire cmpl;
-	wire cmpe;
 	wire cmpg;
 	wire [30:0] rout_field;
 	field FIELD(.field(field),.in(rout),.out(rout_field));
-	cmp CMP(.clk(clk),.start(cmp1),.stop(cmp2),.in1(rout_field),.in2(value),.equal(cmpe),.less(cmpl),.greater(cmpg));	
+	cmp CMP(.clk(clk),.start(cmp1),.stop(cmp2),.in1(rout_field),.in2(value),.less(cmpl),.greater(cmpg));	
 	
 endmodule

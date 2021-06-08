@@ -43,22 +43,24 @@ module UartRX(
 		else run <= run;
 	
 	reg [15:0] baud;
-	wire is144;
+	wire is144;	//25MHz
 	assign is144 = baud[4] & baud[7];
-	wire is108;
+	wire is108;	//24MHz
 	assign is108 = baud[2] & baud[3] & baud[5] & baud[6];
+	wire is104;	//23.8MHz
+	assign is104 = baud[3] & baud[5] & baud[6];
 	always @(posedge clk)
-		if (reset|is108) baud <= 0;
+		if (reset|is104) baud <= 0;
 		else if (run) baud <= baud + 1;
 
 	wire shift;
-	assign shift = is108 & ~bits[0];
+	assign shift = is104 & ~bits[0];
 	reg [15:0] bits;
 	always @(posedge clk)
 		if (reset|start) bits <= 0;
-		else if (is108) bits <= bits + 1;
+		else if (is104) bits <= bits + 1;
 
-	assign stop = is108 & bits[4] & bits[1];	
+	assign stop = is104 & bits[4] & bits[1];	
 	
 	reg [9:0] shifter;
 	always @(posedge clk)

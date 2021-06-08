@@ -72,7 +72,7 @@ module fmul(
 	wire [24:0] mr;
 	assign mr = {1'd0,ms[47:24]}+{24'd0,round};
 	wire [6:0] er;
-	assign er = es - {6'd0,mr[24]};
+	assign er = es + {6'd0,mr[24]};
 	wire [23:0] mp;
 	assign mp = mr[24]? {5'd0,mr[24:6]}: {mr[23:0]};
 	// pack

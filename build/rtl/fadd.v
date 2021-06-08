@@ -4,12 +4,17 @@
 module fadd(
 	input wire clk,
 	input wire start,
+	input wire sub,
 	input wire [30:0] in1,
 	input wire [30:0] in2,
 	output [30:0] out,
 	output stop,
 	output wire overflow
 );
+	reg subtract;
+	always @(posedge clk)
+		if (start) subtract <= sub;
+
 	reg one;
 	always @(posedge clk)
 		if (start) one <= 1;
@@ -92,26 +97,53 @@ module fadd(
 	reg sign;
 	always @(posedge clk)
 		if (start) sign <= in1[30];
-		else if (one & g2) sign <= in2[30];
+		else if (one & g2) sign <= in2[30]^subtract;
 	
 	reg op;
 	always @(posedge clk)
 		if (start) op <= in1[30];
-		else if (one) op <= op ^ in2[30];
+		else if (one) op <= op ^ in2[30]^subtract;
 
 	//extra shift?
+	wire sm1;
+	wire s1;
+	wire s2;
+	wire s3;
+	wire s4;
+	wire s5;
+	assign sm1 = calc[54];
+	assign s1 = calc[53:48]==6'd0;
+	assign s2 = s1 & calc[47:42]==6'd0;
+	assign s3 = s2 & calc[41:36]==6'd0;
+	assign s4 = s3 & calc[35:30]==6'd0;
+	assign s5 = s4 & calc[29:24]==6'd0;
+
+
 	wire [6:0] es;
-	assign es = calc[54]? {1'd0, ae}+7'd1: {1'd0,ae};
+	assign es = sm1? {1'd0, ae}+7'd1: 
+		    s5? {1'd0,ae}-7'd5:
+		    s4? {1'd0,ae}-7'd4:
+		    s3? {1'd0,ae}-7'd3:
+		    s2? {1'd0,ae}-7'd2:
+		    s1? {1'd0,ae}-7'd1:
+		    {1'd0,ae};
+
 	wire [53:0] ms;
-	assign ms = calc[54]? {6'd1,calc[53:6]}: calc[53:0];
+	assign ms = sm1? {6'd1,calc[53:6]}:
+		    s5? {calc[23:0],30'd0}:
+		    s4? {calc[29:0],24'd0}:
+		    s3? {calc[35:0],18'd0}:
+		    s2? {calc[41:0],12'd0}:
+		    s1? {calc[47:0],6'd0}:
+		    {calc[53:0]};
 
 
 	wire round;
 	assign round = ms[29] & ~((ms[28:0]==29'd0)&ms[30]);
 	wire [24:0] mr;
-	assign mr = {1'd0,ms[53:30]}+{24'd0,round};
-	wire [6:0] er;
-	assign er = es - {6'd0,mr[24]};
+	assign mr = {1'd0,ms[53:30]} + {24'd0,round};
+	wire [6:0] er; 
+	assign er = es + {6'd0,mr[24]};
 	wire [23:0] mp;
 	assign mp = mr[24]? {5'd0,mr[24:6]}: {mr[23:0]};
 	// pack

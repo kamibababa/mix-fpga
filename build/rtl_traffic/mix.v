@@ -70,7 +70,7 @@ module mix(
 	wire fetch;	// fetch instruction
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
 	wire fetch1;	// ready for next fetch
-	assign fetch1 = go | nop | add2 | sub2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2;
+	assign fetch1 = go | nop | add2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2 | fadd2|fdiv2;
 	reg fetch2;	// fetch after outrequest
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
@@ -116,14 +116,15 @@ module mix(
 		if (reset) RegisterA <= 31'd0;
 		else if (ld2 & rA2) RegisterA <= ldout;
 		else if (add2) RegisterA <= addout;
-		else if (sub2) RegisterA <= subout;
 		else if (mul2) RegisterA <= {mulsign,mulout[59:30]};
 		else if (div2) RegisterA <= {divsign,divQ};
 		else if (ide & rA) RegisterA <= ideout;
 		else if (char2) RegisterA <= {RegisterA[30],charout[59:30]};
 		else if (num2) RegisterA <= {RegisterA[30],numout};
 		else if (shift2) RegisterA <= {RegisterA[30],shiftaout};
+		else if (fadd2) RegisterA <= faddout;
 		else if (fmul2) RegisterA <= fmulout;
+		else if (fdiv2) RegisterA <= fdivout;
 	reg [12:0] RegisterI1;
 	always @(posedge clk)
 		if (reset) RegisterI1 <= 13'd0;
@@ -230,24 +231,24 @@ module mix(
 	//flags
 	reg overflow;
 	reg less;
-	reg equal;
+	wire equal;
+	assign equal = ~(less|greater);
 	reg greater;
 	always @(posedge clk)
 		if (reset|clearof) overflow <= 0;
 		else if (button) overflow <= 1;		//the traffic signal button controls the overflow toggle
-		else if (add2) overflow <= addof;
-		else if (sub2) overflow <= subof;
-		else if (ide) overflow <= (rA|rX) & ideof;
-		else if (fmulof) overflow <= 1;
+		else if (add2 & addof) overflow <= 1;
+		else if (div2 & divof) overflow <= 1;
+		else if (ide & (rA|rX) & ideof) overflow <= 1;
+		else if (fadd2 & faddof) overflow <= 1;
+	       	else if (fmul2 & fmulof) overflow <=  1;
+		else if (fdiv2 & fdivof) overflow <= 1;
 	always @(posedge clk)
 		if (reset) less <= 0;
 		else if (cmp2) less <= cmpl;
 	always @(posedge clk)
 		if (reset) greater <= 0;
 		else if (cmp2) greater <= cmpg;
-	always @(posedge clk)
-		if (reset) equal <= 1;
-		else if (cmp2) equal <= cmpe;
 
 	//Command
 	wire [5:0] command;
@@ -273,20 +274,23 @@ module mix(
 	assign nop = (execute) & (command == 6'd0);
 	
 	//command 1 - ADD
+	wire addc;
+	assign addc = (command == 6'd1);
 	wire add1;
-	assign add1 = (command == 6'd1);
+	assign add1 = (addc|subc) & ~fpu;
 	wire add2;
 	wire [30:0] addout;
 	wire addof;
-	add ADD(.clk(clk),.start(add1),.stop(add2),.in1(RegisterA),.in2(value),.out(addout),.overflow(addof));	
-	
+	wire fadd1;
+	assign fadd1 = (addc | subc)  & fpu;
+	wire fadd2;
+	wire [30:0] faddout;
+	wire faddof;
+	add ADD(.clk(clk),.start(add1),.subtract(subc),.stop(add2),.in1(RegisterA),.in2(value),.out(addout),.overflow(addof));	
+	fadd FADD(.clk(clk),.sub(subc),.start(fadd1),.stop(fadd2),.in1(RegisterA),.in2(data),.out(faddout),.overflow(faddof));	
 	//command 2 - SUB
-	wire sub1;
-	assign sub1 = (command == 6'd2);
-	wire sub2;
-	wire [30:0] subout;
-	wire subof;
-	sub SUB(.clk(clk),.start(sub1),.stop(sub2),.in1(RegisterA),.in2(value),.out(subout),.overflow(subof));	
+	wire subc;
+	assign subc = (command == 6'd2);
 	
 	//command 3 - MUL
 	wire mulc;
@@ -310,14 +314,19 @@ module mix(
 	wire divc;
 	assign divc = (command == 6'd4);
 	wire div1;
+	wire fdiv1;
 	assign div1 = divc & ~fpu;
+	assign fdiv1 = divc & fpu;
 	wire div2;
+	wire fdiv2;
 	wire [29:0] divQ;
 	wire [29:0] divR;
 	wire divof;
 	wire divsign;
+	wire fdivof;
+	wire [30:0] fdivout;
 	div DIV(.clk(clk),.start(div1),.stop(div2),.divisor(value),.quotient(divQ),.dividend({RegisterA,RegisterX[29:0]}),.overflow(divof),.rest(divR),.sign(divsign));	
-	//fdiv FDIV(.clk(clk),.start(fdiv1),.stop(fdiv2),.divisor(data),.dividend(RegisterA),.overflow(fdivof),.out(fdivout));
+	fdiv FDIV(.clk(clk),.start(fdiv1),.stop(fdiv2),.divisor(data),.dividend(RegisterA),.overflow(fdivof),.out(fdivout));
 
 	//command 5(0) - NUM
 	wire num1;
@@ -497,10 +506,9 @@ module mix(
 	assign cmp1 = (command[5:3] == 3'd7);
 	wire cmp2;
 	wire cmpl;
-	wire cmpe;
 	wire cmpg;
 	wire [30:0] rout_field;
 	field FIELD(.field(field),.in(rout),.out(rout_field));
-	cmp CMP(.clk(clk),.start(cmp1),.stop(cmp2),.in1(rout_field),.in2(value),.equal(cmpe),.less(cmpl),.greater(cmpg));	
+	cmp CMP(.clk(clk),.start(cmp1),.stop(cmp2),.in1(rout_field),.in2(value),.less(cmpl),.greater(cmpg));	
 	
 endmodule
