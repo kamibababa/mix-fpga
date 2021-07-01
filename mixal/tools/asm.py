@@ -123,9 +123,11 @@ def opcode(op):
     if (op in op_codes):
         return op_codes[op]
     elif (op.startswith('LD')):
-        return (8+reg(op[2]),5)
-        if (op[3]=='N'):
-            opc+=8
+        if (len(op)>3 and op[3]=='N'):
+            return (16+reg(op[2]),5)
+        else:    
+            return (8+reg(op[2]),5)
+        return opc
     elif (op.startswith('ST')):
         return (24+reg(op[2]),5)
     elif (op.startswith('J')):

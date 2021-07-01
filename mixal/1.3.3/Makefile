@@ -6,10 +6,11 @@ $(NAME).mls: $(NAME).mixal
 	../tools/asm.py $(NAME).mixal
 $(NAME).card: $(NAME).mls
 	../tools/mls2card.py $(NAME).mls
+	cat $(NAME).card a.in > $(NAME)_in.card
 $(NAME).out: $(NAME).card
 	stty -F /dev/ttyUSB0 115200 -icrnl -echo
 	cat /dev/ttyUSB0 > $(NAME).out &
-	cat $(NAME).card > /dev/ttyUSB0
+	cat $(NAME)_in.card > /dev/ttyUSB0
 	sleep 1
 	killall cat
 	cat $(NAME).out
