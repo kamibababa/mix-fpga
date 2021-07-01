@@ -1,115 +1,116 @@
-* Count the number of coin combinations
-
-TERM	EQU	19		Terminal uses 14 words or 70 char
-VAL	EQU	4:5		The value of a coin
-AMT	EQU	1:3		The current amount of those coins
-
-* Start of the program.
-	ORIG	1000
-PROG	OUT	PRMPT(TERM)
-	JBUS	*(TERM)
-* Get the value we want combos for
-        IN	INPT1(TERM)
-	LDA	INPT1		THE NUMBER IS PROBABLY IN THIS WORD
-	LDX	INPT2		WE LOAD 10 CHARS OF INPUT
-	JAP	1F		MAKE SURE THEY ENTERED SOMETHING
-	JXZ	PROG		MAYBE THEY HAD SPACES FIRST?
-1H	CMPX	PRMPT(5:5)	IS THE LAST CHAR A SPACE
-	JNE	3F		IF NOT THEN WE CAN MOVE ON
-	SRAX	1		IF IT IS, SHIFT RIGHT 1 SPOT AND
-	JMP	1B		LOOP BACK TO MAKE SURE
-3H	NUM
-	CMPA	MAX
-	JG	PROG
-	STZ	MAX
-	STA	WANTED
-
-* Get a current value of the coins we have
-CURRVAL	LD6	TYPES		How many kinds of coins
-	LDA	COINS,6(AMT)	Load current amount of first coin
-2H	DEC6	1		Move to next coin
-	ADD	COINS,6(AMT)	Add the amount of the next coin
-	J6NZ	2B		Keep going for all combos
-
-* If less than goal, add a coin
-        CMPA    WANTED		Compare the current value to wanted value
-	JGE	1F		If it's < wanted
-	LDA	COINS(AMT)	{
-	ADD	COINS(VAL)	  add another of the first coin
-	STA	COINS(AMT)        and go back to CURRVAL
-	JMP	CURRVAL		}
-1H	JG	3F		If it's = wanted
-
-* It was equal, print, and the fall through
-	LDX	MAX
-	INCX	1      	        We use this for counting the hits
-	LD6	TYPES		We iterate through the types
-	ENT5	0		This points to the word in PBUFF
-	STX	MAX
-	LDA	MAX
-	CHAR
-	STX	PBUF,5		Print the current number of hits
-1H	INC5	2		Move to the next column
-	ENTA	0
-	LDX	COINS,6(AMT)	Get the number of coins by dividing the amount
-	DIV	COINS,6(VAL)	by the value of 1 coin
-6H	CHAR
-	STX	PBUF,5(3:5)	Print the current amount
-	DEC6	1		Go to the next coin type
-	J6NN	1B		If we go negative, we're done with coins
-	OUT	PBUF(TERM)	Output the line to the console
-
-* Equal or Greater, find first non-zero spot, add one to the next
-* spot up, and then zero it out.
-3H	ENT5	0
-5H	LDA	COINS,5(AMT)	Load current coin value
-	INC5	1		Go to next type of coin
-	CMP5	TYPES		Compare to number of coin types
-	JG	DONE		If greater, we're out of coins
-	JAZ	5B		If current coin value is 0, go to next coin
-	LDA	COINS,5(AMT)	Load next coin up
-	ADD	COINS,5(VAL)	Add it's value to the amount
-	STA	COINS,5(AMT)	Save it
-	DEC5	1		Go back to previous type
-	STZ	COINS,5(AMT)	Zero it out
-	JMP	CURRVAL		Go back to the main loop
-DONE	HLT
-* Tables to keep the values and counts
-* The below can be used to test for 1000 (1:2), 100 (3:4), and 10 (5:5)
-MAX	CON	499	   	MAX AMOUNT OF CENTS BEFORE COUNTER RESETS IS 221
-WANTED	CON	62		THE COMBINATION WE WANT
-TYPES	CON	5		NUMBER OF TYPES - 1
-COINS	CON	1		PENNIES
-	CON	5		NICKLES
-	CON	10		DIMES
-	CON	25		QUARTERS
-	CON	50		HALF-DOLLARS
-	CON	100		DOLLARS
-PRMPT	ALF	"WHAT "
-	ALF	"AMOUN"
-	ALF	"T <IN"
-	ALF	" CENT"
-	ALF	"S> DO"
-	ALF	" YOU "
-	ALF	"WANT "
-	ALF	"MAX 2"
-	ALF	"20:  "
-	ORIG	PRMPT+14
-INPT1	CON	0
-INPT2	CON	0
-* This will be our printline
-	ORIG	PRMPT+28
-PBUF	CON	0		COUNT
-	ALF	"  DLR"
-	ALF	":    "
-	ALF	"  HLF"
-	ALF	":    "
-	ALF	"  QTR"
-	ALF	":    "
-	ALF	"  DMS"
-	ALF	":    "
-	ALF	" NCKL"
-	ALF	":    "
-	ALF	"  PNY"
-	ALF	":    "
-	END	PROG
+* Count the number of coin combinations                                         
+*                                                                               
+TERM       EQU  19                                                              
+VAL        EQU  4:5                                                             
+AMT        EQU  1:3                                                             
+*                                                                               
+* Start of the program.                                                         
+           ORIG 1000                                                            
+PROG       OUT  PRMPT(TERM)                                                     
+* Get the value we want combos for                                              
+           IN   INPT1(TERM)                                                     
+           JBUS *(TERM) 
+           LDA  INPT1                                                           
+           LDX  INPT2                                                           
+           JAP  1F                                                              
+           JXZ  PROG                                                            
+1H         CMPX PRMPT(5:5)                                                      
+           JNE  3F                                                              
+           SRAX 1                                                               
+           JMP  1B                                                              
+3H         NUM                                                                  
+           CMPA MAX                                                             
+           JG   PROG                                                            
+           STZ  MAX                                                             
+           STA  WANTED                                                          
+*                                                                               
+* Get a current value of the coins we have                                      
+CURRVAL    LD6  TYPES                                                           
+           LDA  COINS,6(AMT)                                                    
+2H         DEC6 1                                                               
+           ADD  COINS,6(AMT)                                                    
+           J6NZ 2B                                                              
+*                                                                               
+* If less than goal, add a coin                                                 
+           CMPA WANTED                                                          
+           JGE  1F                                                              
+           LDA  COINS(AMT)                                                      
+           ADD  COINS(VAL)                                                      
+           STA  COINS(AMT)                                                      
+           JMP  CURRVAL                                                         
+1H         JG   3F                                                              
+*                                                                               
+* It was equal, print, and the fall through                                     
+           LDX  MAX                                                             
+           INCX 1                                                               
+           LD6  TYPES                                                           
+           ENT5 0                                                               
+           STX  MAX                                                             
+           LDA  MAX                                                             
+           CHAR                                                                 
+           STX  PBUF,5                                                          
+1H         INC5 2                                                               
+           ENTA 0                                                               
+           LDX  COINS,6(AMT)                                                    
+           DIV  COINS,6(VAL)                                                    
+6H         CHAR                                                                 
+           STX  PBUF,5(3:5)                                                     
+           DEC6 1                                                               
+           J6NN 1B                                                                         
+           OUT  PBUF(TERM)     
+           JBUS *(TERM) 
+*                                                                               
+* Equal or Greater, find first non-zero spot, add one to the next               
+* spot up, and then zero it out.                                                
+3H         ENT5 0                                                               
+5H         LDA  COINS,5(AMT)                                                    
+           INC5 1                                                               
+           CMP5 TYPES                                                           
+           JG   DONE                                                            
+           JAZ  5B                                                              
+           LDA  COINS,5(AMT)                                                    
+           ADD  COINS,5(VAL)                                                    
+           STA  COINS,5(AMT)                                                    
+           DEC5 1                                                               
+           STZ  COINS,5(AMT)                                                    
+           JMP  CURRVAL                                                         
+DONE       HLT                                                                  
+* Tables to keep the values and counts                                          
+* The below can be used to test for 1000 (1:2), 100 (3:4), and 10 (5:5)         
+MAX        CON  499                                                             
+WANTED     CON  62                                                              
+TYPES      CON  5                                                               
+COINS      CON  1                                                               
+           CON  5                                                               
+           CON  10                                                              
+           CON  25                                                              
+           CON  50                                                              
+           CON  100                                                             
+PRMPT      ALF  WHAT                                                            
+           ALF  AMOUN                                                           
+           ALF  T <IN                                                           
+           ALF   CENT                                                           
+           ALF  S> DO                                                           
+           ALF   YOU                                                            
+           ALF  WANT                                                            
+           ALF  MAX 2                                                           
+           ALF  20:                                                             
+           ORIG PRMPT+14                                                        
+INPT1      CON  0                                                               
+INPT2      CON  0                                                               
+* This will be our printline                                                    
+           ORIG PRMPT+28                                                        
+PBUF       CON  0                                                               
+           ALF    DLR                                                           
+           ALF  :                                                               
+           ALF    HLF                                                           
+           ALF  :                                                               
+           ALF    QTR                                                           
+           ALF  :                                                               
+           ALF    DMS                                                           
+           ALF  :                                                               
+           ALF   NCKL                                                           
+           ALF  :                                                               
+           ALF    PNY                                                           
+           ALF  :                                                               
+           END  PROG                                                            

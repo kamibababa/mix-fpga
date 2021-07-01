@@ -1,0 +1,22 @@
+           ORIG 4000                                                            
+           JMP  START                                                           
+WELCOME    ALF  WELCO                                                           
+           ALF  ME TO                                                           
+           ALF   MIX.                                                           
+           ALF   1U =                                                           
+           ALF   42NS                                                           
+           ALF  . U16                                                           
+           ALF  -U20                                                            
+           ALF  USB-U                                                           
+           ALF  ART.                                                            
+           ALF  U8 10                                                           
+           ALF  00 BL                                                           
+           ALF  OCKS.                                                           
+           ALF   FPU.                                                           
+           ORIG 4091                                                            
+START      OUT  WELCOME(17)                                                     
+           JBUS *(17)                                                           
+NEXT       IN   0(16)                                                           
+           JBUS *(16)                                                           
+           JMP  0                                                               
+           END  START                                                           

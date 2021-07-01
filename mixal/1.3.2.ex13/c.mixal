@@ -1,0 +1,55 @@
+* CRYPTANALYST PROBLEM (CLASSIFIED)                                             
+TAPE       EQU  16                                                              
+TYPE       EQU  19                                                              
+SIZE       EQU  16                                                              
+OSIZE      EQU  14                                                              
+TABLE      EQU  1000                                                            
+           ORIG TABLE                                                           
+           CON  -1                                                              
+           ORIG TABLE+46                                                        
+           CON  -1                                                              
+           ORIG 2000                                                            
+BUF1       ORIG *+SIZE                                                          
+           CON  -1                                                              
+           CON  *+1                                                             
+BUF2       ORIG *+SIZE                                                          
+           CON  -1                                                              
+           CON  BUF1                                                            
+BEGIN      IN   BUF1(TAPE)                                                      
+           ENT6 BUF2                                                            
+1H         IN   0,6(TAPE)                                                       
+           LD6  SIZE+1,6                                                        
+           ENT5 0,6                                                             
+           JMP  4F                                                              
+2H         INCA 1                                                               
+           STA  TABLE,1                                                         
+3H         SLAX 1                                                               
+           STA  *+1(2:2)                                                        
+           ENT1 0                                                               
+           LDA  TABLE,1                                                         
+           JANN 2B                                                              
+           J1NZ 3F                                                              
+           JXP  3B                                                              
+           INC5 1                                                               
+4H         LDX  0,5                                                             
+           JXNN 3B                                                              
+           JMP  1B                                                              
+3H         ENT1 1                                                               
+2H         LDA  TABLE,1                                                         
+           JANP 1F                                                              
+           CHAR                                                                 
+           JBUS *(TYPE)                                                         
+           ST1  CHAR(1:1)                                                       
+           STA  CHAR(4:5)                                                       
+           STX  FREQ                                                            
+           OUT  ANS(TYPE)                                                       
+1H         CMP1 =63=                                                            
+           INC1 1                                                               
+           JL   2B                                                              
+           HLT                                                                  
+ANS        ALF                                                                  
+           ALF                                                                  
+CHAR       ALF  C  NN                                                           
+FREQ       ALF  NNNNN                                                           
+           ORIG ANS+OSIZE                                                       
+           END  BEGIN                                                           
