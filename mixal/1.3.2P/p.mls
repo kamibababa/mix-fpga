@@ -53,20 +53,20 @@
 2051 + 0000 00 00 03      =3         CON  3
                      0052            END  START 
                                      TRANS 3000
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  2050
-                          L          EQU  500
-                          PRINTER    EQU  18
-                          PRIME      EQU  -1
-                          BUF0       EQU  2000
-                          BUF1       EQU  2025
-                          START      EQU  3000
                           2H@0012    EQU  3003
-                          4H@0015    EQU  3006
-                          6H@0017    EQU  3008
                           2H@0025    EQU  3016
                           2H@0028    EQU  3019
+                          4H@0015    EQU  3006
                           4H@0029    EQU  3020
-                          TITLE      EQU  1995
+                          6H@0017    EQU  3008
                           =1-L       EQU  2050
                           =3         EQU  2051
+                          BUF0       EQU  2000
+                          BUF1       EQU  2025
+                          L          EQU  500
+                          PRIME      EQU  -1
+                          PRINTER    EQU  18
+                          START      EQU  3000
+                          TITLE      EQU  1995

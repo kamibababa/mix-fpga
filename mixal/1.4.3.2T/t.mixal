@@ -1,0 +1,388 @@
+* DATE OF EASTER                                                                
+*                                                                               
+*                                                                               
+           ORIG 3000                                                            
+EASTER     STJ  EASTX                                                           
+           STX  Y                                                               
+           ENTA 0                                                               
+           DIV  =19=                                                            
+           STX  GMINUS1(0:2)                                                    
+           LDA  Y                                                               
+           MUL  =1//100+1=                                                      
+           INCA 61                                                              
+           STA  CPLUS60(1:2)                                                    
+           MUL  =3//4+1=                                                        
+           STA  XPLUS57(1:2)                                                    
+CPLUS60    ENTA *                                                               
+           MUL  =8//25+1=                                                       
+GMINUS1    ENT2 *                                                               
+           ENT1 1,2                                                             
+           INC2 1,1                                                             
+           INC2 0,2                                                             
+           INC2 0,1                                                             
+           INC2 0,2                                                             
+           INC2 773,1                                                           
+XPLUS57    INCA -*,2                                                            
+           SRAX 5                                                               
+           DIV  =30=                                                            
+           DECX 24                                                              
+           JXN  4F                                                              
+           DECX 1                                                               
+           JXP  2F                                                              
+           JXN  3F                                                              
+           DEC1 11                                                              
+           J1NP 2F                                                              
+3H         INCX 1                                                               
+2H         DECX 29                                                              
+4H         STX  20MINUSN(0:2)                                                   
+           LDA  Y                                                               
+           MUL  =1//4+1=                                                        
+           ADD  Y                                                               
+           SUB  XPLUS57(1:2)                                                    
+20MINUSN   ENN1 *                                                               
+           INCA 67,1                                                            
+           SRAX 5                                                               
+           DIV  =7=                                                             
+           SLAX 5                                                               
+           DECA -4,1                                                            
+           JAN  1F                                                              
+           DECA 31                                                              
+           CHAR                                                                 
+           LDA  MARCH                                                           
+           JMP  2F                                                              
+1H         CHAR                                                                 
+           LDA  APRIL                                                           
+2H         JBUS *(18)                                                           
+           STA  MONTH                                                           
+           STX  DAY(1:2)                                                        
+           LDA  Y                                                               
+           CHAR                                                                 
+           STX  YEAR                                                            
+           OUT  ANS(18)                                                         
+EASTX      JMP  *                                                               
+MARCH      ALF  MARCH                                                           
+APRIL      ALF  APRIL                                                           
+ANS        ALF                                                                  
+DAY        ALF  DD                                                              
+MONTH      ALF  MMMM                                                            
+           ALF  ,                                                               
+YEAR       ALF  YYYY                                                            
+           ORIG *+20                                                            
+BEGIN      STJ  ENDE                                                            
+           ENTX 1950                                                            
+           ENT6 1950-2000                                                       
+           JMP  EASTER                                                          
+           INC6 1                                                               
+           ENTX 2000,6                                                          
+           J6NP EASTER+1                                                        
+ENDE       JMP  *                                                               
+* TRACE ROUTINE                                                                 
+*                                                                               
+*                                                                               
+           ORIG *+99                                                            
+BUF        CON  0                                                               
+ENTER      STX  TEST(0:2)                                                       
+           STX  LEAVEX(0:2)                                                     
+           STA  AREG                                                            
+           ST1  I1REG                                                           
+           STJ  JREG                                                            
+           LDA  JREG(0:2)                                                       
+CYCLE      STA  PREG(0:2)                                                       
+PTR        ENT1 -100                                                            
+           STA  BUF+1,1(0:2)                                                    
+TEST       DECA *                                                               
+           JAZ  LEAVE                                                           
+PREG       LDA  *                                                               
+           STA  INST                                                            
+           STA  BUF+2,1                                                         
+           SRA  2                                                               
+           STA  INST1(0:3)                                                      
+           LDA  AREG                                                            
+           STA  BUF+3,1                                                         
+           LDA  I1REG                                                           
+           STA  BUF+4,1                                                         
+           ST2  BUF+5,1                                                         
+           ST3  BUF+6,1                                                         
+           ST4  BUF+7,1                                                         
+           ST5  BUF+8,1                                                         
+           ST6  BUF+9,1                                                         
+           STX  BUF+10,1                                                        
+           LDA  JREG(0:2)                                                       
+           STA  BUF+1,1(4:5)                                                    
+           ENTA 8                                                               
+           JNOV 1F                                                              
+           ADD  BIG                                                             
+1H         JL   1F                                                              
+           INCA 1                                                               
+           JE   1F                                                              
+           INCA 1                                                               
+1H         STA  BUF+1,1(3:3)                                                    
+           INC1 10                                                              
+           J1N  1F                                                              
+           OUT  BUF-99(0)                                                       
+           ENT1 -100                                                            
+1H         ST1  PTR(0:2)                                                        
+           LD1  I1REG                                                           
+           LDA  INST(5:5)                                                       
+           DECA 38                                                              
+           JANN 1F                                                              
+           INCA 6                                                               
+           JANZ 2F                                                              
+           LDA  INST(0:4)                                                       
+           STA  *+2(0:4)                                                        
+JREG       ENTA *                                                               
+           STA  *                                                               
+           JMP  INCP                                                            
+2H         DECA 2                                                               
+           JANZ 2F                                                              
+           JBUS *(18)                                                           
+           JMP  3F                                                              
+1H         DECA 9                                                               
+           JAP  2F                                                              
+3H         LDA  8F(0:3)                                                         
+           STA  INST(0:3)                                                       
+2H         LDA  AREG                                                            
+*                                                                               
+INST       NOP  *                                                               
+           STA  AREG                                                            
+           ST1  I1REG                                                           
+INCP       LDA  PREG(0:2)                                                       
+           INCA 1                                                               
+           JMP  CYCLE                                                           
+8H         JSJ  JUMP                                                            
+JUMP       LDA  8B(4:5)                                                         
+           SUB  INST(4:5)                                                       
+           JAZ  *+4                                                             
+           LDA  PREG(0:2)                                                       
+           INCA 1                                                               
+           STA  JREG(0:2)                                                       
+INST1      ENTA *                                                               
+           JMP  CYCLE                                                           
+LEAVE      LDA  AREG                                                            
+           LD1  I1REG                                                           
+LEAVEX     JMP  *                                                               
+AREG       CON  0                                                               
+B4         EQU  1(1:1)                                                          
+BIG        CON  B4-8,B4-1(1:1)                                                  
+* CONTROL                                                                       
+*                                                                               
+*                                                                               
+OPTABLE    ALF  NOP                                                             
+           ALF  ADD                                                             
+           ALF  SUB                                                             
+           ALF  MUL                                                             
+           ALF  DIV                                                             
+           ALF  SPEC                                                            
+           ALF  SH                                                              
+           ALF  MOVE                                                            
+           ALF  LDA                                                             
+           ALF  LD1                                                             
+           ALF  LD2                                                             
+           ALF  LD3                                                             
+           ALF  LD4                                                             
+           ALF  LD5                                                             
+           ALF  LD6                                                             
+           ALF  LDX                                                             
+           ALF  LDAN                                                            
+           ALF  LD1N                                                            
+           ALF  LD2N                                                            
+           ALF  LD3N                                                            
+           ALF  LD4N                                                            
+           ALF  LD5N                                                            
+           ALF  LD6N                                                            
+           ALF  LDXN                                                            
+           ALF  STA                                                             
+           ALF  ST1                                                             
+           ALF  ST2                                                             
+           ALF  ST3                                                             
+           ALF  ST4                                                             
+           ALF  ST5                                                             
+           ALF  ST6                                                             
+           ALF  STX                                                             
+           ALF  STJ                                                             
+           ALF  STZ                                                             
+           ALF  JBUS                                                            
+           ALF  IOC                                                             
+           ALF  IN                                                              
+           ALF  OUT                                                             
+           ALF  JRED                                                            
+           ALF  JMP                                                             
+           ALF  JA                                                              
+           ALF  J1                                                              
+           ALF  J2                                                              
+           ALF  J3                                                              
+           ALF  J4                                                              
+           ALF  J5                                                              
+           ALF  J6                                                              
+           ALF  JX                                                              
+           ALF  ADRA                                                            
+           ALF  ADR1                                                            
+           ALF  ADR2                                                            
+           ALF  ADR3                                                            
+           ALF  ADR4                                                            
+           ALF  ADR5                                                            
+           ALF  ADR6                                                            
+           ALF  ADRX                                                            
+           ALF  CMPA                                                            
+           ALF  CMP1                                                            
+           ALF  CMP2                                                            
+           ALF  CMP3                                                            
+           ALF  CMP4                                                            
+           ALF  CMP5                                                            
+           ALF  CMP6                                                            
+           ALF  CMPX                                                            
+BUFP       ALF  LOC                                                             
+           ALF  REGJ                                                            
+           ALF  OP                                                              
+           ALF   ADDR                                                           
+           ALF  ,I(FD                                                           
+           ALF  ) C O                                                           
+           ALF                                                                  
+           ALF     RE                                                            
+           ALF  GA                                                                
+           ALF                                                                  
+           ALF     RE                                                            
+           ALF  GX                                                                
+           ALF                                                                  
+           ALF  REG1                                                            
+           ALF                                                                  
+           ALF  REG2                                                            
+           ALF                                                                  
+           ALF  REG3                                                            
+           ALF                                                                  
+           ALF  REG4                                                            
+           ALF                                                                  
+           ALF  REG5                                                            
+           ALF                                                                  
+           ALF  REG6                                                            
+ENDM       CON  0                                                               
+START      ENT3 0                                                               
+           ENTX PRINT                                                           
+           STX  ENDM                                                            
+           JMP  ENTER                                                           
+           JMP  BEGIN                                                           
+PRINT      OUT  BUF-99(0)                                                       
+           IOC  0(0)                                                            
+           NOP                                                                  
+           OUT  BUFP(18)                                                        
+2H         JBUS *(18)                                                           
+           ENT1 -100                                                            
+           IN   BUF+1,1(0)                                                      
+           NOP                                                                  
+*LOC                                                                            
+1H         LDA  BUF+1,1(0:2)                                                    
+4H         CMPA ENDM                                                            
+           JE   STOP                                                            
+           CHAR                                                                 
+           STX  BUFP(1:4)                                                       
+* OP                                                                            
+           LD3  BUF+2,1(5:5)                                                    
+           LDA  OPTABLE,3                                                       
+           STA  BUFP+2                                                          
+* F                                                                             
+           LDA  BUF+2,1(4:4)                                                    
+           CHAR                                                                 
+           STX  BUFP+4(4:5)                                                     
+*I                                                                              
+           LDA  BUF+2,1(3:3)                                                    
+           CHAR                                                                 
+           STX  BUFP+4(2:2)                                                     
+*ADDR                                                                           
+           LDA  BUF+2,1(0:2)                                                    
+           CHAR      
+           SLAX
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDA  0,2
+           SRAX 1                                         
+           STX  BUFP+3(1:5)                                                     
+*REGJ                                                                           
+           LDA  BUF+1,1(4:5)                                                    
+           CHAR                                                                 
+           STX  BUFP+1(1:4)                                                     
+*REGA                                                                           
+           LDA  BUF+3,1                                                         
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+6(1:5)
+           CHAR                                                                 
+           STA  BUFP+7                                                          
+           STX  BUFP+8                                                          
+*regx                                                                           
+           LDA  BUF+10,1                                                        
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+9(1:5)
+           CHAR                                                                 
+           STA  BUFP+10                                                         
+           STX  BUFP+11                                                         
+*REG1	                                                                          
+           LDA  BUF+4,1                                                         
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+12(1:5)
+           CHAR                                                                 
+           STX  BUFP+13(1:4)                                                    
+*reg2	                                                                          
+           LDA  BUF+5,1                                                         
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+14(1:5)
+           CHAR                                                                 
+           STX  BUFP+15(1:4)                                                    
+*reg3                                                                           
+           LDA  BUF+6,1                                                         
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+16(1:5)
+           CHAR                                                                 
+           STX  BUFP+17(1:4)                                                    
+*reg4                                                                           
+           LDA  BUF+7,1                                                         
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+18(1:5)
+           CHAR                                                                 
+           STX  BUFP+19(1:4)                                                    
+*reg5                                                                           
+           LDA  BUF+8,1
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+20(1:5)
+           CHAR                                                                 
+           STX  BUFP+21(1:4)                                                    
+*reg6                                                                           
+           LDA  BUF+9,1
+           ENT2 SIGNN
+	   STA  *+1(0:0)
+           INC2 1
+           LDX  0,2
+           STX  BUFP+22(1:5)
+           CHAR                                                                 
+           STX  BUFP+23(1:4)                                                    
+*           
+           OUT  BUFP(18)                                                        
+           JBUS *(18)                                                           
+           INC1 10                                                              
+           J1N  1B                                                              
+           JMP  2B                                                              
+STOP       HLT    
+SIGNM      ALF      -
+SIGNN      ALF 
+SIGNP      ALF      +                                                              
+           END  START                                                           

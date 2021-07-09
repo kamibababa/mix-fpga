@@ -1,12 +1,12 @@
-## Running program perm on MIX
+## Running program a on MIX
 We will calculate the produkt of permutations according to TAOCP (p. 168) on MIX.
 
-### perm.mixal
+### a.mixal
 The mixal program can be found in `perm.mixal`:
 
 Inpect the file with:
 ```
-cat perm.mixal
+$ cat a.mixal
 ```
 
 ```
@@ -101,134 +101,148 @@ CLOSE   MOVE      RPREN
         END       BEGIN
 ```
 
-### perm.mls
+### a.mls
 First we translate the mixal programm to binary code. This is done with the GNU library `mixasm`. The option `-l` produces a list file `p.mls`
 
 ```
-mixasm perm.mixal -l
-cat perm.mls
-```
-```
-*** perm.mixal: Kompilerzusammenfassung ***
-
------------------------------------------------------------------
-Src     Address  Compiled word           Symbolic rep
------------------------------------------------------------------
-009     02424   + 00 00 00 16 36 	IN	0,0(2:0)
-010     02425   + 00 00 00 02 50 	ENT2	0,0
-011     02426   + 38 45 00 05 08 	LDA	2477,0
-012     02427   + 37 59 00 16 34 	JBUS	2427,0(2:0)
-013     02428   + 00 15 02 05 56 	CMPA	15,2
-014     02429   + 37 63 00 05 39 	JE	2431,0
-015     02430   + 00 16 02 16 36 	IN	16,2(2:0)
-016     02431   + 37 32 00 02 49 	ENT1	2400,0
-017     02432   + 38 00 00 18 34 	JBUS	2432,0(2:2)
-018     02433   + 00 00 02 16 07 	MOVE	0,2(2:0)
-019     02434   + 37 32 00 18 37 	OUT	2400,0(2:2)
-020     02435   + 38 08 00 05 39 	JE	2440,0
-021     02436   + 00 16 00 00 50 	INC2	16,0
-022     02437   + 39 05 00 05 58 	CMP2	2501,0
-023     02438   + 37 59 00 09 39 	JLE	2427,0
-024     02439   + 10 26 00 02 05 	HLT	666,0
-025     02440   + 00 15 00 00 50 	INC2	15,0
-026     02441   + 39 09 00 05 26 	ST2	2505,0
-027     02442   + 00 00 00 02 51 	ENT3	0,0
-028     02443   + 00 00 03 05 16 	LDAN	0,3
-029     02444   + 38 43 00 13 56 	CMPA	2475,0(1:5)
-030     02445   + 38 18 00 08 39 	JNE	2450,0
-031     02446   + 00 00 03 05 24 	STA	0,3
-032     02447   + 00 01 00 00 51 	INC3	1,0
-033     02448   + 00 00 03 05 23 	LDXN	0,3
-034     02449   + 38 15 00 01 47 	JXZ	2447,0
-035     02450   + 38 44 00 13 56 	CMPA	2476,0(1:5)
-036     02451   + 38 21 00 08 39 	JNE	2453,0
-037     02452   + 00 00 03 05 31 	STX	0,3
-038     02453   + 00 01 00 00 51 	INC3	1,0
-039     02454   + 39 09 00 05 59 	CMP3	2505,0
-040     02455   + 38 11 00 04 39 	JL	2443,0
-041     02456   + 38 43 00 05 08 	LDA	2475,0
-042     02457   + 18 48 00 02 49 	ENT1	1200,0
-043     02458   + 00 00 00 02 51 	ENT3	0,0
-044     02459   + 00 00 03 05 23 	LDXN	0,3
-045     02460   + 38 46 00 00 47 	JXN	2478,0
-046     02461   + 00 01 00 00 51 	INC3	1,0
-047     02462   + 39 09 00 05 59 	CMP3	2505,0
-048     02463   + 38 27 00 04 39 	JL	2459,0
-050     02464   + 39 06 00 05 57 	CMP1	2502,0
-051     02465   + 38 35 00 08 39 	JNE	2467,0
-052     02466   + 38 43 00 02 07 	MOVE	2475,0(0:2)
-053     02467   + 39 07 00 01 07 	MOVE	2503,0
-054     02468   - 00 01 01 22 07 	MOVE	-1,1(2:6)
-055     02469   + 00 00 00 02 51 	ENT3	0,0
-056     02470   + 18 48 03 18 37 	OUT	1200,3(2:2)
-057     02471   + 00 24 00 00 51 	INC3	24,0
-058     02472   + 18 48 03 05 15 	LDX	1200,3
-059     02473   + 38 38 00 04 47 	JXNZ	2470,0
-060     02474   + 00 00 00 02 05 	HLT	0,0
-062     02475   + 00 00 00 00 42 	ALF	"    ("
-063     02476   + 43 00 00 00 00 	ALF	")    "
-064     02477   + 00 00 00 00 48 	ALF	"    ="
-066     02478   + 38 43 00 01 07 	MOVE	2475,0
-067     02479   + 00 00 03 01 07 	MOVE	0,3
-068     02480   + 39 08 00 05 31 	STX	2504,0
-069     02481   + 00 00 03 05 31 	STX	0,3
-070     02482   + 00 01 00 00 51 	INC3	1,0
-071     02483   + 00 00 03 13 23 	LDXN	0,3(1:5)
-072     02484   + 38 59 00 00 47 	JXN	2491,0
-073     02485   + 38 50 00 00 39 	JMP	2482,0
-074     02486   + 00 00 01 05 31 	STX	0,1
-075     02487   + 00 01 00 00 49 	INC1	1,0
-076     02488   + 00 00 00 02 51 	ENT3	0,0
-077     02489   + 00 00 03 13 63 	CMPX	0,3(1:5)
-078     02490   + 38 49 00 05 39 	JE	2481,0
-079     02491   + 00 01 00 00 51 	INC3	1,0
-080     02492   + 39 09 00 05 59 	CMP3	2505,0
-081     02493   + 38 57 00 04 39 	JL	2489,0
-082     02494   + 39 08 00 13 63 	CMPX	2504,0(1:5)
-083     02495   + 38 54 00 08 39 	JNE	2486,0
-084     02496   + 38 44 00 01 07 	MOVE	2476,0
-085     02497   - 00 03 01 05 56 	CMPA	-3,1
-086     02498   + 38 26 00 08 39 	JNE	2458,0
-087     02499   - 00 03 00 00 49 	INC1	-3,0
-088     02500   + 38 26 00 00 39 	JMP	2458,0
-000     02501   + 00 00 00 18 32 	CON	1184
-000     02502   + 00 00 00 18 48 	CON	1200
-000     02503   + 00 00 00 00 00 	CON	0000
-000     02504   + 00 00 00 00 00 	CON	0000
-000     02505   + 00 00 00 00 00 	CON	0000
------------------------------------------------------------------
-
-*** Startadresse:	2424
-*** Endadresse:	2501
-
-*** Symboltabelle
-SUCC                :  2481
-SIZE                :  2505
-PRINTER             :  18
-DONE                :  2464
-START               :  2504
-CLOSE               :  2496
-CARDS               :  16
-EQUALS              :  2477
-MAXWDS              :  1200
-GO                  :  2478
-PERM                :  0
-BEGIN               :  2424
-LPREN               :  2475
-ANS                 :  1200
-OUTBUF              :  2400
-RPREN               :  2476
-OPEN                :  2458
-
-*** Ende der Zusammenfassung ***
+$ ../tools/asm.py perm.mixal
+$ cat a.mls
 ```
 
-### perm.card
+```
+                     0001 * multiply permutations in cycle form (taopc p. 168)
+                     0002 *
+                     0003 MAXWDS     EQU  1200 
+                     0004 PERM       ORIG *+MAXWDS 
+                     0005 ANS        ORIG *+MAXWDS 
+                     0006 OUTBUF     ORIG *+24 
+                     0007 CARDS      EQU  16 
+                     0008 PRINTER    EQU  18 
+2424 + 0000 00 16 36 0009 BEGIN      IN   PERM(CARDS) 
+2425 + 0000 00 02 50 0010            ENT2 0 
+2426 + 2477 00 05 08 0011            LDA  EQUALS 
+2427 + 2427 00 16 34 0012 1H@0012    JBUS *(CARDS) 
+2428 + 0015 02 05 56 0013            CMPA PERM+15,2 
+2429 + 2431 00 05 39 0014            JE   *+2 
+2430 + 0016 02 16 36 0015            IN   PERM+16,2(CARDS) 
+2431 + 2400 00 02 49 0016            ENT1 OUTBUF 
+2432 + 2432 00 18 34 0017            JBUS *(PRINTER) 
+2433 + 0000 02 16 07 0018            MOVE PERM,2(16) 
+2434 + 2400 00 18 37 0019            OUT  OUTBUF(PRINTER) 
+2435 + 2440 00 05 39 0020            JE   1F 
+2436 + 0016 00 00 50 0021            INC2 16 
+2437 + 2501 00 05 58 0022            CMP2 =MAXWDS-16= 
+2438 + 2427 00 09 39 0023            JLE  1B 
+2439 + 0666 00 02 05 0024            HLT  666 
+2440 + 0015 00 00 50 0025 1H@0025    INC2 15 
+2441 + 2502 00 05 26 0026            ST2  SIZE 
+2442 + 0000 00 02 51 0027            ENT3 0 
+2443 + 0000 03 05 16 0028 2H@0028    LDAN PERM,3 
+2444 + 2475 00 13 56 0029            CMPA LPREN(1:5) 
+2445 + 2450 00 08 39 0030            JNE  1F 
+2446 + 0000 03 05 24 0031            STA  PERM,3 
+2447 + 0001 00 00 51 0032            INC3 1 
+2448 + 0000 03 05 23 0033            LDXN PERM,3 
+2449 + 2447 00 01 47 0034            JXZ  *-2 
+2450 + 2476 00 13 56 0035 1H@0035    CMPA RPREN(1:5) 
+2451 + 2453 00 08 39 0036            JNE  *+2 
+2452 + 0000 03 05 31 0037            STX  PERM,3 
+2453 + 0001 00 00 51 0038            INC3 1 
+2454 + 2502 00 05 59 0039            CMP3 SIZE 
+2455 + 2443 00 04 39 0040            JL   2B 
+2456 + 2475 00 05 08 0041            LDA  LPREN 
+2457 + 1200 00 02 49 0042            ENT1 ANS 
+2458 + 0000 00 02 51 0043 OPEN       ENT3 0 
+2459 + 0000 03 05 23 0044 1H@0044    LDXN PERM,3 
+2460 + 2478 00 00 47 0045            JXN  GO 
+2461 + 0001 00 00 51 0046            INC3 1 
+2462 + 2502 00 05 59 0047            CMP3 SIZE 
+2463 + 2459 00 04 39 0048            JL   1B 
+                     0049 *
+2464 + 2503 00 05 57 0050 DONE       CMP1 =ANS= 
+2465 + 2467 00 08 39 0051            JNE  *+2 
+2466 + 2475 00 02 07 0052            MOVE LPREN(2) 
+2467 + 2504 00 01 07 0053            MOVE =0= 
+2468 - 0001 01 22 07 0054            MOVE -1,1(22) 
+2469 + 0000 00 02 51 0055            ENT3 0 
+2470 + 1200 03 18 37 0056            OUT  ANS,3(PRINTER) 
+2471 + 0024 00 00 51 0057            INC3 24 
+2472 + 1200 03 05 15 0058            LDX  ANS,3 
+2473 + 2470 00 04 47 0059            JXNZ *-3 
+2474 + 0000 00 02 05 0060            HLT       
+                     0061 *
+2475 + 0000 00 00 42 0062 LPREN      ALF      (
+2476 + 2752 00 00 00 0063 RPREN      ALF  )    
+2477 + 0000 00 00 48 0064 EQUALS     ALF      =
+                     0065 *
+2478 + 2475 00 01 07 0066 GO         MOVE LPREN 
+2479 + 0000 03 01 07 0067            MOVE PERM,3 
+2480 + 2505 00 05 31 0068            STX  START 
+2481 + 0000 03 05 31 0069 SUCC       STX  PERM,3 
+2482 + 0001 00 00 51 0070            INC3 1 
+2483 + 0000 03 13 23 0071            LDXN PERM,3(1:5) 
+2484 + 2491 00 00 47 0072            JXN  1F 
+2485 + 2482 00 00 39 0073            JMP  *-3 
+2486 + 0000 01 05 31 0074 5H@0074    STX  0,1 
+2487 + 0001 00 00 49 0075            INC1 1 
+2488 + 0000 00 02 51 0076            ENT3 0 
+2489 + 0000 03 13 63 0077 4H@0077    CMPX PERM,3(1:5) 
+2490 + 2481 00 05 39 0078            JE   SUCC 
+2491 + 0001 00 00 51 0079 1H@0079    INC3 1 
+2492 + 2502 00 05 59 0080            CMP3 SIZE 
+2493 + 2489 00 04 39 0081            JL   4B 
+2494 + 2505 00 13 63 0082            CMPX START(1:5) 
+2495 + 2486 00 08 39 0083            JNE  5B 
+2496 + 2476 00 01 07 0084 CLOSE      MOVE RPREN 
+2497 - 0003 01 05 56 0085            CMPA -3,1 
+2498 + 2458 00 08 39 0086            JNE  OPEN 
+2499 - 0003 00 00 49 0087            INC1 -3 
+2500 + 2458 00 00 39 0088            JMP  OPEN 
+2501 + 0000 00 18 32      =MAXWDS-16 CON  1184
+2502 + 0000 00 00 00      SIZE       CON  0
+2503 + 0000 00 18 48      =ANS       CON  1200
+2504 + 0000 00 00 00      =0         CON  0
+2505 + 0000 00 00 00      START      CON  0
+                     0089            END  BEGIN 
+                                     TRANS 2424
+                          * SYMBOL TABLE
+                          *          EQU  2501
+                          MAXWDS     EQU  1200
+                          PERM       EQU  0
+                          ANS        EQU  1200
+                          OUTBUF     EQU  2400
+                          CARDS      EQU  16
+                          PRINTER    EQU  18
+                          BEGIN      EQU  2424
+                          1H@0012    EQU  2427
+                          1H@0025    EQU  2440
+                          2H@0028    EQU  2443
+                          1H@0035    EQU  2450
+                          OPEN       EQU  2458
+                          1H@0044    EQU  2459
+                          DONE       EQU  2464
+                          LPREN      EQU  2475
+                          RPREN      EQU  2476
+                          EQUALS     EQU  2477
+                          GO         EQU  2478
+                          SUCC       EQU  2481
+                          5H@0074    EQU  2486
+                          4H@0077    EQU  2489
+                          1H@0079    EQU  2491
+                          CLOSE      EQU  2496
+                          =MAXWDS-16 EQU  2501
+                          SIZE       EQU  2502
+                          =ANS       EQU  2503
+                          =0         EQU  2504
+                          START      EQU  2505
+```
+
+### a.card
 
 Next we must write the binary code onto punched cards. This can be done with the python script `tools/mls2card.py`.
 
 ```
-../../tools/mls2card.py perm.mls
+$ ../tools/mls2card.py a.mls
 ```
 
 The python scripts reads the listing file `perm.mls`, extracts the code and writes it in the file `perm.card`.
@@ -236,7 +250,7 @@ The python scripts reads the listing file `perm.mls`, extracts the code and writ
 Inspect the punchcards
 
 ```
-cat perm.card
+cat a.card
 ```
 Every line holds 80 chars of a card. The first to cards contain the bootloader discussed in exercise 26 in chapter 1.3.1 of TAOCP (see p. 510). The last cards is the so called transfer card, which tells the bootloader to start execution at memory location 2424.
 
@@ -260,8 +274,8 @@ TRANS024240000000000000000000000000000000000000000000000000000000000000000000000
 
 This are the punched cards for the program. Now we add the punched cards for the programm input (the permutations we want to multiply):
 ```
-cat perm.card perm.in > permall.card
-cat permall.card
+$ cat a.card a.in > a_in.card
+$ cat a_in.card
 ```
 
 The whole deck of punched cards reads:
@@ -296,7 +310,7 @@ Power MIX with USB cable connected to your computer.
 
 Start a screen session with 115200 baud (8N1)
 ```
-screen /dev/ttyUSB0 115200
+$ screen /dev/ttyUSB0 115200
 ```
 
 Press the "Go button" on MIX

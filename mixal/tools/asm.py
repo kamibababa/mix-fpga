@@ -294,7 +294,8 @@ def assembler(fin,fout):
             if len(loc)>0:
                 if len(loc)==2 and loc[1]=='H':
                     loc='{:2s}@{:04d}'.format(loc,line_number)
-                symbols[loc] = symbols['*']
+                if loc not in symbols:
+                    symbols[loc] = symbols['*']
             if (op=='EQU'):
                 symbols[loc] = w_expr(address)
                 printequ=True
@@ -357,8 +358,9 @@ def assembler(fin,fout):
                  
 #print symbol table
 def symbol_table(fout):
-    print('                          * SYMBOL TABLE',file=fout)
-    for s in symbols:
+    print('                         * SYMBOL TABLE',file=fout)
+    sorted_dict = dict(sorted(symbols.items(), key=lambda item: item[0]))
+    for s in sorted_dict:
         print('                          {:10s} EQU  {:d}'.format(s,symbols[s]),file=fout)
 
 fin=open(mixal_file,'r')

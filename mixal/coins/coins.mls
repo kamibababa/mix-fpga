@@ -115,27 +115,27 @@
 1108 + 3456 00 00 00 0115            ALF  :    
                      0116            END  PROG 
                                      TRANS 1000
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  1109
-                          TERM       EQU  19
-                          VAL        EQU  37
-                          AMT        EQU  11
-                          PROG       EQU  1000
                           1H@0017    EQU  1007
-                          3H@0021    EQU  1011
-                          CURRVAL    EQU  1016
-                          2H@0030    EQU  1018
                           1H@0041    EQU  1027
                           1H@0052    EQU  1036
-                          6H@0056    EQU  1040
+                          2H@0030    EQU  1018
+                          3H@0021    EQU  1011
                           3H@0065    EQU  1046
                           5H@0066    EQU  1047
-                          DONE       EQU  1058
-                          MAX        EQU  1059
-                          WANTED     EQU  1060
-                          TYPES      EQU  1061
+                          6H@0056    EQU  1040
+                          AMT        EQU  11
                           COINS      EQU  1062
-                          PRMPT      EQU  1068
+                          CURRVAL    EQU  1016
+                          DONE       EQU  1058
                           INPT1      EQU  1082
                           INPT2      EQU  1083
+                          MAX        EQU  1059
                           PBUF       EQU  1096
+                          PRMPT      EQU  1068
+                          PROG       EQU  1000
+                          TERM       EQU  19
+                          TYPES      EQU  1061
+                          VAL        EQU  37
+                          WANTED     EQU  1060
