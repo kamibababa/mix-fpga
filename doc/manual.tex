@@ -19,8 +19,8 @@
 \flushbottom
 \usepackage{geometry}
 \geometry{a4paper}
-\usepackage[headsepline]{scrpage2}
 \usepackage{color}
+\usepackage{tikz}
 \usetikzlibrary{circuits.ee.IEC}
 %\usepackage{beramono}
 \usepackage{pdfpages}
@@ -87,9 +87,9 @@ In our MIX implementation all character based I/O units (U16 -- U20) are connect
 
 
 
-\subsubsection{The block based I/O unit U8}
+\subsubsection{The block based I/O unit U0}
 
-A block based device is implemented on I/O unit 8. The device acts as a disk with 1000 blocks à 100 words. The data is stored in the SRAM chip included on the iCE40HX8K-EVB board. The speed of read and write operations is exactly $401 u$ for reading or writing one complete block of data (no \lstinline|JBUS| is needed). The data stored to unit U8 can be retrieved also after a reset (GO-Button). But on a full shutdown, when removing power supply (USB connector) data is lost.
+A block based device is implemented on I/O unit 0. The device acts as a tape with 1024 blocks à 100 words. The data is stored in the SRAM chip included on the iCE40HX8K-EVB board. The speed of read and write operations is exactly $401 u$ for reading or writing one complete block of data (no \lstinline|JBUS| is needed). The data stored to unit U0 can be retrieved also after a reset (GO-Button). But on a full shutdown, when removing power supply (USB connector) data is lost.
 
 \begin{figure}
 	\centering
@@ -144,9 +144,9 @@ All commands described in TAOCP Vol. 1 are implemented (s. table \ref{tab:comman
 	\hline 
 \lstinline| JMP|, \lstinline|JSJ|, \lstinline|JOV|, \lstinline|JNOV|, \lstinline|JL|, \lstinline|JE|, \lstinline|JG|, \lstinline|JGE|, \lstinline|JNE|, \lstinline|JLE|& 39  &0---9  & $1u$   \\
  	\hline 
- \lstinline|JrN|, \lstinline|JrZ|, \lstinline|JrP|, \lstinline|JrNN|, \lstinline|JrNZ|, \lstinline|JrNP|, \lstinline|JrE|, \lstinline|JrO| & 40-47& 0-7 & 	$1u$ \\
+ \lstinline|JrN|, \lstinline|JrZ|, \lstinline|JrP|, \lstinline|JrNN|, \lstinline|JrNZ|, \lstinline|JrNP|, \lstinline|JrE|, \lstinline|JrO| & 40-47& 0---7 & 	$1u$ \\
 	\hline 
- \lstinline|INCr|, \lstinline|DECr|, \lstinline|ENTr|, \lstinline|ENNr|  & 48---53   &0-3     & $1u$   \\
+ \lstinline|INCr|, \lstinline|DECr|, \lstinline|ENTr|, \lstinline|ENNr|  & 48---53   &0---3     & $1u$   \\
 	\hline 
  \lstinline|CMPr| & 54---63&0:5          & $2u$   \\
 	\hline 
@@ -243,6 +243,7 @@ MIX has been verified with the following programms. The numbering correspond to 
 \item \lstinline|1.3.2.ex22| traffic signal problem (driving real LEDs)
 \item \lstinline|1.3.3A| multiply permutations in cycle form
 \item \lstinline|1.4.2|  character input routine
+\item \lstinline|1.4.3|  trace routine (uses tape U0)
 \end{itemize}
 
 \section{Example program 1.3.2P}

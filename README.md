@@ -29,8 +29,8 @@ In our MIX implementation all character based I/O units (U16 -- U20) are connect
 ![](doc/MIX_usb.jpg)
 
 
-### The block based I/O unit U8
-A block based device is implemented on I/O unit 8. The device acts as a disk with 1000 blocks à 100 words. The data is stored in the SRAM chip included on the iCE40HX8K-EVB board. The speed of read and write operations is exactly 401u for reading or writing one complete block of data (no JBUS is needed). The data stored to unit U8 can be retrieved also after a reset (GO-Button). But on a full shutdown, when removing power supply (USB connector) data is lost.
+### The block based I/O unit U0
+A block based device is implemented on I/O unit 0. The device acts as a tape with 1024 blocks à 100 words. The data is stored in the SRAM chip included on the iCE40HX8K-EVB board. The speed of read and write operations is exactly 401u for reading or writing one complete block of data (no JBUS is needed). The data stored to unit U0 can be retrieved also after a reset (GO-Button). But on a full shutdown, when removing power supply (USB connector) data is lost.
 
 
 ### Commands
@@ -43,20 +43,20 @@ All commands described in TAOCP Vol. 1 are implemented (s. list) with execution 
 | FADD, FSUB, FMUL, FDIV    | 1, 2, 3, 4   | 6     | 4u, 4u, 9u, 11u     |
 | NUM, CHAR| 5   | 0, 1   | 10u    |
 | HLT     | 5   | 2     | ?      |
-| SLA, SRA, SLAX, SRAX, SLC, SRC| 6  | 0-5|  2u     |
+| SLA, SRA, SLAX, SRAX, SLC, SRC| 6  | 0--5|  2u     |
 | MOVE    | 7   | F     | (1+2F)u|
-| LDr     | 8-15| 0:5   | 2u     |
-| LDNr    |16-23| 0:5   | 2u     |
-| STr     |24-31| 0:5   | 2u     |
+| LDr     | 8--15| 0:5   | 2u     |
+| LDNr    |16--23| 0:5   | 2u     |
+| STr     |24--31| 0:5   | 2u     |
 | STJ     | 32  | 0:2   | 2u     |
 | STZ     | 33  | 0:5   | 2u     |
 |JBUS, JRED|34,38| U     | 1u     |
 | IOC     | 35  | U     | 1u     |
 | IN, OUT  |36,37| U     | (1+T)u |
-| JMP, JSJ, JOV, JNOV, JL, JE, JG, JGE, JNE, JLE| 39  |0-9  | 1u   | 
-| JrN, JrZ, JrP, JrNN, JrNZ, JrNP, JrE, JrO | 40-47| 0-7 | 1u |
-| INCr, DECr, ENTr, ENNr  | 48-53   |0-3     | 1u   |
-| CMPr|54-63|0:5          | 2u   |
+| JMP, JSJ, JOV, JNOV, JL, JE, JG, JGE, JNE, JLE| 39  |0--9  | 1u   | 
+| JrN, JrZ, JrP, JrNN, JrNZ, JrNP, JrE, JrO | 40--47| 0--7 | 1u |
+| INCr, DECr, ENTr, ENNr  | 48--53   |0--3     | 1u   |
+| CMPr|54--63|0:5          | 2u   |
 
 
 
@@ -94,6 +94,7 @@ MIX has been verified with the following programms. The numbering correspond to 
 * **1.3.2.ex22** traffic signal problem (driving real LEDs)
 * **1.3.3A** multiply permutations in cycle form
 * **1.4.2**  character input routine
+* **1.4.3** tracing routine (uses tape U0)
 
 ### Example 1: Program 1.3.2P
 Compute the first 500 primes

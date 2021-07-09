@@ -70,7 +70,7 @@ module mix(
 	wire fetch;	// fetch instruction
 	assign fetch = (fetch1 & ~outrequest) | fetch2;
 	wire fetch1;	// ready for next fetch
-	assign fetch1 = go | nop | add2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|disk2 | fmul2 | fadd2|fdiv2;
+	assign fetch1 = go | nop | add2 | ld2 | st2 | mul2 | div2 | ide | cmp2 | jmp | jmpr |jbus1| jred1 | ioc1 | in2 | out2 | mov2 | shift2 | char2|num2|tape2 | fmul2 | fadd2|fdiv2;
 	reg fetch2;	// fetch after outrequest
 	always @(posedge clk)
 		if (reset) fetch2 <=0;
@@ -387,37 +387,40 @@ module mix(
 	wire [11:0] staddress;
 	st ST(.clk(clk),.addressin(addressIndex[11:0]),.addressout(staddress),.start(st1|stj1|stz1),.stop(st2),.data(data),.field(field),.in(stin),.out(stout));
 	
-	//SRAM
-	wire insram;
-	assign insram = (command[5:0]==6'd36) & (field==6'd8);
-	wire outsram;
-	assign outsram = (command[5:0]==6'd37) & (field==6'd8);
-	wire disk2;
+	//TAPE
+	wire intape;
+	assign intape = in1 & (field==6'd0);
+	wire outtape;
+	assign outtape = out1 & (field==6'd0);
+	wire tape2;
 	wire [11:0] addressSRAM;
 	wire [30:0] dataSRAM;
 	wire sram_read;
 	wire sram_write;
-	sram SRAM(.reset(reset),.clk(clk),.block(RegisterX[9:0]),.sram_addr(sram_addr),.sram_data(sram_data),.sram_wen(sram_wen),.sram_oen(sram_oen),.sram_cen(sram_cen),.startW(outsram),.startR(insram),.mix_addr_in(addressIndex[11:0]),
-		.mix_addr_out(addressSRAM),.mix_data_in(data),.mix_data_out(dataSRAM),.mix_read(sram_read),.mix_write(sram_write),.stop(disk2));
+	tape TAPE(.reset(reset),.ioc(tapeioc),.clk(clk),.sram_addr(sram_addr),.sram_data(sram_data),.sram_wen(sram_wen),.sram_oen(sram_oen),.sram_cen(sram_cen),.startW(outtape),.startR(intape),.mix_addr_in(addressIndex[11:0]),
+		.mix_addr_out(addressSRAM),.mix_data_in(data),.mix_data_out(dataSRAM),.mix_read(sram_read),.mix_write(sram_write),.stop(tape2));
 	
 	//command 34 -JBUS
 	wire jbus1;
-	assign jbus1 = (command[5:0]==6'd34) & field[4];
+	assign jbus1 = (command[5:0]==6'd34);
 	wire jmpbus;
-	assign jmpbus = (jbus1 & busy);
+	assign jmpbus = (jbus1 & busy & field[4]);
+	
 	//command 38 - JRED
 	wire jred1;
-	assign jred1 = (command[5:0]==6'd38) & field[4];
+	assign jred1 = (command[5:0]==6'd38);
 	wire jmpred;
-	assign jmpred = (jred1 & ~busy);
+	assign jmpred = (jred1 & ~(busy & field[4]));
 	
 	//command 35 - IOC
 	wire ioc1;
 	assign ioc1 = (command[5:0] ==6'd35);
+	wire tapeioc;
+	assign tapeioc = ioc1 & (field==6'd0);
 
 	//command 36 - IN
 	wire in1;
-	assign in1 = (command[5:0] == 6'd36) & field[4];
+	assign in1 = (command[5:0] == 6'd36);
 	wire in2;
 	wire instore;
 	assign instore = requestin & (~st2) & (~movstore);
@@ -427,11 +430,11 @@ module mix(
 	wire busyin;
 	assign busy = busyin|busyout;
 	wire requestin;
-	in IN(.field(field),.busy(busyin),.rx(rx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressIn),.store(instore),.reset(reset),.start(in1),.stop(in2),.out(dataIn),.request(requestin));
+	in IN(.field(field),.busy(busyin),.rx(rx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressIn),.store(instore),.reset(reset),.start(in1 & field[4]),.stop(in2),.out(dataIn),.request(requestin));
 	
 	//command 37 - OUT
 	wire out1;
-	assign out1 = (command[5:0] == 6'd37) & field[4];
+	assign out1 = (command[5:0] == 6'd37);
 	wire out2;
 	wire outload;
 	assign outload = (~movload & outrequest&~execute) | (outrequest & fetch1);
@@ -443,9 +446,7 @@ module mix(
 	wire outrequest;
 	wire busyout;
 	wire [11:0] addressOut;
-	out OUT(.field(field),.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1),.in(data[29:0]),.stop(out2));
-
-
+	out OUT(.field(field),.busy(busyout),.tx(tx),.clk(clk),.addressin(addressIndex[11:0]),.addressout(addressOut),.request(outrequest),.load(outload2),.reset(reset),.start(out1 & field[4]),.in(data[29:0]),.stop(out2));
 
 	//command 39 - JMP
 	wire jmp;
