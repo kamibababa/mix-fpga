@@ -270,6 +270,7 @@ def assembler(fin,fout):
     global line_number
     line_number = 0
     next_loc = 0
+    sign='+'
     for line in fin:
         symbols['*']=next_loc
         line_number+=1
