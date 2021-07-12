@@ -95,6 +95,7 @@ MIX has been verified with the following programms. The numbering correspond to 
 * **1.3.3A** multiply permutations in cycle form
 * **1.4.2**  character input routine
 * **1.4.3** tracing routine (uses tape U0)
+* **mixaload** A load and go assembler by James L. Peterson from [Computer Organization and Assembly Language Programming](http://www.jklp.org/profession/books/mix/index.html)
 
 ### Example 1: Program 1.3.2P
 Compute the first 500 primes
