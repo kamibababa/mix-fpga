@@ -12,7 +12,7 @@ $(NAME).out: $(NAME).card
 	../tools/cardreader.py $(NAME).card
 	sleep 1
 	../tools/cardreader.py p.mixal 0.03
-	sleep 3
+	sleep 1
 	killall cat
 	cat $(NAME).out
 clean:

@@ -22,8 +22,6 @@ CHAINEND   CON  4095
 *                                                                               
 *          TAPE BUFFER VARIABLES                                                
 *                                                                               
-BUF1       ORIG *+100                                                           
-BUF2       ORIG *+100                                                           
 STOREBUF   CON  BUF1                                                            
 TAPEBUF    CON  BUF2                                                            
 TAPEBUFPTR CON  BUF1                                                            
@@ -147,14 +145,14 @@ FINISHBLCK STJ  FLBEXIT
 *                                                                               
 BLOCKOUT   LDA  LDRBLOCK,1                                                      
            JMP  TAPEOUT                                                         
-           ADD  CHECKSUM(0:5)                                                   
-           STA  CHECKSUM(0:5)                                                   
+           ADD  CHECKSUM                                                        
+           STA  CHECKSUM                                                        
 *                                                                               
            INC1 1                                                               
            CMP1 LDRBLOCK(4:5)                                                   
            JLE  BLOCKOUT                                                        
 *                                                                               
-           LDA  CHECKSUM(1:5)                                                   
+           LDA  CHECKSUM                                                        
            JMP  TAPEOUT                                                         
 *                                                                               
            JOV  *+1                                                             
@@ -328,8 +326,6 @@ OPTAB      EQU  *
            ADD                                                                  
            ALF  ALF D                                                           
            CON  0                                                               
-           ALF  AND A                                                           
-           NOP                                                                  
            ALF  CHARA                                                           
            CHAR                                                                 
            ALF  CMPAA                                                           
@@ -405,17 +401,15 @@ OPTAB      EQU  *
            ALF  EQU E                                                           
            CON  0                                                               
            ALF  FADDA                                                           
-           ADD  0(6)                                                            
+           FADD                                                                 
            ALF  FCMPA                                                           
-           CMPA 0(6)                                                            
+           FCMP                                                                 
            ALF  FDIVA                                                           
-           DIV  0(6)                                                            
-           ALF  FLOTA                                                           
-           NOP                                                                  
+           FDIV                                                                 
            ALF  FMULA                                                           
-           MUL  0(6)                                                            
+           FMUL                                                                 
            ALF  FSUBA                                                           
-           SUB  0(6)                                                            
+           FSUB                                                                 
 *                                                                               
 HLTINDEX   EQU  *-OPTAB/2                                                       
            ALF  HLT A                                                           
@@ -608,28 +602,20 @@ HLTINDEX   EQU  *-OPTAB/2
            NOP                                                                  
            ALF  NUM A                                                           
            NUM                                                                  
-           ALF  OCT A                                                           
-           NOP                                                                  
            ALF  ORIGB                                                           
            CON  0                                                               
-           ALF  ORR A                                                           
-           NOP                                                                  
            ALF  OUT A                                                           
            OUT                                                                  
            ALF  SLA A                                                           
            SLA                                                                  
            ALF  SLAXA                                                           
            SLAX                                                                 
-           ALF  SLB A                                                           
-           NOP                                                                  
            ALF  SLC A                                                           
            SLC                                                                  
            ALF  SRA A                                                           
            SRA                                                                  
            ALF  SRAXA                                                           
            SRAX                                                                 
-           ALF  SRB A                                                           
-           NOP                                                                  
            ALF  SRC A                                                           
            SRC                                                                  
            ALF  STA A                                                           
@@ -654,8 +640,6 @@ HLTINDEX   EQU  *-OPTAB/2
            ST6                                                                  
            ALF  SUB A                                                           
            SUB                                                                  
-           ALF  XOR A                                                           
-           NOP                                                                  
 *                                                                               
 NUMBEROPS  EQU  *-OPTAB/2                                                       
 *                                                                               
@@ -1281,7 +1265,7 @@ DLEXIT     JMP  *
 *                                                                               
 *          MAIN LOOP STARTS HERE                                                
 *                                                                               
-MAIN       STJ  ENDMAIN  
+MAIN       STJ  ENDMAIN                                                         
            JMP  INITIALIZE                                                      
 *                                                                               
 MAINLOOP   JMP  READCARD                                                        
@@ -1542,11 +1526,13 @@ UPSYM1     INC3 4
 *                                                                               
 FINEXIT    JMP  *                                                               
 *                                                                               
-TAPE       EQU  0                                                               
-LP         EQU  18                                                              
+*          LOADER ROUTINE                                                       
 *                                                                               
-           ORIG 3666                                                            
+*                                                                               
+           ORIG 3680                                                            
 FIRST      CON  *                                                               
+BUF1       ORIG *+100                                                           
+BUF2       ORIG *+100                                                           
 *                                                                               
 CHKSUM     ORIG *+1                                                             
 HEADER     ORIG *+1                                                             
@@ -1603,8 +1589,8 @@ LLL        J1N  HDRERROR
 LOADLOOP   JMP  INPUT                                                           
            STA  0,1                                                             
            INC1 1                                                               
-           ADD  CHKSUM(0:5)                                                          
-           STA  CHKSUM(0:5)                                                         
+           ADD  CHKSUM                                                          
+           STA  CHKSUM                                                          
            DEC2 1                                                               
            J2P  LOADLOOP                                                        
 *                                                                               
@@ -1613,13 +1599,13 @@ LOADLOOP   JMP  INPUT
            JE   NEXTBLOCK                                                       
 *                                                                               
 CHKSUMERR  ENT2 CHKMSG                                                          
-           JMP  ERROR                                                           
+           JMP  LERROR                                                          
 *                                                                               
 HDRERROR   ENT2 HDRMSG                                                          
 *                                                                               
-           JMP  ERROR                                                           
+           JMP  LERROR                                                          
 *                                                                               
-ERROR      ENT1 ERRORMSG                                                        
+LERROR     ENT1 ERRORMSG                                                        
            MOVE 0,2(3)                                                          
            ENTA 0,3                                                             
            CHAR                                                                 
@@ -1638,8 +1624,6 @@ ERROR      ENT1 ERRORMSG
 *                                                                               
 ADDR       ORIG *+1                                                             
 COUNT      CON  0                                                               
-BUF1       ORIG *+100                                                           
-BUF2       ORIG *+100                                                           
 INPUTBUF   CON  BUF1                                                            
 USINGBUF   CON  BUF2                                                            
 *                                                                               
@@ -1671,9 +1655,9 @@ RETURNWORD LD2  ADDR
 TEMP2      ENT2 *                                                               
 TEMP1      ENT1 *                                                               
 EXITINPUT  JMP  *                                                               
-*                                                                             
-MIXAL      JMP  MAIN
-           IOC  0(0)
-           JMP  LOADER     
-           END  MIXAL                                                             
-                                                                               
+*                                                                               
+MIXAL      JMP  MAIN                                                            
+           IOC  0(0)                                                            
+           JMP  LOADER                                                          
+           END  MIXAL                                                           
+                                                                                

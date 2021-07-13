@@ -1,8 +1,18 @@
 ## A load and go assembler for MIX
 We will run the one pass load and go assembler program `mixaload.mixal` written by James L. Peterson in his book [Computer Organisation and Assembly Language Programming](http://www.jklp.org/profession/books/index.html).
 
+`mixaload.mixal` consists of two parts:
 
-### Run mixaload and process program p
+1. Assembler
+2. Loader
+
+The assembler reads the card deck. The mixal program written on cards is then assembled to binary form and written to tape 0. After the assembler processes the last card with the tag `END` the loader takes on execution. It reads the content of tape 0 and writes the binary code to MIX main memory. When input on tape 0 is finished, execution is startet in main memory at the location described by `END xxxx`.
+
+The only restriction imposed on the mixal program to be processed by this load and go assembler is: Don't use memory location 3700--3999, because that's where the loader routine resides in memory.
+
+![](../../doc/mixaload.png)
+
+### Example: mixaload processes program p
 We will run the load and go assembler program `mixaload.mixal` on MIX. Then we will input `p.mixal` so MIX will assemble program p and finally execute it.
 
 ``` 
@@ -11,9 +21,6 @@ $ make
 ```
 
 The output `mixaload.out` shows the result of the load and go assembler processing program p.
-**Remark 1** The used assembler shows addresses and compiled code in octal representation.
-**Remark 2** The assembler cannot handle relative labels (2H,2F,2B etc.)
-**Remark 3** The assembler cannot handle constant expressions (=1-L=)
 
 ```
                               * TABLE OF PRIMES                                                                    1    
@@ -120,3 +127,8 @@ FIRST FIVE HUNDRED PRIMES
      0229 0541 0863 1223 1583 1987 2357 2741 3181 3571                                                                  
 
 ```
+
+The first part of the output shows the result of the assembler processing the program p. Addresses and binary codes are represented in octal form.
+
+The second part of the output shows the result of program p, which is loaded into memory by the loader and executed.
+

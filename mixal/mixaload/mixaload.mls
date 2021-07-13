@@ -22,1675 +22,1659 @@
                      0022 *
                      0023 *          TAPE BUFFER VARIABLES
                      0024 *
-                     0025 BUF1       ORIG *+100 
-                     0026 BUF2       ORIG *+100 
-1211 + 0000 00 15 51 0027 STOREBUF   CON  BUF1 
-1212 + 0000 00 17 23 0028 TAPEBUF    CON  BUF2 
-1213 + 0000 00 15 51 0029 TAPEBUFPTR CON  BUF1 
-1214 + 0000 00 01 36 0030 TAPECNTR   CON  100 
-                     0031 *
+1011 + 0000 00 57 33 0025 STOREBUF   CON  BUF1 
+1012 + 0000 00 59 05 0026 TAPEBUF    CON  BUF2 
+1013 + 0000 00 57 33 0027 TAPEBUFPTR CON  BUF1 
+1014 + 0000 00 01 36 0028 TAPECNTR   CON  100 
+                     0029 *
+                     0030 *
+                     0031 *          SUBROUTINE FINISHBUF
                      0032 *
-                     0033 *          SUBROUTINE FINISHBUF
-                     0034 *
-                     0035 *          LOADER WORDS TO BE WRITTEN TO TAPE FOR
-                     0036 *          LOADING ARE STORED IN A BUFFER UNTIL 100
-                     0037 *          WORDS ARE ACCUMULATED. THEN THIS ROUTINE
-                     0038 *          IS CALLED TO DUMP THE BUFFER TO TAPE. DOUBLE
-                     0039 *          BUFFERING IS USED.
-                     0040 *
-1215 + 1226 00 02 32 0041 FINISHBUF  STJ  FIBEXIT 
-1216 + 1224 00 02 25 0042            ST1  FIBSAVE1(0:2) 
-1217 + 1225 00 02 26 0043            ST2  FIBSAVE2(0:2) 
-                     0044 *
-1218 + 1211 00 05 09 0045            LD1  STOREBUF 
-1219 + 0000 01 00 37 0046            OUT  0,1(TAPE) 
-1220 + 1212 00 05 10 0047            LD2  TAPEBUF 
-1221 + 1211 00 05 26 0048            ST2  STOREBUF 
-1222 + 1213 00 05 26 0049            ST2  TAPEBUFPTR 
-1223 + 1212 00 05 25 0050            ST1  TAPEBUF 
-                     0051 *
-1224 + 1224 00 02 49 0052 FIBSAVE1   ENT1 * 
-1225 + 1225 00 02 50 0053 FIBSAVE2   ENT2 * 
-1226 + 1226 00 00 39 0054 FIBEXIT    JMP  * 
-                     0055 *
+                     0033 *          LOADER WORDS TO BE WRITTEN TO TAPE FOR
+                     0034 *          LOADING ARE STORED IN A BUFFER UNTIL 100
+                     0035 *          WORDS ARE ACCUMULATED. THEN THIS ROUTINE
+                     0036 *          IS CALLED TO DUMP THE BUFFER TO TAPE. DOUBLE
+                     0037 *          BUFFERING IS USED.
+                     0038 *
+1015 + 1026 00 02 32 0039 FINISHBUF  STJ  FIBEXIT 
+1016 + 1024 00 02 25 0040            ST1  FIBSAVE1(0:2) 
+1017 + 1025 00 02 26 0041            ST2  FIBSAVE2(0:2) 
+                     0042 *
+1018 + 1011 00 05 09 0043            LD1  STOREBUF 
+1019 + 0000 01 00 37 0044            OUT  0,1(TAPE) 
+1020 + 1012 00 05 10 0045            LD2  TAPEBUF 
+1021 + 1011 00 05 26 0046            ST2  STOREBUF 
+1022 + 1013 00 05 26 0047            ST2  TAPEBUFPTR 
+1023 + 1012 00 05 25 0048            ST1  TAPEBUF 
+                     0049 *
+1024 + 1024 00 02 49 0050 FIBSAVE1   ENT1 * 
+1025 + 1025 00 02 50 0051 FIBSAVE2   ENT2 * 
+1026 + 1026 00 00 39 0052 FIBEXIT    JMP  * 
+                     0053 *
+                     0054 *
+                     0055 *          SUBROUTINE TAPEOUT
                      0056 *
-                     0057 *          SUBROUTINE TAPEOUT
-                     0058 *
-                     0059 *          THIS SUBROUTINE ACCEPTS ONE WORD TO BE
-                     0060 *          WRITTEN TO THE TAPE FOR THE LOADER AND
-                     0061 *          STORES IT IN THE BUFFER UNTIL THE BUFFER IS
-                     0062 *          FULL. THEN IT CALLS FINISHBUF TO EMPTY
-                     0063 *          THE BUFFER.
+                     0057 *          THIS SUBROUTINE ACCEPTS ONE WORD TO BE
+                     0058 *          WRITTEN TO THE TAPE FOR THE LOADER AND
+                     0059 *          STORES IT IN THE BUFFER UNTIL THE BUFFER IS
+                     0060 *          FULL. THEN IT CALLS FINISHBUF TO EMPTY
+                     0061 *          THE BUFFER.
+                     0062 *
+                     0063 *          INPUT WORD IS IN THE A REGISTER
                      0064 *
-                     0065 *          INPUT WORD IS IN THE A REGISTER
-                     0066 *
-1227 + 1240 00 02 32 0067 TAPEOUT    STJ  TOEXIT 
-1228 + 1239 00 02 25 0068            ST1  TOSAVE1(0:2) 
-                     0069 *
-1229 + 1213 00 05 09 0070            LD1  TAPEBUFPTR 
-1230 + 0000 01 05 24 0071            STA  0,1 
-1231 + 0001 00 00 49 0072            INC1 1 
-1232 + 1213 00 05 25 0073            ST1  TAPEBUFPTR 
-                     0074 *
-1233 + 1214 00 05 09 0075            LD1  TAPECNTR 
-1234 + 0001 00 01 49 0076            DEC1 1 
-1235 + 1238 00 02 41 0077            J1P  STILLROOM 
-1236 + 1215 00 00 39 0078            JMP  FINISHBUF 
-1237 + 0100 00 02 49 0079            ENT1 100 
+1027 + 1040 00 02 32 0065 TAPEOUT    STJ  TOEXIT 
+1028 + 1039 00 02 25 0066            ST1  TOSAVE1(0:2) 
+                     0067 *
+1029 + 1013 00 05 09 0068            LD1  TAPEBUFPTR 
+1030 + 0000 01 05 24 0069            STA  0,1 
+1031 + 0001 00 00 49 0070            INC1 1 
+1032 + 1013 00 05 25 0071            ST1  TAPEBUFPTR 
+                     0072 *
+1033 + 1014 00 05 09 0073            LD1  TAPECNTR 
+1034 + 0001 00 01 49 0074            DEC1 1 
+1035 + 1038 00 02 41 0075            J1P  STILLROOM 
+1036 + 1015 00 00 39 0076            JMP  FINISHBUF 
+1037 + 0100 00 02 49 0077            ENT1 100 
+                     0078 *
+1038 + 1014 00 05 25 0079 STILLROOM  ST1  TAPECNTR 
                      0080 *
-1238 + 1214 00 05 25 0081 STILLROOM  ST1  TAPECNTR 
-                     0082 *
-1239 + 1239 00 02 49 0083 TOSAVE1    ENT1 * 
-1240 + 1240 00 00 39 0084 TOEXIT     JMP  * 
-                     0085 *
+1039 + 1039 00 02 49 0081 TOSAVE1    ENT1 * 
+1040 + 1040 00 00 39 0082 TOEXIT     JMP  * 
+                     0083 *
+                     0084 *
+                     0085 *          LOADER BLOCK VARIABLES
                      0086 *
-                     0087 *          LOADER BLOCK VARIABLES
-                     0088 *
-1241 + 0000 00 00 63 0089 BLCKLENGTH CON  63 
-                     0090 LDRBLOCK   ORIG *+64 
-1306 + 0000 00 00 00 0091 NXTLOADLOC CON  0 
+1041 + 0000 00 00 63 0087 BLCKLENGTH CON  63 
+                     0088 LDRBLOCK   ORIG *+64 
+1106 + 0000 00 00 00 0089 NXTLOADLOC CON  0 
+                     0090 *
+                     0091 *          GENERATE
                      0092 *
-                     0093 *          GENERATE
-                     0094 *
-                     0095 *          GENERATE A WORD OF LOADER OUTPUT.
-                     0096 *          THE LOADER WORD IS IN VALUE. REGISTER I6 HAS
-                     0097 *          THE ADDRESS OF THE LOCATION WHERE IT SHOULD
-                     0098 *          BE LOADED. IF THIS WORD IS A CONTINUATION
-                     0099 *          OF THE CURRENT BUFFER, IT IS SIMPLY STORED.
-                     0100 *          IF THE WORD IS NONCONTIGUOUS OR FILLS THE
-                     0101 *          BUFFER, THE BUFFER IS EMPTIED.
+                     0093 *          GENERATE A WORD OF LOADER OUTPUT.
+                     0094 *          THE LOADER WORD IS IN VALUE. REGISTER I6 HAS
+                     0095 *          THE ADDRESS OF THE LOCATION WHERE IT SHOULD
+                     0096 *          BE LOADED. IF THIS WORD IS A CONTINUATION
+                     0097 *          OF THE CURRENT BUFFER, IT IS SIMPLY STORED.
+                     0098 *          IF THE WORD IS NONCONTIGUOUS OR FILLS THE
+                     0099 *          BUFFER, THE BUFFER IS EMPTIED.
+                     0100 *
+                     0101 GNSAVEA    ORIG *+1 
                      0102 *
-                     0103 GNSAVEA    ORIG *+1 
-                     0104 *
-1308 + 1324 00 02 32 0105 GENERATE   STJ  GENEXIT 
-1309 + 1307 00 05 24 0106            STA  GNSAVEA 
-1310 + 1323 00 02 25 0107            ST1  GNSAVE1(0:2) 
-                     0108 *
-1311 + 1306 00 05 62 0109            CMP6 NXTLOADLOC 
-1312 + 1327 00 08 39 0110            JNE  FINISHBLCK 
-                     0111 *
-1313 + 1242 00 37 09 0112            LD1  LDRBLOCK(4:5) 
-1314 + 0001 00 00 49 0113            INC1 1 
-1315 + 1242 00 37 25 0114            ST1  LDRBLOCK(4:5) 
-                     0115 *
-1316 + 1792 00 05 08 0116            LDA  VALUE 
-1317 + 1242 01 05 24 0117            STA  LDRBLOCK,1 
-                     0118 *
-1318 + 0001 00 00 54 0119            INC6 1 
-1319 + 1306 00 05 30 0120            ST6  NXTLOADLOC 
-                     0121 *
-1320 + 1241 00 05 57 0122            CMP1 BLCKLENGTH 
-1321 + 1327 00 07 39 0123            JGE  FINISHBLCK 
-1322 + 1307 00 05 08 0124            LDA  GNSAVEA 
-1323 + 1323 00 02 49 0125 GNSAVE1    ENT1 * 
-1324 + 1324 00 00 39 0126 GENEXIT    JMP  * 
-                     0127 *
+1108 + 1124 00 02 32 0103 GENERATE   STJ  GENEXIT 
+1109 + 1107 00 05 24 0104            STA  GNSAVEA 
+1110 + 1123 00 02 25 0105            ST1  GNSAVE1(0:2) 
+                     0106 *
+1111 + 1106 00 05 62 0107            CMP6 NXTLOADLOC 
+1112 + 1127 00 08 39 0108            JNE  FINISHBLCK 
+                     0109 *
+1113 + 1042 00 37 09 0110            LD1  LDRBLOCK(4:5) 
+1114 + 0001 00 00 49 0111            INC1 1 
+1115 + 1042 00 37 25 0112            ST1  LDRBLOCK(4:5) 
+                     0113 *
+1116 + 1578 00 05 08 0114            LDA  VALUE 
+1117 + 1042 01 05 24 0115            STA  LDRBLOCK,1 
+                     0116 *
+1118 + 0001 00 00 54 0117            INC6 1 
+1119 + 1106 00 05 30 0118            ST6  NXTLOADLOC 
+                     0119 *
+1120 + 1041 00 05 57 0120            CMP1 BLCKLENGTH 
+1121 + 1127 00 07 39 0121            JGE  FINISHBLCK 
+1122 + 1107 00 05 08 0122            LDA  GNSAVEA 
+1123 + 1123 00 02 49 0123 GNSAVE1    ENT1 * 
+1124 + 1124 00 00 39 0124 GENEXIT    JMP  * 
+                     0125 *
+                     0126 *
+                     0127 *          SUBROUTINE FINISHBLCK
                      0128 *
-                     0129 *          SUBROUTINE FINISHBLCK
-                     0130 *
-                     0131 *          OUTPUT TO THE LOADER THE BLOCK IN LDRBLOCK.
-                     0132 *          NUMBER OF WORDS IS IN BYTE 4:5 OF FIRST WORD.
-                     0133 *          (MAY BE ZERO, IN WHICH CASE IGNORE CALL).
-                     0134 *          COMPUTE CHECKSUM AND OUTPUT IT TOO
-                     0135 *
-                     0136 CHECKSUM   ORIG *+1 
-                     0137 FLBSAVEA   ORIG *+1 
-1327 + 1348 00 02 32 0138 FINISHBLCK STJ  FLBEXIT 
-1328 + 1326 00 05 24 0139            STA  FLBSAVEA 
-1329 + 1347 00 02 25 0140            ST1  FLBSAVE1(0:2) 
-                     0141 *
-1330 + 1242 00 37 09 0142            LD1  LDRBLOCK(4:5) 
-1331 + 1344 00 01 41 0143            J1Z  FLBQUIT 
-                     0144 *
-1332 + 1325 00 05 33 0145            STZ  CHECKSUM 
-1333 + 0000 00 02 49 0146            ENT1 0 
-                     0147 *
-1334 + 1242 01 05 08 0148 BLOCKOUT   LDA  LDRBLOCK,1 
-1335 + 1227 00 00 39 0149            JMP  TAPEOUT 
-1336 + 1325 00 05 01 0150            ADD  CHECKSUM(0:5) 
-1337 + 1325 00 05 24 0151            STA  CHECKSUM(0:5) 
-                     0152 *
-1338 + 0001 00 00 49 0153            INC1 1 
-1339 + 1242 00 37 57 0154            CMP1 LDRBLOCK(4:5) 
-1340 + 1334 00 09 39 0155            JLE  BLOCKOUT 
-                     0156 *
-1341 + 1325 00 13 08 0157            LDA  CHECKSUM(1:5) 
-1342 + 1227 00 00 39 0158            JMP  TAPEOUT 
+                     0129 *          OUTPUT TO THE LOADER THE BLOCK IN LDRBLOCK.
+                     0130 *          NUMBER OF WORDS IS IN BYTE 4:5 OF FIRST WORD.
+                     0131 *          (MAY BE ZERO, IN WHICH CASE IGNORE CALL).
+                     0132 *          COMPUTE CHECKSUM AND OUTPUT IT TOO
+                     0133 *
+                     0134 CHECKSUM   ORIG *+1 
+                     0135 FLBSAVEA   ORIG *+1 
+1127 + 1148 00 02 32 0136 FINISHBLCK STJ  FLBEXIT 
+1128 + 1126 00 05 24 0137            STA  FLBSAVEA 
+1129 + 1147 00 02 25 0138            ST1  FLBSAVE1(0:2) 
+                     0139 *
+1130 + 1042 00 37 09 0140            LD1  LDRBLOCK(4:5) 
+1131 + 1144 00 01 41 0141            J1Z  FLBQUIT 
+                     0142 *
+1132 + 1125 00 05 33 0143            STZ  CHECKSUM 
+1133 + 0000 00 02 49 0144            ENT1 0 
+                     0145 *
+1134 + 1042 01 05 08 0146 BLOCKOUT   LDA  LDRBLOCK,1 
+1135 + 1027 00 00 39 0147            JMP  TAPEOUT 
+1136 + 1125 00 05 01 0148            ADD  CHECKSUM 
+1137 + 1125 00 05 24 0149            STA  CHECKSUM 
+                     0150 *
+1138 + 0001 00 00 49 0151            INC1 1 
+1139 + 1042 00 37 57 0152            CMP1 LDRBLOCK(4:5) 
+1140 + 1134 00 09 39 0153            JLE  BLOCKOUT 
+                     0154 *
+1141 + 1125 00 05 08 0155            LDA  CHECKSUM 
+1142 + 1027 00 00 39 0156            JMP  TAPEOUT 
+                     0157 *
+1143 + 1144 00 02 39 0158            JOV  *+1 
                      0159 *
-1343 + 1344 00 02 39 0160            JOV  *+1 
-                     0161 *
-1344 + 1242 00 05 33 0162 FLBQUIT    STZ  LDRBLOCK 
-1345 + 1242 00 02 30 0163            ST6  LDRBLOCK(0:2) 
-                     0164 *
-1346 + 1326 00 05 08 0165            LDA  FLBSAVEA 
-1347 + 1347 00 02 49 0166 FLBSAVE1   ENT1 * 
-1348 + 1348 00 00 39 0167 FLBEXIT    JMP  * 
-                     0168 *
-                     0169 *
-                     0170 INBUF      ORIG *+16 
-1365 + 0000 00 00 00 0171 CARDNUMBER CON  0 
-                     0172 *
+1144 + 1042 00 05 33 0160 FLBQUIT    STZ  LDRBLOCK 
+1145 + 1042 00 02 30 0161            ST6  LDRBLOCK(0:2) 
+                     0162 *
+1146 + 1126 00 05 08 0163            LDA  FLBSAVEA 
+1147 + 1147 00 02 49 0164 FLBSAVE1   ENT1 * 
+1148 + 1148 00 00 39 0165 FLBEXIT    JMP  * 
+                     0166 *
+                     0167 *
+                     0168 INBUF      ORIG *+16 
+1165 + 0000 00 00 00 0169 CARDNUMBER CON  0 
+                     0170 *
+                     0171 *
+                     0172 *          SUBROUTINE READCARD
                      0173 *
-                     0174 *          SUBROUTINE READCARD
-                     0175 *
-                     0176 *          READ THE NEXT CARD FROM THE CARD READER AND
-                     0177 *          UNPACK IT INTO THE CHARACTER ARRAY CARD. THE
-                     0178 *          CARD IS READ INTO THE BUFFER INBUF AND WE
-                     0179 *          TRY TO KEEP THE CARD READER BUSY BY THIS
-                     0180 *          DOUBLE BUFFERING.
+                     0174 *          READ THE NEXT CARD FROM THE CARD READER AND
+                     0175 *          UNPACK IT INTO THE CHARACTER ARRAY CARD. THE
+                     0176 *          CARD IS READ INTO THE BUFFER INBUF AND WE
+                     0177 *          TRY TO KEEP THE CARD READER BUSY BY THIS
+                     0178 *          DOUBLE BUFFERING.
+                     0179 *
+                     0180 RCSAVEA    ORIG *+1 
                      0181 *
-                     0182 RCSAVEA    ORIG *+1 
-                     0183 *
-1367 + 1393 00 02 32 0184 READCARD   STJ  RCEXIT 
-1368 + 1366 00 05 24 0185            STA  RCSAVEA 
-1369 + 1390 00 02 25 0186            ST1  RCSAVE1(0:2) 
-1370 + 1391 00 02 26 0187            ST2  RCSAVE2(0:2) 
-1371 + 1392 00 02 27 0188            ST3  RCSAVE3(0:2) 
-                     0189 *
-1372 + 1372 00 16 34 0190            JBUS *(CR) 
-1373 + 0079 00 02 49 0191            ENT1 79 
-1374 + 0015 00 02 50 0192            ENT2 15 
+1167 + 1193 00 02 32 0182 READCARD   STJ  RCEXIT 
+1168 + 1166 00 05 24 0183            STA  RCSAVEA 
+1169 + 1190 00 02 25 0184            ST1  RCSAVE1(0:2) 
+1170 + 1191 00 02 26 0185            ST2  RCSAVE2(0:2) 
+1171 + 1192 00 02 27 0186            ST3  RCSAVE3(0:2) 
+                     0187 *
+1172 + 1172 00 16 34 0188            JBUS *(CR) 
+1173 + 0079 00 02 49 0189            ENT1 79 
+1174 + 0015 00 02 50 0190            ENT2 15 
+                     0191 *
+                     0192 *          UNPACK CARD FROM RIGHT TO LEFT
                      0193 *
-                     0194 *          UNPACK CARD FROM RIGHT TO LEFT
-                     0195 *
-1375 + 1349 02 05 08 0196 NEXTWORD   LDA  INBUF,2 
-1376 + 0001 00 01 50 0197            DEC2 1 
-1377 + 0004 00 02 51 0198            ENT3 4 
-                     0199 *
-1378 + 3109 01 45 24 0200 NEXTCHAR   STA  CARD,1(5:5) 
-1379 + 0001 00 01 49 0201            DEC1 1 
-1380 + 1385 00 00 41 0202            J1N  CARDDONE 
-1381 + 0001 00 01 51 0203            DEC3 1 
-1382 + 1375 00 00 43 0204            J3N  NEXTWORD 
-1383 + 0001 00 01 06 0205            SRA  1 
-1384 + 1378 00 00 39 0206            JMP  NEXTCHAR 
-                     0207 *
-1385 + 1349 00 16 36 0208 CARDDONE   IN   INBUF(CR) 
-1386 + 1365 00 05 08 0209            LDA  CARDNUMBER 
-1387 + 0001 00 00 48 0210            INCA 1 
-1388 + 1365 00 05 24 0211            STA  CARDNUMBER 
-                     0212 *
-1389 + 1366 00 05 08 0213            LDA  RCSAVEA 
-1390 + 1390 00 02 49 0214 RCSAVE1    ENT1 * 
-1391 + 1391 00 02 50 0215 RCSAVE2    ENT2 * 
-1392 + 1392 00 02 51 0216 RCSAVE3    ENT3 * 
-1393 + 1393 00 00 39 0217 RCEXIT     JMP  * 
-                     0218 *
-                     0219 *
-                     0220 SYM        ORIG *+2 
-                     0221 LETTER     ORIG *+1 
-                     0222 *
+1175 + 1149 02 05 08 0194 NEXTWORD   LDA  INBUF,2 
+1176 + 0001 00 01 50 0195            DEC2 1 
+1177 + 0004 00 02 51 0196            ENT3 4 
+                     0197 *
+1178 + 2895 01 45 24 0198 NEXTCHAR   STA  CARD,1(5:5) 
+1179 + 0001 00 01 49 0199            DEC1 1 
+1180 + 1185 00 00 41 0200            J1N  CARDDONE 
+1181 + 0001 00 01 51 0201            DEC3 1 
+1182 + 1175 00 00 43 0202            J3N  NEXTWORD 
+1183 + 0001 00 01 06 0203            SRA  1 
+1184 + 1178 00 00 39 0204            JMP  NEXTCHAR 
+                     0205 *
+1185 + 1149 00 16 36 0206 CARDDONE   IN   INBUF(CR) 
+1186 + 1165 00 05 08 0207            LDA  CARDNUMBER 
+1187 + 0001 00 00 48 0208            INCA 1 
+1188 + 1165 00 05 24 0209            STA  CARDNUMBER 
+                     0210 *
+1189 + 1166 00 05 08 0211            LDA  RCSAVEA 
+1190 + 1190 00 02 49 0212 RCSAVE1    ENT1 * 
+1191 + 1191 00 02 50 0213 RCSAVE2    ENT2 * 
+1192 + 1192 00 02 51 0214 RCSAVE3    ENT3 * 
+1193 + 1193 00 00 39 0215 RCEXIT     JMP  * 
+                     0216 *
+                     0217 *
+                     0218 SYM        ORIG *+2 
+                     0219 LETTER     ORIG *+1 
+                     0220 *
+                     0221 *
+                     0222 *          SUBROUTINE GETSYM
                      0223 *
-                     0224 *          SUBROUTINE GETSYM
-                     0225 *
-                     0226 *          GET THE NEXT SYMBOL FROM CARD(15) AND PACK
-                     0227 *          IT INTO SYM UNTIL A DELIMITER. I5 WILL BE
-                     0228 *          MOVED TO POINT TO THE DELIMITER. LETTER IS
-                     0229 *          ZERO IF NO LETTER FOUND.
-                     0230 *
-                     0231 GSSAVEA    ORIG *+1 
-                     0232 GSSAVEX    ORIG *+1 
-                     0233 *
-1399 + 1434 00 02 32 0234 GETSYM     STJ  GSEXIT 
-1400 + 1397 00 05 24 0235            STA  GSSAVEA 
-1401 + 1398 00 05 31 0236            STX  GSSAVEX 
-1402 + 1432 00 02 25 0237            ST1  GSSAVE1(0:2) 
-1403 + 1433 00 02 26 0238            ST2  GSSAVE2(0:2) 
-                     0239 *
-1404 + 0010 00 02 49 0240            ENT1 10 
-1405 + 1396 00 05 33 0241            STZ  LETTER 
-1406 + 0000 00 02 55 0242            ENTX 0 
-1407 + 0000 00 02 48 0243            ENTA 0 
-                     0244 *
-1408 + 3109 05 05 10 0245 SCANSYM    LD2  CARD,5 
-1409 + 1000 00 45 58 0246            CMP2 CHARA(5:5) 
-1410 + 1424 00 04 39 0247            JL   ENDSYM 
-1411 + 1002 00 45 58 0248            CMP2 CHAR9(5:5) 
-1412 + 1424 00 06 39 0249            JG   ENDSYM 
-1413 + 1001 00 45 58 0250            CMP2 CHARO(5:5) 
-1414 + 1416 00 07 39 0251            JGE  *+2 
-1415 + 1396 00 37 32 0252            STJ  LETTER(4:5) 
-                     0253 *
-1416 + 0001 00 01 49 0254            DEC1 1 
-1417 + 1420 00 00 41 0255            J1N  *+3 
-1418 + 0001 00 02 06 0256            SLAX 1 
-1419 + 0000 02 00 55 0257            INCX 0,2 
-1420 + 0001 00 00 53 0258            INC5 1 
-1421 + 1408 00 00 39 0259            JMP  SCANSYM 
-                     0260 *
-1422 + 3336 00 00 39 0261 SYMERROR   JMP  BADSYM 
-1423 + 1428 00 00 39 0262            JMP  GSQUIT 
-                     0263 *
-1424 + 1422 00 00 41 0264 ENDSYM     J1N  SYMERROR 
-1425 + 1396 00 05 10 0265            LD2  LETTER 
-1426 + 1428 00 01 42 0266            J2Z  *+2 
-1427 + 0000 01 02 06 0267            SLAX 0,1 
-                     0268 *
-1428 + 1394 00 05 24 0269 GSQUIT     STA  SYM 
-1429 + 1395 00 05 31 0270            STX  SYM+1 
-                     0271 *
-1430 + 1397 00 05 08 0272            LDA  GSSAVEA 
-1431 + 1398 00 05 15 0273            LDX  GSSAVEX 
-1432 + 1432 00 02 49 0274 GSSAVE1    ENT1 * 
-1433 + 1433 00 02 50 0275 GSSAVE2    ENT2 * 
-1434 + 1434 00 00 39 0276 GSEXIT     JMP  * 
-                     0277 *
-                     0278 LABEL      ORIG *+2 
-                     0279 OP         ORIG *+1 
-                     0280 *
+                     0224 *          GET THE NEXT SYMBOL FROM CARD(15) AND PACK
+                     0225 *          IT INTO SYM UNTIL A DELIMITER. I5 WILL BE
+                     0226 *          MOVED TO POINT TO THE DELIMITER. LETTER IS
+                     0227 *          ZERO IF NO LETTER FOUND.
+                     0228 *
+                     0229 GSSAVEA    ORIG *+1 
+                     0230 GSSAVEX    ORIG *+1 
+                     0231 *
+1199 + 1234 00 02 32 0232 GETSYM     STJ  GSEXIT 
+1200 + 1197 00 05 24 0233            STA  GSSAVEA 
+1201 + 1198 00 05 31 0234            STX  GSSAVEX 
+1202 + 1232 00 02 25 0235            ST1  GSSAVE1(0:2) 
+1203 + 1233 00 02 26 0236            ST2  GSSAVE2(0:2) 
+                     0237 *
+1204 + 0010 00 02 49 0238            ENT1 10 
+1205 + 1196 00 05 33 0239            STZ  LETTER 
+1206 + 0000 00 02 55 0240            ENTX 0 
+1207 + 0000 00 02 48 0241            ENTA 0 
+                     0242 *
+1208 + 2895 05 05 10 0243 SCANSYM    LD2  CARD,5 
+1209 + 1000 00 45 58 0244            CMP2 CHARA(5:5) 
+1210 + 1224 00 04 39 0245            JL   ENDSYM 
+1211 + 1002 00 45 58 0246            CMP2 CHAR9(5:5) 
+1212 + 1224 00 06 39 0247            JG   ENDSYM 
+1213 + 1001 00 45 58 0248            CMP2 CHARO(5:5) 
+1214 + 1216 00 07 39 0249            JGE  *+2 
+1215 + 1196 00 37 32 0250            STJ  LETTER(4:5) 
+                     0251 *
+1216 + 0001 00 01 49 0252            DEC1 1 
+1217 + 1220 00 00 41 0253            J1N  *+3 
+1218 + 0001 00 02 06 0254            SLAX 1 
+1219 + 0000 02 00 55 0255            INCX 0,2 
+1220 + 0001 00 00 53 0256            INC5 1 
+1221 + 1208 00 00 39 0257            JMP  SCANSYM 
+                     0258 *
+1222 + 3122 00 00 39 0259 SYMERROR   JMP  BADSYM 
+1223 + 1228 00 00 39 0260            JMP  GSQUIT 
+                     0261 *
+1224 + 1222 00 00 41 0262 ENDSYM     J1N  SYMERROR 
+1225 + 1196 00 05 10 0263            LD2  LETTER 
+1226 + 1228 00 01 42 0264            J2Z  *+2 
+1227 + 0000 01 02 06 0265            SLAX 0,1 
+                     0266 *
+1228 + 1194 00 05 24 0267 GSQUIT     STA  SYM 
+1229 + 1195 00 05 31 0268            STX  SYM+1 
+                     0269 *
+1230 + 1197 00 05 08 0270            LDA  GSSAVEA 
+1231 + 1198 00 05 15 0271            LDX  GSSAVEX 
+1232 + 1232 00 02 49 0272 GSSAVE1    ENT1 * 
+1233 + 1233 00 02 50 0273 GSSAVE2    ENT2 * 
+1234 + 1234 00 00 39 0274 GSEXIT     JMP  * 
+                     0275 *
+                     0276 LABEL      ORIG *+2 
+                     0277 OP         ORIG *+1 
+                     0278 *
+                     0279 *
+                     0280 *          SUBROUTINE GETFIELDS
                      0281 *
-                     0282 *          SUBROUTINE GETFIELDS
-                     0283 *
-                     0284 *          GET THE FIELDS FOR THE ASSEMBLY LANGUAGE.
-                     0285 *          FIELDS ARE LABEL, OPCODE AND OPERAND. LABEL
-                     0286 *          MAY BE MISSING. REGISTER I5 IS LEFT
-                     0287 *          POINTING JUST BEFORE THE OPERAND.
-                     0288 *          THE EXPRESSION ROUTINE WILL SKIP ONE COLUMN
-                     0289 *          TO BEGIN EVALUATION, SO LEAVE I5 ONE BEFORE
-                     0290 *          THE START OF THE OPERAND.
+                     0282 *          GET THE FIELDS FOR THE ASSEMBLY LANGUAGE.
+                     0283 *          FIELDS ARE LABEL, OPCODE AND OPERAND. LABEL
+                     0284 *          MAY BE MISSING. REGISTER I5 IS LEFT
+                     0285 *          POINTING JUST BEFORE THE OPERAND.
+                     0286 *          THE EXPRESSION ROUTINE WILL SKIP ONE COLUMN
+                     0287 *          TO BEGIN EVALUATION, SO LEAVE I5 ONE BEFORE
+                     0288 *          THE START OF THE OPERAND.
+                     0289 *
+                     0290 *          FIXED FIELD
                      0291 *
-                     0292 *          FIXED FIELD
+                     0292 GFSAVEA    ORIG *+1 
                      0293 *
-                     0294 GFSAVEA    ORIG *+1 
-                     0295 *
-1439 + 1460 00 02 32 0296 GETFIELDS  STJ  GFEXIT 
-1440 + 1438 00 05 24 0297            STA  GFSAVEA 
-1441 + 1459 00 02 25 0298            ST1  GFSAVE1(0:2) 
-                     0299 *
-1442 + 1435 00 05 33 0300            STZ  LABEL 
-1443 + 3109 00 05 08 0301            LDA  CARD 
-1444 + 1453 00 01 40 0302            JAZ  NOLABEL 
-1445 + 0000 00 02 53 0303            ENT5 0 
-1446 + 1399 00 00 39 0304            JMP  GETSYM 
-                     0305 *
-1447 + 1396 00 05 08 0306            LDA  LETTER 
-1448 + 1451 00 04 40 0307            JANZ LEGALLABEL 
-1449 + 3336 00 00 39 0308            JMP  BADSYM 
-1450 + 1453 00 00 39 0309            JMP  NOLABEL 
-                     0310 *
-1451 + 1435 00 02 49 0311 LEGALLABEL ENT1 LABEL 
-1452 + 1394 00 02 07 0312            MOVE SYM(2) 
-                     0313 *
-1453 + 0011 00 02 53 0314 NOLABEL    ENT5 11 
-1454 + 1399 00 00 39 0315            JMP  GETSYM 
-1455 + 1394 00 12 08 0316            LDA  SYM(1:4) 
-1456 + 1437 00 05 24 0317            STA  OP 
-                     0318 *
-1457 + 0015 00 02 53 0319            ENT5 15 
-                     0320 *                                 (COLUMN 17)
-                     0321 *
-1458 + 1438 00 05 08 0322            LDA  GFSAVEA 
-1459 + 1459 00 02 49 0323 GFSAVE1    ENT1 * 
-1460 + 1460 00 00 39 0324 GFEXIT     JMP  * 
-                     0325 *
-                     0326 OPTAB      EQU  * 
-1461 + 0068 04 00 01 0327            ALF  ADD A
-1462 + 0000 00 05 01 0328            ADD       
-1463 + 0077 06 00 04 0329            ALF  ALF D
-1464 + 0000 00 00 00 0330            CON  0 
-1465 + 0079 04 00 01 0331            ALF  AND A
-1466 + 0000 00 00 00 0332            NOP       
-1467 + 0200 01 19 01 0333            ALF  CHARA
-1468 + 0000 00 01 05 0334            CHAR      
-1469 + 0206 17 01 01 0335            ALF  CMPAA
-1470 + 0000 00 05 56 0336            CMPA      
-1471 + 0206 17 27 01 0337            ALF  CMPXA
-1472 + 0000 00 05 63 0338            CMPX      
-1473 + 0206 17 31 01 0339            ALF  CMP1A
-1474 + 0000 00 05 57 0340            CMP1      
-1475 + 0206 17 32 01 0341            ALF  CMP2A
-1476 + 0000 00 05 58 0342            CMP2      
-1477 + 0206 17 33 01 0343            ALF  CMP3A
-1478 + 0000 00 05 59 0344            CMP3      
-1479 + 0206 17 34 01 0345            ALF  CMP4A
-1480 + 0000 00 05 60 0346            CMP4      
-1481 + 0206 17 35 01 0347            ALF  CMP5A
-1482 + 0000 00 05 61 0348            CMP5      
-1483 + 0206 17 36 01 0349            ALF  CMP6A
-1484 + 0000 00 05 62 0350            CMP6      
-1485 + 0208 15 00 03 0351            ALF  CON C
-1486 + 0000 00 00 00 0352            CON  0 
-1487 + 0261 03 01 01 0353            ALF  DECAA
-1488 + 0000 00 01 48 0354            DECA      
-1489 + 0261 03 27 01 0355            ALF  DECXA
-1490 + 0000 00 01 55 0356            DECX      
-1491 + 0261 03 31 01 0357            ALF  DEC1A
-1492 + 0000 00 01 49 0358            DEC1      
-1493 + 0261 03 32 01 0359            ALF  DEC2A
-1494 + 0000 00 01 50 0360            DEC2      
-1495 + 0261 03 33 01 0361            ALF  DEC3A
-1496 + 0000 00 01 51 0362            DEC3      
-1497 + 0261 03 34 01 0363            ALF  DEC4A
-1498 + 0000 00 01 52 0364            DEC4      
-1499 + 0261 03 35 01 0365            ALF  DEC5A
-1500 + 0000 00 01 53 0366            DEC5      
-1501 + 0261 03 36 01 0367            ALF  DEC6A
-1502 + 0000 00 01 54 0368            DEC6      
-1503 + 0265 25 00 01 0369            ALF  DIV A
-1504 + 0000 00 05 04 0370            DIV       
-1505 + 0335 04 00 06 0371            ALF  END F
-1506 + 0000 00 00 00 0372            CON  0 
-1507 + 0335 15 01 01 0373            ALF  ENNAA
-1508 + 0000 00 03 48 0374            ENNA      
-1509 + 0335 15 27 01 0375            ALF  ENNXA
-1510 + 0000 00 03 55 0376            ENNX      
-1511 + 0335 15 31 01 0377            ALF  ENN1A
-1512 + 0000 00 03 49 0378            ENN1      
-1513 + 0335 15 32 01 0379            ALF  ENN2A
-1514 + 0000 00 03 50 0380            ENN2      
-1515 + 0335 15 33 01 0381            ALF  ENN3A
-1516 + 0000 00 03 51 0382            ENN3      
-1517 + 0335 15 34 01 0383            ALF  ENN4A
-1518 + 0000 00 03 52 0384            ENN4      
-1519 + 0335 15 35 01 0385            ALF  ENN5A
-1520 + 0000 00 03 53 0386            ENN5      
-1521 + 0335 15 36 01 0387            ALF  ENN6A
-1522 + 0000 00 03 54 0388            ENN6      
-1523 + 0335 23 01 01 0389            ALF  ENTAA
-1524 + 0000 00 02 48 0390            ENTA      
-1525 + 0335 23 27 01 0391            ALF  ENTXA
-1526 + 0000 00 02 55 0392            ENTX      
-1527 + 0335 23 31 01 0393            ALF  ENT1A
-1528 + 0000 00 02 49 0394            ENT1      
-1529 + 0335 23 32 01 0395            ALF  ENT2A
-1530 + 0000 00 02 50 0396            ENT2      
-1531 + 0335 23 33 01 0397            ALF  ENT3A
-1532 + 0000 00 02 51 0398            ENT3      
-1533 + 0335 23 34 01 0399            ALF  ENT4A
-1534 + 0000 00 02 52 0400            ENT4      
-1535 + 0335 23 35 01 0401            ALF  ENT5A
-1536 + 0000 00 02 53 0402            ENT5      
-1537 + 0335 23 36 01 0403            ALF  ENT6A
-1538 + 0000 00 02 54 0404            ENT6      
-1539 + 0338 24 00 05 0405            ALF  EQU E
-1540 + 0000 00 00 00 0406            CON  0 
-1541 + 0385 04 04 01 0407            ALF  FADDA
-1542 + 0000 00 06 01 0408            ADD  0(6) 
-1543 + 0387 14 17 01 0409            ALF  FCMPA
-1544 + 0000 00 06 56 0410            CMPA 0(6) 
-1545 + 0388 09 25 01 0411            ALF  FDIVA
-1546 + 0000 00 06 04 0412            DIV  0(6) 
-1547 + 0397 16 23 01 0413            ALF  FLOTA
-1548 + 0000 00 00 00 0414            NOP       
-1549 + 0398 24 13 01 0415            ALF  FMULA
-1550 + 0000 00 06 03 0416            MUL  0(6) 
-1551 + 0406 24 02 01 0417            ALF  FSUBA
-1552 + 0000 00 06 02 0418            SUB  0(6) 
-                     0419 *
-                     0420 HLTINDEX   EQU  *-OPTAB/2 
-1553 + 0525 23 00 01 0421            ALF  HLT A
-1554 + 0000 00 02 05 0422            HLT       
-1555 + 0591 00 00 01 0423            ALF  IN  A
-1556 + 0000 00 00 36 0424            IN        
-1557 + 0591 03 01 01 0425            ALF  INCAA
-1558 + 0000 00 00 48 0426            INCA      
-1559 + 0591 03 27 01 0427            ALF  INCXA
-1560 + 0000 00 00 55 0428            INCX      
-1561 + 0591 03 31 01 0429            ALF  INC1A
-1562 + 0000 00 00 49 0430            INC1      
-1563 + 0591 03 32 01 0431            ALF  INC2A
-1564 + 0000 00 00 50 0432            INC2      
-1565 + 0591 03 33 01 0433            ALF  INC3A
-1566 + 0000 00 00 51 0434            INC3      
-1567 + 0591 03 34 01 0435            ALF  INC4A
-1568 + 0000 00 00 52 0436            INC4      
-1569 + 0591 03 35 01 0437            ALF  INC5A
-1570 + 0000 00 00 53 0438            INC5      
-1571 + 0591 03 36 01 0439            ALF  INC6A
-1572 + 0000 00 00 54 0440            INC6      
-1573 + 0592 03 00 01 0441            ALF  IOC A
-1574 + 0000 00 00 35 0442            IOC       
-1575 + 0705 05 00 01 0443            ALF  JAE A
-1576 + 0000 00 06 40 0444            JAE       
-1577 + 0705 15 00 01 0445            ALF  JAN A
-1578 + 0000 00 00 40 0446            JAN       
-1579 + 0705 15 15 01 0447            ALF  JANNA
-1580 + 0000 00 03 40 0448            JANN      
-1581 + 0705 15 17 01 0449            ALF  JANPA
-1582 + 0000 00 05 40 0450            JANP      
-1583 + 0705 15 29 01 0451            ALF  JANZA
-1584 + 0000 00 04 40 0452            JANZ      
-1585 + 0705 16 00 01 0453            ALF  JAO A
-1586 + 0000 00 07 40 0454            JAO       
-1587 + 0705 17 00 01 0455            ALF  JAP A
-1588 + 0000 00 02 40 0456            JAP       
-1589 + 0705 29 00 01 0457            ALF  JAZ A
-1590 + 0000 00 01 40 0458            JAZ       
-1591 + 0706 24 22 01 0459            ALF  JBUSA
-1592 + 0000 00 00 34 0460            JBUS      
-1593 + 0709 00 00 01 0461            ALF  JE  A
-1594 + 0000 00 05 39 0462            JE        
-1595 + 0711 00 00 01 0463            ALF  JG  A
-1596 + 0000 00 06 39 0464            JG        
-1597 + 0711 05 00 01 0465            ALF  JGE A
-1598 + 0000 00 07 39 0466            JGE       
-1599 + 0717 00 00 01 0467            ALF  JL  A
-1600 + 0000 00 04 39 0468            JL        
-1601 + 0717 05 00 01 0469            ALF  JLE A
-1602 + 0000 00 09 39 0470            JLE       
-1603 + 0718 17 00 01 0471            ALF  JMP A
-1604 + 0000 00 00 39 0472            JMP       
-1605 + 0719 05 00 01 0473            ALF  JNE A
-1606 + 0000 00 08 39 0474            JNE       
-1607 + 0719 16 25 01 0475            ALF  JNOVA
-1608 + 0000 00 03 39 0476            JNOV      
-1609 + 0720 25 00 01 0477            ALF  JOV A
-1610 + 0000 00 02 39 0478            JOV       
-1611 + 0723 05 04 01 0479            ALF  JREDA
-1612 + 0000 00 00 38 0480            JRED      
-1613 + 0726 11 00 01 0481            ALF  JSJ A
-1614 + 0000 00 01 39 0482            JSJ       
-1615 + 0731 05 00 01 0483            ALF  JXE A
-1616 + 0000 00 06 47 0484            JXE       
-1617 + 0731 15 00 01 0485            ALF  JXN A
-1618 + 0000 00 00 47 0486            JXN       
-1619 + 0731 15 15 01 0487            ALF  JXNNA
-1620 + 0000 00 03 47 0488            JXNN      
-1621 + 0731 15 17 01 0489            ALF  JXNPA
-1622 + 0000 00 05 47 0490            JXNP      
-1623 + 0731 15 29 01 0491            ALF  JXNZA
-1624 + 0000 00 04 47 0492            JXNZ      
-1625 + 0731 16 00 01 0493            ALF  JXO A
-1626 + 0000 00 07 47 0494            JXO       
-1627 + 0731 17 00 01 0495            ALF  JXP A
-1628 + 0000 00 02 47 0496            JXP       
-1629 + 0731 29 00 01 0497            ALF  JXZ A
-1630 + 0000 00 01 47 0498            JXZ       
-1631 + 0735 15 00 01 0499            ALF  J1N A
-1632 + 0000 00 00 41 0500            J1N       
-1633 + 0735 15 15 01 0501            ALF  J1NNA
-1634 + 0000 00 03 41 0502            J1NN      
-1635 + 0735 15 17 01 0503            ALF  J1NPA
-1636 + 0000 00 05 41 0504            J1NP      
-1637 + 0735 15 29 01 0505            ALF  J1NZA
-1638 + 0000 00 04 41 0506            J1NZ      
-1639 + 0735 17 00 01 0507            ALF  J1P A
-1640 + 0000 00 02 41 0508            J1P       
-1641 + 0735 29 00 01 0509            ALF  J1Z A
-1642 + 0000 00 01 41 0510            J1Z       
-1643 + 0736 15 00 01 0511            ALF  J2N A
-1644 + 0000 00 00 42 0512            J2N       
-1645 + 0736 15 15 01 0513            ALF  J2NNA
-1646 + 0000 00 03 42 0514            J2NN      
-1647 + 0736 15 17 01 0515            ALF  J2NPA
-1648 + 0000 00 05 42 0516            J2NP      
-1649 + 0736 15 29 01 0517            ALF  J2NZA
-1650 + 0000 00 04 42 0518            J2NZ      
-1651 + 0736 17 00 01 0519            ALF  J2P A
-1652 + 0000 00 02 42 0520            J2P       
-1653 + 0736 29 00 01 0521            ALF  J2Z A
-1654 + 0000 00 01 42 0522            J2Z       
-1655 + 0737 15 00 01 0523            ALF  J3N A
-1656 + 0000 00 00 43 0524            J3N       
-1657 + 0737 15 15 01 0525            ALF  J3NNA
-1658 + 0000 00 03 43 0526            J3NN      
-1659 + 0737 15 17 01 0527            ALF  J3NPA
-1660 + 0000 00 05 43 0528            J3NP      
-1661 + 0737 15 29 01 0529            ALF  J3NZA
-1662 + 0000 00 04 43 0530            J3NZ      
-1663 + 0737 17 00 01 0531            ALF  J3P A
-1664 + 0000 00 02 43 0532            J3P       
-1665 + 0737 29 00 01 0533            ALF  J3Z A
-1666 + 0000 00 01 43 0534            J3Z       
-1667 + 0738 15 00 01 0535            ALF  J4N A
-1668 + 0000 00 00 44 0536            J4N       
-1669 + 0738 15 15 01 0537            ALF  J4NNA
-1670 + 0000 00 03 44 0538            J4NN      
-1671 + 0738 15 17 01 0539            ALF  J4NPA
-1672 + 0000 00 05 44 0540            J4NP      
-1673 + 0738 15 29 01 0541            ALF  J4NZA
-1674 + 0000 00 04 44 0542            J4NZ      
-1675 + 0738 17 00 01 0543            ALF  J4P A
-1676 + 0000 00 02 44 0544            J4P       
-1677 + 0738 29 00 01 0545            ALF  J4Z A
-1678 + 0000 00 01 44 0546            J4Z       
-1679 + 0739 15 00 01 0547            ALF  J5N A
-1680 + 0000 00 00 45 0548            J5N       
-1681 + 0739 15 15 01 0549            ALF  J5NNA
-1682 + 0000 00 03 45 0550            J5NN      
-1683 + 0739 15 17 01 0551            ALF  J5NPA
-1684 + 0000 00 05 45 0552            J5NP      
-1685 + 0739 15 29 01 0553            ALF  J5NZA
-1686 + 0000 00 04 45 0554            J5NZ      
-1687 + 0739 17 00 01 0555            ALF  J5P A
-1688 + 0000 00 02 45 0556            J5P       
-1689 + 0739 29 00 01 0557            ALF  J5Z A
-1690 + 0000 00 01 45 0558            J5Z       
-1691 + 0740 15 00 01 0559            ALF  J6N A
-1692 + 0000 00 00 46 0560            J6N       
-1693 + 0740 15 15 01 0561            ALF  J6NNA
-1694 + 0000 00 03 46 0562            J6NN      
-1695 + 0740 15 17 01 0563            ALF  J6NPA
-1696 + 0000 00 05 46 0564            J6NP      
-1697 + 0740 15 29 01 0565            ALF  J6NZA
-1698 + 0000 00 04 46 0566            J6NZ      
-1699 + 0740 17 00 01 0567            ALF  J6P A
-1700 + 0000 00 02 46 0568            J6P       
-1701 + 0740 29 00 01 0569            ALF  J6Z A
-1702 + 0000 00 01 46 0570            J6Z       
-1703 + 0836 01 00 01 0571            ALF  LDA A
-1704 + 0000 00 05 08 0572            LDA       
-1705 + 0836 01 15 01 0573            ALF  LDANA
-1706 + 0000 00 05 16 0574            LDAN      
-1707 + 0836 27 00 01 0575            ALF  LDX A
-1708 + 0000 00 05 15 0576            LDX       
-1709 + 0836 27 15 01 0577            ALF  LDXNA
-1710 + 0000 00 05 23 0578            LDXN      
-1711 + 0836 31 00 01 0579            ALF  LD1 A
-1712 + 0000 00 05 09 0580            LD1       
-1713 + 0836 31 15 01 0581            ALF  LD1NA
-1714 + 0000 00 05 17 0582            LD1N      
-1715 + 0836 32 00 01 0583            ALF  LD2 A
-1716 + 0000 00 05 10 0584            LD2       
-1717 + 0836 32 15 01 0585            ALF  LD2NA
-1718 + 0000 00 05 18 0586            LD2N      
-1719 + 0836 33 00 01 0587            ALF  LD3 A
-1720 + 0000 00 05 11 0588            LD3       
-1721 + 0836 33 15 01 0589            ALF  LD3NA
-1722 + 0000 00 05 19 0590            LD3N      
-1723 + 0836 34 00 01 0591            ALF  LD4 A
-1724 + 0000 00 05 12 0592            LD4       
-1725 + 0836 34 15 01 0593            ALF  LD4NA
-1726 + 0000 00 05 20 0594            LD4N      
-1727 + 0836 35 00 01 0595            ALF  LD5 A
-1728 + 0000 00 05 13 0596            LD5       
-1729 + 0836 35 15 01 0597            ALF  LD5NA
-1730 + 0000 00 05 21 0598            LD5N      
-1731 + 0836 36 00 01 0599            ALF  LD6 A
-1732 + 0000 00 05 14 0600            LD6       
-1733 + 0836 36 15 01 0601            ALF  LD6NA
-1734 + 0000 00 05 22 0602            LD6N      
-1735 + 0912 25 05 01 0603            ALF  MOVEA
-1736 + 0000 00 01 07 0604            MOVE      
-1737 + 0920 13 00 01 0605            ALF  MUL A
-1738 + 0000 00 05 03 0606            MUL       
-1739 + 0976 17 00 01 0607            ALF  NOP A
-1740 + 0000 00 00 00 0608            NOP       
-1741 + 0984 14 00 01 0609            ALF  NUM A
-1742 + 0000 00 00 05 0610            NUM       
-1743 + 1027 23 00 01 0611            ALF  OCT A
-1744 + 0000 00 00 00 0612            NOP       
-1745 + 1043 09 07 02 0613            ALF  ORIGB
-1746 + 0000 00 00 00 0614            CON  0 
-1747 + 1043 19 00 01 0615            ALF  ORR A
-1748 + 0000 00 00 00 0616            NOP       
-1749 + 1048 23 00 01 0617            ALF  OUT A
-1750 + 0000 00 00 37 0618            OUT       
-1751 + 1421 01 00 01 0619            ALF  SLA A
-1752 + 0000 00 00 06 0620            SLA       
-1753 + 1421 01 27 01 0621            ALF  SLAXA
-1754 + 0000 00 02 06 0622            SLAX      
-1755 + 1421 02 00 01 0623            ALF  SLB A
-1756 + 0000 00 00 00 0624            NOP       
-1757 + 1421 03 00 01 0625            ALF  SLC A
-1758 + 0000 00 04 06 0626            SLC       
-1759 + 1427 01 00 01 0627            ALF  SRA A
-1760 + 0000 00 01 06 0628            SRA       
-1761 + 1427 01 27 01 0629            ALF  SRAXA
-1762 + 0000 00 03 06 0630            SRAX      
-1763 + 1427 02 00 01 0631            ALF  SRB A
-1764 + 0000 00 00 00 0632            NOP       
-1765 + 1427 03 00 01 0633            ALF  SRC A
-1766 + 0000 00 05 06 0634            SRC       
-1767 + 1431 01 00 01 0635            ALF  STA A
-1768 + 0000 00 05 24 0636            STA       
-1769 + 1431 11 00 01 0637            ALF  STJ A
-1770 + 0000 00 02 32 0638            STJ       
-1771 + 1431 27 00 01 0639            ALF  STX A
-1772 + 0000 00 05 31 0640            STX       
-1773 + 1431 29 00 01 0641            ALF  STZ A
-1774 + 0000 00 05 33 0642            STZ       
-1775 + 1431 31 00 01 0643            ALF  ST1 A
-1776 + 0000 00 05 25 0644            ST1       
-1777 + 1431 32 00 01 0645            ALF  ST2 A
-1778 + 0000 00 05 26 0646            ST2       
-1779 + 1431 33 00 01 0647            ALF  ST3 A
-1780 + 0000 00 05 27 0648            ST3       
-1781 + 1431 34 00 01 0649            ALF  ST4 A
-1782 + 0000 00 05 28 0650            ST4       
-1783 + 1431 35 00 01 0651            ALF  ST5 A
-1784 + 0000 00 05 29 0652            ST5       
-1785 + 1431 36 00 01 0653            ALF  ST6 A
-1786 + 0000 00 05 30 0654            ST6       
-1787 + 1432 02 00 01 0655            ALF  SUB A
-1788 + 0000 00 05 02 0656            SUB       
-1789 + 1744 19 00 01 0657            ALF  XOR A
-1790 + 0000 00 00 00 0658            NOP       
-                     0659 *
-                     0660 NUMBEROPS  EQU  *-OPTAB/2 
-                     0661 *
-1791 + 0000 00 00 00 0662 OPTYPE     CON  0 
-                     0663 *
-                     0664 VALUE      ORIG *+1 
-                     0665 *
-1793 + 0000 00 00 00 0666 NSYMBOL    CON  0 
-                     0667 SYMINDEX   ORIG *+1 
-                     0668 SYMTAB     ORIG 4*MAXSYMBOL+* 
-                     0669 *
+1239 + 1260 00 02 32 0294 GETFIELDS  STJ  GFEXIT 
+1240 + 1238 00 05 24 0295            STA  GFSAVEA 
+1241 + 1259 00 02 25 0296            ST1  GFSAVE1(0:2) 
+                     0297 *
+1242 + 1235 00 05 33 0298            STZ  LABEL 
+1243 + 2895 00 05 08 0299            LDA  CARD 
+1244 + 1253 00 01 40 0300            JAZ  NOLABEL 
+1245 + 0000 00 02 53 0301            ENT5 0 
+1246 + 1199 00 00 39 0302            JMP  GETSYM 
+                     0303 *
+1247 + 1196 00 05 08 0304            LDA  LETTER 
+1248 + 1251 00 04 40 0305            JANZ LEGALLABEL 
+1249 + 3122 00 00 39 0306            JMP  BADSYM 
+1250 + 1253 00 00 39 0307            JMP  NOLABEL 
+                     0308 *
+1251 + 1235 00 02 49 0309 LEGALLABEL ENT1 LABEL 
+1252 + 1194 00 02 07 0310            MOVE SYM(2) 
+                     0311 *
+1253 + 0011 00 02 53 0312 NOLABEL    ENT5 11 
+1254 + 1199 00 00 39 0313            JMP  GETSYM 
+1255 + 1194 00 12 08 0314            LDA  SYM(1:4) 
+1256 + 1237 00 05 24 0315            STA  OP 
+                     0316 *
+1257 + 0015 00 02 53 0317            ENT5 15 
+                     0318 *                                 (COLUMN 17)
+                     0319 *
+1258 + 1238 00 05 08 0320            LDA  GFSAVEA 
+1259 + 1259 00 02 49 0321 GFSAVE1    ENT1 * 
+1260 + 1260 00 00 39 0322 GFEXIT     JMP  * 
+                     0323 *
+                     0324 OPTAB      EQU  * 
+1261 + 0068 04 00 01 0325            ALF  ADD A
+1262 + 0000 00 05 01 0326            ADD       
+1263 + 0077 06 00 04 0327            ALF  ALF D
+1264 + 0000 00 00 00 0328            CON  0 
+1265 + 0200 01 19 01 0329            ALF  CHARA
+1266 + 0000 00 01 05 0330            CHAR      
+1267 + 0206 17 01 01 0331            ALF  CMPAA
+1268 + 0000 00 05 56 0332            CMPA      
+1269 + 0206 17 27 01 0333            ALF  CMPXA
+1270 + 0000 00 05 63 0334            CMPX      
+1271 + 0206 17 31 01 0335            ALF  CMP1A
+1272 + 0000 00 05 57 0336            CMP1      
+1273 + 0206 17 32 01 0337            ALF  CMP2A
+1274 + 0000 00 05 58 0338            CMP2      
+1275 + 0206 17 33 01 0339            ALF  CMP3A
+1276 + 0000 00 05 59 0340            CMP3      
+1277 + 0206 17 34 01 0341            ALF  CMP4A
+1278 + 0000 00 05 60 0342            CMP4      
+1279 + 0206 17 35 01 0343            ALF  CMP5A
+1280 + 0000 00 05 61 0344            CMP5      
+1281 + 0206 17 36 01 0345            ALF  CMP6A
+1282 + 0000 00 05 62 0346            CMP6      
+1283 + 0208 15 00 03 0347            ALF  CON C
+1284 + 0000 00 00 00 0348            CON  0 
+1285 + 0261 03 01 01 0349            ALF  DECAA
+1286 + 0000 00 01 48 0350            DECA      
+1287 + 0261 03 27 01 0351            ALF  DECXA
+1288 + 0000 00 01 55 0352            DECX      
+1289 + 0261 03 31 01 0353            ALF  DEC1A
+1290 + 0000 00 01 49 0354            DEC1      
+1291 + 0261 03 32 01 0355            ALF  DEC2A
+1292 + 0000 00 01 50 0356            DEC2      
+1293 + 0261 03 33 01 0357            ALF  DEC3A
+1294 + 0000 00 01 51 0358            DEC3      
+1295 + 0261 03 34 01 0359            ALF  DEC4A
+1296 + 0000 00 01 52 0360            DEC4      
+1297 + 0261 03 35 01 0361            ALF  DEC5A
+1298 + 0000 00 01 53 0362            DEC5      
+1299 + 0261 03 36 01 0363            ALF  DEC6A
+1300 + 0000 00 01 54 0364            DEC6      
+1301 + 0265 25 00 01 0365            ALF  DIV A
+1302 + 0000 00 05 04 0366            DIV       
+1303 + 0335 04 00 06 0367            ALF  END F
+1304 + 0000 00 00 00 0368            CON  0 
+1305 + 0335 15 01 01 0369            ALF  ENNAA
+1306 + 0000 00 03 48 0370            ENNA      
+1307 + 0335 15 27 01 0371            ALF  ENNXA
+1308 + 0000 00 03 55 0372            ENNX      
+1309 + 0335 15 31 01 0373            ALF  ENN1A
+1310 + 0000 00 03 49 0374            ENN1      
+1311 + 0335 15 32 01 0375            ALF  ENN2A
+1312 + 0000 00 03 50 0376            ENN2      
+1313 + 0335 15 33 01 0377            ALF  ENN3A
+1314 + 0000 00 03 51 0378            ENN3      
+1315 + 0335 15 34 01 0379            ALF  ENN4A
+1316 + 0000 00 03 52 0380            ENN4      
+1317 + 0335 15 35 01 0381            ALF  ENN5A
+1318 + 0000 00 03 53 0382            ENN5      
+1319 + 0335 15 36 01 0383            ALF  ENN6A
+1320 + 0000 00 03 54 0384            ENN6      
+1321 + 0335 23 01 01 0385            ALF  ENTAA
+1322 + 0000 00 02 48 0386            ENTA      
+1323 + 0335 23 27 01 0387            ALF  ENTXA
+1324 + 0000 00 02 55 0388            ENTX      
+1325 + 0335 23 31 01 0389            ALF  ENT1A
+1326 + 0000 00 02 49 0390            ENT1      
+1327 + 0335 23 32 01 0391            ALF  ENT2A
+1328 + 0000 00 02 50 0392            ENT2      
+1329 + 0335 23 33 01 0393            ALF  ENT3A
+1330 + 0000 00 02 51 0394            ENT3      
+1331 + 0335 23 34 01 0395            ALF  ENT4A
+1332 + 0000 00 02 52 0396            ENT4      
+1333 + 0335 23 35 01 0397            ALF  ENT5A
+1334 + 0000 00 02 53 0398            ENT5      
+1335 + 0335 23 36 01 0399            ALF  ENT6A
+1336 + 0000 00 02 54 0400            ENT6      
+1337 + 0338 24 00 05 0401            ALF  EQU E
+1338 + 0000 00 00 00 0402            CON  0 
+1339 + 0385 04 04 01 0403            ALF  FADDA
+1340 + 0000 00 06 01 0404            FADD      
+1341 + 0387 14 17 01 0405            ALF  FCMPA
+1342 + 0000 00 06 56 0406            FCMP      
+1343 + 0388 09 25 01 0407            ALF  FDIVA
+1344 + 0000 00 06 04 0408            FDIV      
+1345 + 0398 24 13 01 0409            ALF  FMULA
+1346 + 0000 00 06 03 0410            FMUL      
+1347 + 0406 24 02 01 0411            ALF  FSUBA
+1348 + 0000 00 06 02 0412            FSUB      
+                     0413 *
+                     0414 HLTINDEX   EQU  *-OPTAB/2 
+1349 + 0525 23 00 01 0415            ALF  HLT A
+1350 + 0000 00 02 05 0416            HLT       
+1351 + 0591 00 00 01 0417            ALF  IN  A
+1352 + 0000 00 00 36 0418            IN        
+1353 + 0591 03 01 01 0419            ALF  INCAA
+1354 + 0000 00 00 48 0420            INCA      
+1355 + 0591 03 27 01 0421            ALF  INCXA
+1356 + 0000 00 00 55 0422            INCX      
+1357 + 0591 03 31 01 0423            ALF  INC1A
+1358 + 0000 00 00 49 0424            INC1      
+1359 + 0591 03 32 01 0425            ALF  INC2A
+1360 + 0000 00 00 50 0426            INC2      
+1361 + 0591 03 33 01 0427            ALF  INC3A
+1362 + 0000 00 00 51 0428            INC3      
+1363 + 0591 03 34 01 0429            ALF  INC4A
+1364 + 0000 00 00 52 0430            INC4      
+1365 + 0591 03 35 01 0431            ALF  INC5A
+1366 + 0000 00 00 53 0432            INC5      
+1367 + 0591 03 36 01 0433            ALF  INC6A
+1368 + 0000 00 00 54 0434            INC6      
+1369 + 0592 03 00 01 0435            ALF  IOC A
+1370 + 0000 00 00 35 0436            IOC       
+1371 + 0705 05 00 01 0437            ALF  JAE A
+1372 + 0000 00 06 40 0438            JAE       
+1373 + 0705 15 00 01 0439            ALF  JAN A
+1374 + 0000 00 00 40 0440            JAN       
+1375 + 0705 15 15 01 0441            ALF  JANNA
+1376 + 0000 00 03 40 0442            JANN      
+1377 + 0705 15 17 01 0443            ALF  JANPA
+1378 + 0000 00 05 40 0444            JANP      
+1379 + 0705 15 29 01 0445            ALF  JANZA
+1380 + 0000 00 04 40 0446            JANZ      
+1381 + 0705 16 00 01 0447            ALF  JAO A
+1382 + 0000 00 07 40 0448            JAO       
+1383 + 0705 17 00 01 0449            ALF  JAP A
+1384 + 0000 00 02 40 0450            JAP       
+1385 + 0705 29 00 01 0451            ALF  JAZ A
+1386 + 0000 00 01 40 0452            JAZ       
+1387 + 0706 24 22 01 0453            ALF  JBUSA
+1388 + 0000 00 00 34 0454            JBUS      
+1389 + 0709 00 00 01 0455            ALF  JE  A
+1390 + 0000 00 05 39 0456            JE        
+1391 + 0711 00 00 01 0457            ALF  JG  A
+1392 + 0000 00 06 39 0458            JG        
+1393 + 0711 05 00 01 0459            ALF  JGE A
+1394 + 0000 00 07 39 0460            JGE       
+1395 + 0717 00 00 01 0461            ALF  JL  A
+1396 + 0000 00 04 39 0462            JL        
+1397 + 0717 05 00 01 0463            ALF  JLE A
+1398 + 0000 00 09 39 0464            JLE       
+1399 + 0718 17 00 01 0465            ALF  JMP A
+1400 + 0000 00 00 39 0466            JMP       
+1401 + 0719 05 00 01 0467            ALF  JNE A
+1402 + 0000 00 08 39 0468            JNE       
+1403 + 0719 16 25 01 0469            ALF  JNOVA
+1404 + 0000 00 03 39 0470            JNOV      
+1405 + 0720 25 00 01 0471            ALF  JOV A
+1406 + 0000 00 02 39 0472            JOV       
+1407 + 0723 05 04 01 0473            ALF  JREDA
+1408 + 0000 00 00 38 0474            JRED      
+1409 + 0726 11 00 01 0475            ALF  JSJ A
+1410 + 0000 00 01 39 0476            JSJ       
+1411 + 0731 05 00 01 0477            ALF  JXE A
+1412 + 0000 00 06 47 0478            JXE       
+1413 + 0731 15 00 01 0479            ALF  JXN A
+1414 + 0000 00 00 47 0480            JXN       
+1415 + 0731 15 15 01 0481            ALF  JXNNA
+1416 + 0000 00 03 47 0482            JXNN      
+1417 + 0731 15 17 01 0483            ALF  JXNPA
+1418 + 0000 00 05 47 0484            JXNP      
+1419 + 0731 15 29 01 0485            ALF  JXNZA
+1420 + 0000 00 04 47 0486            JXNZ      
+1421 + 0731 16 00 01 0487            ALF  JXO A
+1422 + 0000 00 07 47 0488            JXO       
+1423 + 0731 17 00 01 0489            ALF  JXP A
+1424 + 0000 00 02 47 0490            JXP       
+1425 + 0731 29 00 01 0491            ALF  JXZ A
+1426 + 0000 00 01 47 0492            JXZ       
+1427 + 0735 15 00 01 0493            ALF  J1N A
+1428 + 0000 00 00 41 0494            J1N       
+1429 + 0735 15 15 01 0495            ALF  J1NNA
+1430 + 0000 00 03 41 0496            J1NN      
+1431 + 0735 15 17 01 0497            ALF  J1NPA
+1432 + 0000 00 05 41 0498            J1NP      
+1433 + 0735 15 29 01 0499            ALF  J1NZA
+1434 + 0000 00 04 41 0500            J1NZ      
+1435 + 0735 17 00 01 0501            ALF  J1P A
+1436 + 0000 00 02 41 0502            J1P       
+1437 + 0735 29 00 01 0503            ALF  J1Z A
+1438 + 0000 00 01 41 0504            J1Z       
+1439 + 0736 15 00 01 0505            ALF  J2N A
+1440 + 0000 00 00 42 0506            J2N       
+1441 + 0736 15 15 01 0507            ALF  J2NNA
+1442 + 0000 00 03 42 0508            J2NN      
+1443 + 0736 15 17 01 0509            ALF  J2NPA
+1444 + 0000 00 05 42 0510            J2NP      
+1445 + 0736 15 29 01 0511            ALF  J2NZA
+1446 + 0000 00 04 42 0512            J2NZ      
+1447 + 0736 17 00 01 0513            ALF  J2P A
+1448 + 0000 00 02 42 0514            J2P       
+1449 + 0736 29 00 01 0515            ALF  J2Z A
+1450 + 0000 00 01 42 0516            J2Z       
+1451 + 0737 15 00 01 0517            ALF  J3N A
+1452 + 0000 00 00 43 0518            J3N       
+1453 + 0737 15 15 01 0519            ALF  J3NNA
+1454 + 0000 00 03 43 0520            J3NN      
+1455 + 0737 15 17 01 0521            ALF  J3NPA
+1456 + 0000 00 05 43 0522            J3NP      
+1457 + 0737 15 29 01 0523            ALF  J3NZA
+1458 + 0000 00 04 43 0524            J3NZ      
+1459 + 0737 17 00 01 0525            ALF  J3P A
+1460 + 0000 00 02 43 0526            J3P       
+1461 + 0737 29 00 01 0527            ALF  J3Z A
+1462 + 0000 00 01 43 0528            J3Z       
+1463 + 0738 15 00 01 0529            ALF  J4N A
+1464 + 0000 00 00 44 0530            J4N       
+1465 + 0738 15 15 01 0531            ALF  J4NNA
+1466 + 0000 00 03 44 0532            J4NN      
+1467 + 0738 15 17 01 0533            ALF  J4NPA
+1468 + 0000 00 05 44 0534            J4NP      
+1469 + 0738 15 29 01 0535            ALF  J4NZA
+1470 + 0000 00 04 44 0536            J4NZ      
+1471 + 0738 17 00 01 0537            ALF  J4P A
+1472 + 0000 00 02 44 0538            J4P       
+1473 + 0738 29 00 01 0539            ALF  J4Z A
+1474 + 0000 00 01 44 0540            J4Z       
+1475 + 0739 15 00 01 0541            ALF  J5N A
+1476 + 0000 00 00 45 0542            J5N       
+1477 + 0739 15 15 01 0543            ALF  J5NNA
+1478 + 0000 00 03 45 0544            J5NN      
+1479 + 0739 15 17 01 0545            ALF  J5NPA
+1480 + 0000 00 05 45 0546            J5NP      
+1481 + 0739 15 29 01 0547            ALF  J5NZA
+1482 + 0000 00 04 45 0548            J5NZ      
+1483 + 0739 17 00 01 0549            ALF  J5P A
+1484 + 0000 00 02 45 0550            J5P       
+1485 + 0739 29 00 01 0551            ALF  J5Z A
+1486 + 0000 00 01 45 0552            J5Z       
+1487 + 0740 15 00 01 0553            ALF  J6N A
+1488 + 0000 00 00 46 0554            J6N       
+1489 + 0740 15 15 01 0555            ALF  J6NNA
+1490 + 0000 00 03 46 0556            J6NN      
+1491 + 0740 15 17 01 0557            ALF  J6NPA
+1492 + 0000 00 05 46 0558            J6NP      
+1493 + 0740 15 29 01 0559            ALF  J6NZA
+1494 + 0000 00 04 46 0560            J6NZ      
+1495 + 0740 17 00 01 0561            ALF  J6P A
+1496 + 0000 00 02 46 0562            J6P       
+1497 + 0740 29 00 01 0563            ALF  J6Z A
+1498 + 0000 00 01 46 0564            J6Z       
+1499 + 0836 01 00 01 0565            ALF  LDA A
+1500 + 0000 00 05 08 0566            LDA       
+1501 + 0836 01 15 01 0567            ALF  LDANA
+1502 + 0000 00 05 16 0568            LDAN      
+1503 + 0836 27 00 01 0569            ALF  LDX A
+1504 + 0000 00 05 15 0570            LDX       
+1505 + 0836 27 15 01 0571            ALF  LDXNA
+1506 + 0000 00 05 23 0572            LDXN      
+1507 + 0836 31 00 01 0573            ALF  LD1 A
+1508 + 0000 00 05 09 0574            LD1       
+1509 + 0836 31 15 01 0575            ALF  LD1NA
+1510 + 0000 00 05 17 0576            LD1N      
+1511 + 0836 32 00 01 0577            ALF  LD2 A
+1512 + 0000 00 05 10 0578            LD2       
+1513 + 0836 32 15 01 0579            ALF  LD2NA
+1514 + 0000 00 05 18 0580            LD2N      
+1515 + 0836 33 00 01 0581            ALF  LD3 A
+1516 + 0000 00 05 11 0582            LD3       
+1517 + 0836 33 15 01 0583            ALF  LD3NA
+1518 + 0000 00 05 19 0584            LD3N      
+1519 + 0836 34 00 01 0585            ALF  LD4 A
+1520 + 0000 00 05 12 0586            LD4       
+1521 + 0836 34 15 01 0587            ALF  LD4NA
+1522 + 0000 00 05 20 0588            LD4N      
+1523 + 0836 35 00 01 0589            ALF  LD5 A
+1524 + 0000 00 05 13 0590            LD5       
+1525 + 0836 35 15 01 0591            ALF  LD5NA
+1526 + 0000 00 05 21 0592            LD5N      
+1527 + 0836 36 00 01 0593            ALF  LD6 A
+1528 + 0000 00 05 14 0594            LD6       
+1529 + 0836 36 15 01 0595            ALF  LD6NA
+1530 + 0000 00 05 22 0596            LD6N      
+1531 + 0912 25 05 01 0597            ALF  MOVEA
+1532 + 0000 00 01 07 0598            MOVE      
+1533 + 0920 13 00 01 0599            ALF  MUL A
+1534 + 0000 00 05 03 0600            MUL       
+1535 + 0976 17 00 01 0601            ALF  NOP A
+1536 + 0000 00 00 00 0602            NOP       
+1537 + 0984 14 00 01 0603            ALF  NUM A
+1538 + 0000 00 00 05 0604            NUM       
+1539 + 1043 09 07 02 0605            ALF  ORIGB
+1540 + 0000 00 00 00 0606            CON  0 
+1541 + 1048 23 00 01 0607            ALF  OUT A
+1542 + 0000 00 00 37 0608            OUT       
+1543 + 1421 01 00 01 0609            ALF  SLA A
+1544 + 0000 00 00 06 0610            SLA       
+1545 + 1421 01 27 01 0611            ALF  SLAXA
+1546 + 0000 00 02 06 0612            SLAX      
+1547 + 1421 03 00 01 0613            ALF  SLC A
+1548 + 0000 00 04 06 0614            SLC       
+1549 + 1427 01 00 01 0615            ALF  SRA A
+1550 + 0000 00 01 06 0616            SRA       
+1551 + 1427 01 27 01 0617            ALF  SRAXA
+1552 + 0000 00 03 06 0618            SRAX      
+1553 + 1427 03 00 01 0619            ALF  SRC A
+1554 + 0000 00 05 06 0620            SRC       
+1555 + 1431 01 00 01 0621            ALF  STA A
+1556 + 0000 00 05 24 0622            STA       
+1557 + 1431 11 00 01 0623            ALF  STJ A
+1558 + 0000 00 02 32 0624            STJ       
+1559 + 1431 27 00 01 0625            ALF  STX A
+1560 + 0000 00 05 31 0626            STX       
+1561 + 1431 29 00 01 0627            ALF  STZ A
+1562 + 0000 00 05 33 0628            STZ       
+1563 + 1431 31 00 01 0629            ALF  ST1 A
+1564 + 0000 00 05 25 0630            ST1       
+1565 + 1431 32 00 01 0631            ALF  ST2 A
+1566 + 0000 00 05 26 0632            ST2       
+1567 + 1431 33 00 01 0633            ALF  ST3 A
+1568 + 0000 00 05 27 0634            ST3       
+1569 + 1431 34 00 01 0635            ALF  ST4 A
+1570 + 0000 00 05 28 0636            ST4       
+1571 + 1431 35 00 01 0637            ALF  ST5 A
+1572 + 0000 00 05 29 0638            ST5       
+1573 + 1431 36 00 01 0639            ALF  ST6 A
+1574 + 0000 00 05 30 0640            ST6       
+1575 + 1432 02 00 01 0641            ALF  SUB A
+1576 + 0000 00 05 02 0642            SUB       
+                     0643 *
+                     0644 NUMBEROPS  EQU  *-OPTAB/2 
+                     0645 *
+1577 + 0000 00 00 00 0646 OPTYPE     CON  0 
+                     0647 *
+                     0648 VALUE      ORIG *+1 
+                     0649 *
+1579 + 0000 00 00 00 0650 NSYMBOL    CON  0 
+                     0651 SYMINDEX   ORIG *+1 
+                     0652 SYMTAB     ORIG 4*MAXSYMBOL+* 
+                     0653 *
+                     0654 *
+                     0655 *          SUBROUTINE SEARCH OP
+                     0656 *
+                     0657 *          SEARCH THE OPCODE TABLE (OPTAB) FOR THE
+                     0658 *          OPCODE IN OP. A BINARY SEARCH IS USED. IF
+                     0659 *          THE OPCODE IS NOT FOUND, AN UNOP ERROR
+                     0660 *          OCCURS. A HLT IS USED FOR UNOP ERRORS. THE
+                     0661 *          VALUE OF THE SECOND WORD IS
+                     0662 *          STORED IN VALUE AND THE TYPE OF THE OPCODE
+                     0663 *          IN OPTYPE.
+                     0664 *
+                     0665 SOPSAVEA   ORIG *+1 
+                     0666 SOPSAVEX   ORIG *+1 
+                     0667 OPHIGH     ORIG *+1 
+                     0668 OPLOW      ORIG *+1 
+                     0669 OPMID      ORIG *+1 
                      0670 *
-                     0671 *          SUBROUTINE SEARCH OP
-                     0672 *
-                     0673 *          SEARCH THE OPCODE TABLE (OPTAB) FOR THE
-                     0674 *          OPCODE IN OP. A BINARY SEARCH IS USED. IF
-                     0675 *          THE OPCODE IS NOT FOUND, AN UNOP ERROR
-                     0676 *          OCCURS. A HLT IS USED FOR UNOP ERRORS. THE
-                     0677 *          VALUE OF THE SECOND WORD IS
-                     0678 *          STORED IN VALUE AND THE TYPE OF THE OPCODE
-                     0679 *          IN OPTYPE.
-                     0680 *
-                     0681 SOPSAVEA   ORIG *+1 
-                     0682 SOPSAVEX   ORIG *+1 
-                     0683 OPHIGH     ORIG *+1 
-                     0684 OPLOW      ORIG *+1 
-                     0685 OPMID      ORIG *+1 
-                     0686 *
-2800 + 2837 00 02 32 0687 SEARCHOP   STJ  SOPEXIT 
-2801 + 2795 00 05 24 0688            STA  SOPSAVEA 
-2802 + 2796 00 05 31 0689            STX  SOPSAVEX 
-2803 + 2836 00 02 25 0690            ST1  SOPSAVE1(0:2) 
+2586 + 2623 00 02 32 0671 SEARCHOP   STJ  SOPEXIT 
+2587 + 2581 00 05 24 0672            STA  SOPSAVEA 
+2588 + 2582 00 05 31 0673            STX  SOPSAVEX 
+2589 + 2622 00 02 25 0674            ST1  SOPSAVE1(0:2) 
+                     0675 *
+2590 + 0157 00 02 49 0676            ENT1 NUMBEROPS-1 
+2591 + 2583 00 05 25 0677            ST1  OPHIGH 
+2592 + 2584 00 05 33 0678            STZ  OPLOW 
+                     0679 *
+2593 + 2584 00 05 08 0680 SOPLOOP    LDA  OPLOW 
+2594 + 2583 00 05 01 0681            ADD  OPHIGH 
+2595 + 0005 00 03 06 0682            SRAX 5 
+2596 + 1007 00 05 04 0683            DIV  TWO 
+2597 + 2585 00 05 24 0684            STA  OPMID 
+2598 + 2585 00 05 09 0685            LD1  OPMID 
+2599 + 0000 01 00 49 0686            INC1 0,1 
+                     0687 *
+2600 + 1261 01 12 08 0688            LDA  OPTAB,1(1:4) 
+2601 + 1237 00 05 56 0689            CMPA OP 
+2602 + 2616 00 05 39 0690            JE   SOPFOUND 
                      0691 *
-2804 + 0164 00 02 49 0692            ENT1 NUMBEROPS-1 
-2805 + 2797 00 05 25 0693            ST1  OPHIGH 
-2806 + 2798 00 05 33 0694            STZ  OPLOW 
-                     0695 *
-2807 + 2798 00 05 08 0696 SOPLOOP    LDA  OPLOW 
-2808 + 2797 00 05 01 0697            ADD  OPHIGH 
-2809 + 0005 00 03 06 0698            SRAX 5 
-2810 + 1007 00 05 04 0699            DIV  TWO 
-2811 + 2799 00 05 24 0700            STA  OPMID 
-2812 + 2799 00 05 09 0701            LD1  OPMID 
-2813 + 0000 01 00 49 0702            INC1 0,1 
-                     0703 *
-2814 + 1461 01 12 08 0704            LDA  OPTAB,1(1:4) 
-2815 + 1437 00 05 56 0705            CMPA OP 
-2816 + 2830 00 05 39 0706            JE   SOPFOUND 
-                     0707 *
-2817 + 2822 00 04 39 0708            JL   UPLOW 
-2818 + 2799 00 05 09 0709 DOWNHIGH   LD1  OPMID 
-2819 + 0001 00 01 49 0710            DEC1 1 
-2820 + 2797 00 05 25 0711            ST1  OPHIGH 
-2821 + 2825 00 00 39 0712            JMP  SOPDONE 
-                     0713 *
-2822 + 2799 00 05 09 0714 UPLOW      LD1  OPMID 
-2823 + 0001 00 00 49 0715            INC1 1 
-2824 + 2798 00 05 25 0716            ST1  OPLOW 
-                     0717 *          JMP  SOPDONE
-                     0718 *
-2825 + 2797 00 05 08 0719 SOPDONE    LDA  OPHIGH 
-2826 + 2798 00 05 56 0720            CMPA OPLOW 
-2827 + 2807 00 07 39 0721            JGE  SOPLOOP 
+2603 + 2608 00 04 39 0692            JL   UPLOW 
+2604 + 2585 00 05 09 0693 DOWNHIGH   LD1  OPMID 
+2605 + 0001 00 01 49 0694            DEC1 1 
+2606 + 2583 00 05 25 0695            ST1  OPHIGH 
+2607 + 2611 00 00 39 0696            JMP  SOPDONE 
+                     0697 *
+2608 + 2585 00 05 09 0698 UPLOW      LD1  OPMID 
+2609 + 0001 00 00 49 0699            INC1 1 
+2610 + 2584 00 05 25 0700            ST1  OPLOW 
+                     0701 *          JMP  SOPDONE
+                     0702 *
+2611 + 2583 00 05 08 0703 SOPDONE    LDA  OPHIGH 
+2612 + 2584 00 05 56 0704            CMPA OPLOW 
+2613 + 2593 00 07 39 0705            JGE  SOPLOOP 
+                     0706 *
+2614 + 3126 00 00 39 0707            JMP  UNOP 
+2615 + 0088 00 02 49 0708            ENT1 2*HLTINDEX 
+                     0709 *
+2616 + 1262 01 05 08 0710 SOPFOUND   LDA  OPTAB+1,1 
+2617 + 1578 00 05 24 0711            STA  VALUE 
+2618 + 1261 01 45 09 0712            LD1  OPTAB,1(5:5) 
+2619 + 1577 00 05 25 0713            ST1  OPTYPE 
+                     0714 *
+2620 + 2581 00 05 08 0715            LDA  SOPSAVEA 
+2621 + 2582 00 05 15 0716            LDX  SOPSAVEX 
+2622 + 2622 00 02 49 0717 SOPSAVE1   ENT1 * 
+2623 + 2623 00 00 39 0718 SOPEXIT    JMP  * 
+                     0719 *
+                     0720 *
+                     0721 *          SUBROUTINE DEFINESYM
                      0722 *
-2828 + 3340 00 00 39 0723            JMP  UNOP 
-2829 + 0092 00 02 49 0724            ENT1 2*HLTINDEX 
-                     0725 *
-2830 + 1462 01 05 08 0726 SOPFOUND   LDA  OPTAB+1,1 
-2831 + 1792 00 05 24 0727            STA  VALUE 
-2832 + 1461 01 45 09 0728            LD1  OPTAB,1(5:5) 
-2833 + 1791 00 05 25 0729            ST1  OPTYPE 
-                     0730 *
-2834 + 2795 00 05 08 0731            LDA  SOPSAVEA 
-2835 + 2796 00 05 15 0732            LDX  SOPSAVEX 
-2836 + 2836 00 02 49 0733 SOPSAVE1   ENT1 * 
-2837 + 2837 00 00 39 0734 SOPEXIT    JMP  * 
-                     0735 *
-                     0736 *
-                     0737 *          SUBROUTINE DEFINESYM
-                     0738 *
-                     0739 *          DEFINE A SYMBOL. PUT IT IN THE SYMBOL
-                     0740 *          TABLE. THE A REGISTER HAS ITS VALUE. THE
-                     0741 *          FORWARD REFERENCE FIELD IS SET TO INDICATE
-                     0742 *          NO FORWARD REFERENCES (YET) BY SETTING IT
-                     0743 *          TO CHAINEND.
+                     0723 *          DEFINE A SYMBOL. PUT IT IN THE SYMBOL
+                     0724 *          TABLE. THE A REGISTER HAS ITS VALUE. THE
+                     0725 *          FORWARD REFERENCE FIELD IS SET TO INDICATE
+                     0726 *          NO FORWARD REFERENCES (YET) BY SETTING IT
+                     0727 *          TO CHAINEND.
+                     0728 *
+2624 + 2639 00 02 32 0729 DEFINESYM  STJ  DSEXIT 
+2625 + 2638 00 02 25 0730            ST1  DSSAVE1(0:2) 
+                     0731 *
+2626 + 1579 00 05 09 0732            LD1  NSYMBOL 
+2627 + 1583 01 05 24 0733            STA  SYMTAB+2,1 
+2628 + 1194 00 05 08 0734            LDA  SYM 
+2629 + 1581 01 05 24 0735            STA  SYMTAB,1 
+2630 + 1195 00 05 08 0736            LDA  SYM+1 
+2631 + 1582 01 05 24 0737            STA  SYMTAB+1,1 
+2632 + 1010 00 05 08 0738            LDA  CHAINEND 
+2633 + 1584 01 37 24 0739            STA  SYMTAB+3,1(4:5) 
+                     0740 *
+2634 + 1580 00 05 25 0741            ST1  SYMINDEX 
+2635 + 0004 00 00 49 0742            INC1 4 
+2636 + 1579 00 05 25 0743            ST1  NSYMBOL 
                      0744 *
-2838 + 2853 00 02 32 0745 DEFINESYM  STJ  DSEXIT 
-2839 + 2852 00 02 25 0746            ST1  DSSAVE1(0:2) 
-                     0747 *
-2840 + 1793 00 05 09 0748            LD1  NSYMBOL 
-2841 + 1797 01 05 24 0749            STA  SYMTAB+2,1 
-2842 + 1394 00 05 08 0750            LDA  SYM 
-2843 + 1795 01 05 24 0751            STA  SYMTAB,1 
-2844 + 1395 00 05 08 0752            LDA  SYM+1 
-2845 + 1796 01 05 24 0753            STA  SYMTAB+1,1 
-2846 + 1010 00 05 08 0754            LDA  CHAINEND 
-2847 + 1798 01 37 24 0755            STA  SYMTAB+3,1(4:5) 
-                     0756 *
-2848 + 1794 00 05 25 0757            ST1  SYMINDEX 
-2849 + 0004 00 00 49 0758            INC1 4 
-2850 + 1793 00 05 25 0759            ST1  NSYMBOL 
+2637 + 1579 01 05 08 0745            LDA  SYMTAB-2,1 
+2638 + 2638 00 02 49 0746 DSSAVE1    ENT1 * 
+2639 + 2639 00 00 39 0747 DSEXIT     JMP  * 
+                     0748 *
+                     0749 *
+                     0750 *          SUBROUTINE SEARCHSYM
+                     0751 *
+                     0752 *          SEARCH SYMBOL TABLE. SYMBOL TABLE
+                     0753 *          IS SEARCHED FROM THE BACK TO THE FRONT.
+                     0754 *          THE RESULT OF THE SEARCH IS RETURNED IN
+                     0755 *          SYMINDEX. SYMINDEX IS AN INDEX INTO SYMTAB
+                     0756 *          IF FOUND, OR NEGATIVE
+                     0757 *
+                     0758 SSSAVEA    ORIG *+1 
+                     0759 SSSAVEX    ORIG *+1 
                      0760 *
-2851 + 1793 01 05 08 0761            LDA  SYMTAB-2,1 
-2852 + 2852 00 02 49 0762 DSSAVE1    ENT1 * 
-2853 + 2853 00 00 39 0763 DSEXIT     JMP  * 
-                     0764 *
+2642 + 2659 00 02 32 0761 SEARCHSYM  STJ  SSEXIT 
+2643 + 2640 00 05 24 0762            STA  SSSAVEA 
+2644 + 2641 00 05 31 0763            STX  SSSAVEX 
+2645 + 2656 00 02 25 0764            ST1  SSSAVE1(0:2) 
                      0765 *
-                     0766 *          SUBROUTINE SEARCHSYM
-                     0767 *
-                     0768 *          SEARCH SYMBOL TABLE. SYMBOL TABLE
-                     0769 *          IS SEARCHED FROM THE BACK TO THE FRONT.
-                     0770 *          THE RESULT OF THE SEARCH IS RETURNED IN
-                     0771 *          SYMINDEX. SYMINDEX IS AN INDEX INTO SYMTAB
-                     0772 *          IF FOUND, OR NEGATIVE
-                     0773 *
-                     0774 SSSAVEA    ORIG *+1 
-                     0775 SSSAVEX    ORIG *+1 
+2646 + 1194 00 05 08 0766            LDA  SYM 
+2647 + 1195 00 05 15 0767            LDX  SYM+1 
+2648 + 1579 00 05 09 0768            LD1  NSYMBOL 
+                     0769 *
+2649 + 0004 00 01 49 0770 SYMLOOP    DEC1 4 
+2650 + 2655 00 00 41 0771            J1N  SYMDONE 
+2651 + 1581 01 13 56 0772            CMPA SYMTAB,1(1:5) 
+2652 + 2649 00 08 39 0773            JNE  SYMLOOP 
+2653 + 1582 01 13 63 0774            CMPX SYMTAB+1,1(1:5) 
+2654 + 2649 00 08 39 0775            JNE  SYMLOOP 
                      0776 *
-2856 + 2873 00 02 32 0777 SEARCHSYM  STJ  SSEXIT 
-2857 + 2854 00 05 24 0778            STA  SSSAVEA 
-2858 + 2855 00 05 31 0779            STX  SSSAVEX 
-2859 + 2870 00 02 25 0780            ST1  SSSAVE1(0:2) 
-                     0781 *
-2860 + 1394 00 05 08 0782            LDA  SYM 
-2861 + 1395 00 05 15 0783            LDX  SYM+1 
-2862 + 1793 00 05 09 0784            LD1  NSYMBOL 
-                     0785 *
-2863 + 0004 00 01 49 0786 SYMLOOP    DEC1 4 
-2864 + 2869 00 00 41 0787            J1N  SYMDONE 
-2865 + 1795 01 13 56 0788            CMPA SYMTAB,1(1:5) 
-2866 + 2863 00 08 39 0789            JNE  SYMLOOP 
-2867 + 1796 01 13 63 0790            CMPX SYMTAB+1,1(1:5) 
-2868 + 2863 00 08 39 0791            JNE  SYMLOOP 
-                     0792 *
-2869 + 1794 00 05 25 0793 SYMDONE    ST1  SYMINDEX 
-                     0794 *
-2870 + 2870 00 02 49 0795 SSSAVE1    ENT1 * 
-2871 + 2854 00 05 08 0796            LDA  SSSAVEA 
-2872 + 2855 00 05 15 0797            LDX  SSSAVEX 
-2873 + 2873 00 00 39 0798 SSEXIT     JMP  * 
+2655 + 1580 00 05 25 0777 SYMDONE    ST1  SYMINDEX 
+                     0778 *
+2656 + 2656 00 02 49 0779 SSSAVE1    ENT1 * 
+2657 + 2640 00 05 08 0780            LDA  SSSAVEA 
+2658 + 2641 00 05 15 0781            LDX  SSSAVEX 
+2659 + 2659 00 00 39 0782 SSEXIT     JMP  * 
+                     0783 *
+                     0784 *
+                     0785 UNDEFSYM   ORIG *+1 
+2661 + 0000 00 00 01 0786 NOFORWARD  CON  1 
+                     0787 *
+                     0788 *          UPPER AND LOWER BOUNDS FOR EXPRESSIONS
+                     0789 *
+2662 + 0000 00 00 00 0790 HLBYTE     CON  0 
+2663 + 0000 00 00 63 0791            CON  63 
+2664 + 0000 00 00 00 0792 HLADDR     CON  0 
+2665 + 0000 00 62 31 0793            CON  3999 
+2666 - 0000 00 63 63 0794 HL2BYTE    CON  -4095 
+2667 + 0000 00 63 63 0795            CON  +4095 
+2668 - 4095 63 63 63 0796 HLWORD     CON  -1073741823 
+2669 + 4095 63 63 63 0797            CON  +1073741823 
+                     0798 *
                      0799 *
-                     0800 *
-                     0801 UNDEFSYM   ORIG *+1 
-2875 + 0000 00 00 01 0802 NOFORWARD  CON  1 
-                     0803 *
-                     0804 *          UPPER AND LOWER BOUNDS FOR EXPRESSIONS
-                     0805 *
-2876 + 0000 00 00 00 0806 HLBYTE     CON  0 
-2877 + 0000 00 00 63 0807            CON  63 
-2878 + 0000 00 00 00 0808 HLADDR     CON  0 
-2879 + 0000 00 62 31 0809            CON  3999 
-2880 - 0000 00 63 63 0810 HL2BYTE    CON  -4095 
-2881 + 0000 00 63 63 0811            CON  +4095 
-2882 - 4095 63 63 63 0812 HLWORD     CON  -1073741823 
-2883 + 4095 63 63 63 0813            CON  +1073741823 
-                     0814 *
-                     0815 *
-                     0816 OPERATOR   ORIG *+44 
-2928 + 0000 00 00 01 0817            CON  1 
-2929 + 0000 00 00 02 0818            CON  2 
-2930 + 0000 00 00 03 0819            CON  3 
-2931 + 0000 00 00 04 0820            CON  4 
-                     0821            ORIG *+6 
-2938 + 0000 00 00 05 0822            CON  5 
-                     0823            ORIG *+10 
-                     0824 *
-                     0825 *
-                     0826 *          SUBROUTINE EVALSYM
+                     0800 OPERATOR   ORIG *+44 
+2714 + 0000 00 00 01 0801            CON  1 
+2715 + 0000 00 00 02 0802            CON  2 
+2716 + 0000 00 00 03 0803            CON  3 
+2717 + 0000 00 00 04 0804            CON  4 
+                     0805            ORIG *+6 
+2724 + 0000 00 00 05 0806            CON  5 
+                     0807            ORIG *+10 
+                     0808 *
+                     0809 *
+                     0810 *          SUBROUTINE EVALSYM
+                     0811 *
+                     0812 *          EVALUATE THE NEXT SYMBOL. VALUE RETURNED
+                     0813 *          IN A. UNDEFSYM IS NONZERO IF VALUE IS
+                     0814 *          UNDEFINED. SYMBOLS MAY BE *, NUMBER
+                     0815 *          OR SYMBOL. GETSYM IS USED TO GET NUMBERS
+                     0816 *          OR SYMBOLS.
+                     0817 *
+                     0818 ESSAVEX    ORIG *+1 
+                     0819 *
+2736 + 2772 00 02 32 0820 EVALSYM    STJ  ESEXIT 
+2737 + 2771 00 02 25 0821            ST1  ESSAVE1(0:2) 
+2738 + 2735 00 05 31 0822            STX  ESSAVEX 
+                     0823 *
+2739 + 2895 05 05 08 0824            LDA  CARD,5 
+2740 + 1003 00 45 56 0825            CMPA CHARSTAR(5:5) 
+2741 + 2746 00 08 39 0826            JNE  NOTSTAR 
                      0827 *
-                     0828 *          EVALUATE THE NEXT SYMBOL. VALUE RETURNED
-                     0829 *          IN A. UNDEFSYM IS NONZERO IF VALUE IS
-                     0830 *          UNDEFINED. SYMBOLS MAY BE *, NUMBER
-                     0831 *          OR SYMBOL. GETSYM IS USED TO GET NUMBERS
-                     0832 *          OR SYMBOLS.
-                     0833 *
-                     0834 ESSAVEX    ORIG *+1 
-                     0835 *
-2950 + 2986 00 02 32 0836 EVALSYM    STJ  ESEXIT 
-2951 + 2985 00 02 25 0837            ST1  ESSAVE1(0:2) 
-2952 + 2949 00 05 31 0838            STX  ESSAVEX 
-                     0839 *
-2953 + 3109 05 05 08 0840            LDA  CARD,5 
-2954 + 1003 00 45 56 0841            CMPA CHARSTAR(5:5) 
-2955 + 2960 00 08 39 0842            JNE  NOTSTAR 
+2742 + 0001 00 00 53 0828 ISSTAR     INC5 1 
+2743 + 0000 06 02 48 0829            ENTA 0,6 
+2744 + 2660 00 05 33 0830            STZ  UNDEFSYM 
+2745 + 2770 00 00 39 0831            JMP  ESQUIT 
+                     0832 *
+2746 + 1199 00 00 39 0833 NOTSTAR    JMP  GETSYM 
+2747 + 1196 00 05 09 0834            LD1  LETTER 
+2748 + 2755 00 04 41 0835            J1NZ ISSYMBOL 
+                     0836 *
+2749 + 1194 00 05 08 0837 ISNUMBER   LDA  SYM 
+2750 + 1195 00 05 15 0838            LDX  SYM+1 
+2751 + 0000 00 00 05 0839            NUM       
+2752 + 3134 00 02 39 0840            JOV  EXPOV 
+2753 + 2660 00 05 33 0841            STZ  UNDEFSYM 
+2754 + 2770 00 00 39 0842            JMP  ESQUIT 
                      0843 *
-2956 + 0001 00 00 53 0844 ISSTAR     INC5 1 
-2957 + 0000 06 02 48 0845            ENTA 0,6 
-2958 + 2874 00 05 33 0846            STZ  UNDEFSYM 
-2959 + 2984 00 00 39 0847            JMP  ESQUIT 
-                     0848 *
-2960 + 1399 00 00 39 0849 NOTSTAR    JMP  GETSYM 
-2961 + 1396 00 05 09 0850            LD1  LETTER 
-2962 + 2969 00 04 41 0851            J1NZ ISSYMBOL 
-                     0852 *
-2963 + 1394 00 05 08 0853 ISNUMBER   LDA  SYM 
-2964 + 1395 00 05 15 0854            LDX  SYM+1 
-2965 + 0000 00 00 05 0855            NUM       
-2966 + 3348 00 02 39 0856            JOV  EXPOV 
-2967 + 2874 00 05 33 0857            STZ  UNDEFSYM 
-2968 + 2984 00 00 39 0858            JMP  ESQUIT 
-                     0859 *
-2969 + 2856 00 00 39 0860 ISSYMBOL   JMP  SEARCHSYM 
-2970 + 1794 00 05 09 0861            LD1  SYMINDEX 
-2971 + 2977 00 00 41 0862            J1N  ISNOTTHERE 
-2972 + 1795 01 05 08 0863            LDA  SYMTAB,1 
-2973 + 2981 00 00 40 0864            JAN  ISNOTDEF 
-                     0865 *
-2974 + 1797 01 05 08 0866 ISDEFINED  LDA  SYMTAB+2,1 
-2975 + 2874 00 05 33 0867            STZ  UNDEFSYM 
-2976 + 2984 00 00 39 0868            JMP  ESQUIT 
-                     0869 *
-2977 - 0001 00 02 48 0870 ISNOTTHERE ENTA -1 
-2978 + 2838 00 00 39 0871            JMP  DEFINESYM 
-2979 + 1794 00 05 09 0872            LD1  SYMINDEX 
-2980 + 1795 01 00 24 0873            STA  SYMTAB,1(0:0) 
-                     0874 *
-2981 + 1798 01 05 08 0875 ISNOTDEF   LDA  SYMTAB+3,1 
-2982 + 2874 00 37 32 0876            STJ  UNDEFSYM(4:5) 
-2983 + 1798 01 05 30 0877            ST6  SYMTAB+3,1 
+2755 + 2642 00 00 39 0844 ISSYMBOL   JMP  SEARCHSYM 
+2756 + 1580 00 05 09 0845            LD1  SYMINDEX 
+2757 + 2763 00 00 41 0846            J1N  ISNOTTHERE 
+2758 + 1581 01 05 08 0847            LDA  SYMTAB,1 
+2759 + 2767 00 00 40 0848            JAN  ISNOTDEF 
+                     0849 *
+2760 + 1583 01 05 08 0850 ISDEFINED  LDA  SYMTAB+2,1 
+2761 + 2660 00 05 33 0851            STZ  UNDEFSYM 
+2762 + 2770 00 00 39 0852            JMP  ESQUIT 
+                     0853 *
+2763 - 0001 00 02 48 0854 ISNOTTHERE ENTA -1 
+2764 + 2624 00 00 39 0855            JMP  DEFINESYM 
+2765 + 1580 00 05 09 0856            LD1  SYMINDEX 
+2766 + 1581 01 00 24 0857            STA  SYMTAB,1(0:0) 
+                     0858 *
+2767 + 1584 01 05 08 0859 ISNOTDEF   LDA  SYMTAB+3,1 
+2768 + 2660 00 37 32 0860            STJ  UNDEFSYM(4:5) 
+2769 + 1584 01 05 30 0861            ST6  SYMTAB+3,1 
+                     0862 *
+                     0863 ESQUIT     EQU  * 
+2770 + 2735 00 05 15 0864            LDX  ESSAVEX 
+2771 + 2771 00 02 49 0865 ESSAVE1    ENT1 * 
+2772 + 2772 00 00 39 0866 ESEXIT     JMP  * 
+                     0867 *
+                     0868 *
+                     0869 *          SUBROUTINE EXPRESSION
+                     0870 *
+                     0871 *          EVALUATE THE NEXT EXPRESSION. EXPRESSION
+                     0872 *          STARTS AT COLUMN+1 (COLUMN IN I5). (THE
+                     0873 *          PLUS ONE IS TO SKIP OVER THE LAST DELIMITER)
+                     0874 *          OPERANDS ARE EVALUATED BY EVALSYM.
+                     0875 *          OPERATORS ARE + - * / :
+                     0876 *          AND ARE APPLIED LEFT TO RIGHT UNTIL A
+                     0877 *          DELIMITER IS FOUND.
                      0878 *
-                     0879 ESQUIT     EQU  * 
-2984 + 2949 00 05 15 0880            LDX  ESSAVEX 
-2985 + 2985 00 02 49 0881 ESSAVE1    ENT1 * 
-2986 + 2986 00 00 39 0882 ESEXIT     JMP  * 
-                     0883 *
-                     0884 *
-                     0885 *          SUBROUTINE EXPRESSION
-                     0886 *
-                     0887 *          EVALUATE THE NEXT EXPRESSION. EXPRESSION
-                     0888 *          STARTS AT COLUMN+1 (COLUMN IN I5). (THE
-                     0889 *          PLUS ONE IS TO SKIP OVER THE LAST DELIMITER)
-                     0890 *          OPERANDS ARE EVALUATED BY EVALSYM.
-                     0891 *          OPERATORS ARE + - * / :
-                     0892 *          AND ARE APPLIED LEFT TO RIGHT UNTIL A
-                     0893 *          DELIMITER IS FOUND.
+                     0879 VALUE1     ORIG *+1 
+                     0880 VALUE2     ORIG *+1 
+                     0881 EXPSAVEX   ORIG *+1 
+                     0882 *
+2776 + 2832 00 02 32 0883 EXPRESSION STJ  EXPEXIT 
+2777 + 2820 00 02 25 0884            ST1  EXPSAVE1(0:2) 
+2778 + 2831 00 02 26 0885            ST2  EXPSAVE2(0:2) 
+2779 + 2775 00 05 31 0886            STX  EXPSAVEX 
+                     0887 *
+2780 + 0001 00 00 53 0888            INC5 1 
+2781 + 2736 00 00 39 0889            JMP  EVALSYM 
+                     0890 *
+2782 + 2895 05 05 10 0891 EXPLOOP    LD2  CARD,5 
+2783 + 2670 02 05 10 0892            LD2  OPERATOR,2 
+2784 + 2816 00 05 42 0893            J2NP EXPOVER 
                      0894 *
-                     0895 VALUE1     ORIG *+1 
-                     0896 VALUE2     ORIG *+1 
-                     0897 EXPSAVEX   ORIG *+1 
-                     0898 *
-2990 + 3046 00 02 32 0899 EXPRESSION STJ  EXPEXIT 
-2991 + 3034 00 02 25 0900            ST1  EXPSAVE1(0:2) 
-2992 + 3045 00 02 26 0901            ST2  EXPSAVE2(0:2) 
-2993 + 2989 00 05 31 0902            STX  EXPSAVEX 
-                     0903 *
-2994 + 0001 00 00 53 0904            INC5 1 
-2995 + 2950 00 00 39 0905            JMP  EVALSYM 
-                     0906 *
-2996 + 3109 05 05 10 0907 EXPLOOP    LD2  CARD,5 
-2997 + 2884 02 05 10 0908            LD2  OPERATOR,2 
-2998 + 3030 00 05 42 0909            J2NP EXPOVER 
-                     0910 *
-2999 + 2874 00 05 09 0911            LD1  UNDEFSYM 
-3000 + 3033 00 04 41 0912            J1NZ FORERROR 
-                     0913 *
-3001 + 0001 00 00 53 0914            INC5 1 
-3002 + 2987 00 05 24 0915            STA  VALUE1 
-3003 + 2950 00 00 39 0916            JMP  EVALSYM 
-3004 + 2988 00 05 24 0917            STA  VALUE2 
-3005 + 2987 00 05 08 0918            LDA  VALUE1 
-3006 + 3006 02 00 39 0919            JMP  *,2 
-3007 + 3012 00 00 39 0920            JMP  OPADD 
-3008 + 3014 00 00 39 0921            JMP  OPSUB 
-3009 + 3016 00 00 39 0922            JMP  OPMUL 
-3010 + 3020 00 00 39 0923            JMP  OPDIV 
-3011 + 3023 00 00 39 0924            JMP  OP8ADD 
-                     0925 *
-3012 + 2988 00 05 01 0926 OPADD      ADD  VALUE2 
-3013 + 3028 00 00 39 0927            JMP  NEXTOP 
-                     0928 *
-3014 + 2988 00 05 02 0929 OPSUB      SUB  VALUE2 
-3015 + 3028 00 00 39 0930            JMP  NEXTOP 
-                     0931 *
-3016 + 2988 00 05 03 0932 OPMUL      MUL  VALUE2 
-3017 + 3348 00 04 40 0933            JANZ EXPOV 
-3018 + 0005 00 02 06 0934            SLAX 5 
-3019 + 3028 00 00 39 0935            JMP  NEXTOP 
-                     0936 *
-3020 + 0005 00 03 06 0937 OPDIV      SRAX 5 
-3021 + 2988 00 05 04 0938            DIV  VALUE2 
-3022 + 3028 00 00 39 0939            JMP  NEXTOP 
-                     0940 *
-3023 + 1009 00 05 03 0941 OP8ADD     MUL  EIGHT 
-3024 + 3348 00 04 40 0942            JANZ EXPOV 
-3025 + 0005 00 02 06 0943            SLAX 5 
-3026 + 2988 00 05 01 0944            ADD  VALUE2 
-3027 + 3028 00 00 39 0945            JMP  NEXTOP 
-                     0946 *
-3028 + 3348 00 02 39 0947 NEXTOP     JOV  EXPOV 
-3029 + 2996 00 00 39 0948            JMP  EXPLOOP 
+2785 + 2660 00 05 09 0895            LD1  UNDEFSYM 
+2786 + 2819 00 04 41 0896            J1NZ FORERROR 
+                     0897 *
+2787 + 0001 00 00 53 0898            INC5 1 
+2788 + 2773 00 05 24 0899            STA  VALUE1 
+2789 + 2736 00 00 39 0900            JMP  EVALSYM 
+2790 + 2774 00 05 24 0901            STA  VALUE2 
+2791 + 2773 00 05 08 0902            LDA  VALUE1 
+2792 + 2792 02 00 39 0903            JMP  *,2 
+2793 + 2798 00 00 39 0904            JMP  OPADD 
+2794 + 2800 00 00 39 0905            JMP  OPSUB 
+2795 + 2802 00 00 39 0906            JMP  OPMUL 
+2796 + 2806 00 00 39 0907            JMP  OPDIV 
+2797 + 2809 00 00 39 0908            JMP  OP8ADD 
+                     0909 *
+2798 + 2774 00 05 01 0910 OPADD      ADD  VALUE2 
+2799 + 2814 00 00 39 0911            JMP  NEXTOP 
+                     0912 *
+2800 + 2774 00 05 02 0913 OPSUB      SUB  VALUE2 
+2801 + 2814 00 00 39 0914            JMP  NEXTOP 
+                     0915 *
+2802 + 2774 00 05 03 0916 OPMUL      MUL  VALUE2 
+2803 + 3134 00 04 40 0917            JANZ EXPOV 
+2804 + 0005 00 02 06 0918            SLAX 5 
+2805 + 2814 00 00 39 0919            JMP  NEXTOP 
+                     0920 *
+2806 + 0005 00 03 06 0921 OPDIV      SRAX 5 
+2807 + 2774 00 05 04 0922            DIV  VALUE2 
+2808 + 2814 00 00 39 0923            JMP  NEXTOP 
+                     0924 *
+2809 + 1009 00 05 03 0925 OP8ADD     MUL  EIGHT 
+2810 + 3134 00 04 40 0926            JANZ EXPOV 
+2811 + 0005 00 02 06 0927            SLAX 5 
+2812 + 2774 00 05 01 0928            ADD  VALUE2 
+2813 + 2814 00 00 39 0929            JMP  NEXTOP 
+                     0930 *
+2814 + 3134 00 02 39 0931 NEXTOP     JOV  EXPOV 
+2815 + 2782 00 00 39 0932            JMP  EXPLOOP 
+                     0933 *
+2816 + 2660 00 05 09 0934 EXPOVER    LD1  UNDEFSYM 
+2817 + 2820 00 01 41 0935            J1Z  EXPQUIT 
+2818 + 2661 00 05 09 0936            LD1  NOFORWARD 
+2819 + 3130 00 04 41 0937 FORERROR   J1NZ ILLFOR 
+                     0938 *
+                     0939 EXPQUIT    EQU  * 
+2820 + 2820 00 02 49 0940 EXPSAVE1   ENT1 * 
+2821 + 0000 01 05 56 0941            CMPA 0,1 
+2822 + 2825 00 07 39 0942            JGE  *+3 
+2823 + 3134 00 00 39 0943            JMP  EXPOV 
+2824 + 0000 01 05 08 0944            LDA  0,1 
+2825 + 0001 01 05 56 0945            CMPA 1,1 
+2826 + 2829 00 09 39 0946            JLE  *+3 
+2827 + 3134 00 00 39 0947            JMP  EXPOV 
+2828 + 0001 01 05 08 0948            LDA  1,1 
                      0949 *
-3030 + 2874 00 05 09 0950 EXPOVER    LD1  UNDEFSYM 
-3031 + 3034 00 01 41 0951            J1Z  EXPQUIT 
-3032 + 2875 00 05 09 0952            LD1  NOFORWARD 
-3033 + 3344 00 04 41 0953 FORERROR   J1NZ ILLFOR 
-                     0954 *
-                     0955 EXPQUIT    EQU  * 
-3034 + 3034 00 02 49 0956 EXPSAVE1   ENT1 * 
-3035 + 0000 01 05 56 0957            CMPA 0,1 
-3036 + 3039 00 07 39 0958            JGE  *+3 
-3037 + 3348 00 00 39 0959            JMP  EXPOV 
-3038 + 0000 01 05 08 0960            LDA  0,1 
-3039 + 0001 01 05 56 0961            CMPA 1,1 
-3040 + 3043 00 09 39 0962            JLE  *+3 
-3041 + 3348 00 00 39 0963            JMP  EXPOV 
-3042 + 0001 01 05 08 0964            LDA  1,1 
-                     0965 *
-3043 + 2875 00 37 32 0966            STJ  NOFORWARD(4:5) 
-                     0967 *
-3044 + 2989 00 05 15 0968            LDX  EXPSAVEX 
-3045 + 3045 00 02 50 0969 EXPSAVE2   ENT2 * 
-3046 + 3046 00 00 39 0970 EXPEXIT    JMP  * 
-                     0971 *
+2829 + 2661 00 37 32 0950            STJ  NOFORWARD(4:5) 
+                     0951 *
+2830 + 2775 00 05 15 0952            LDX  EXPSAVEX 
+2831 + 2831 00 02 50 0953 EXPSAVE2   ENT2 * 
+2832 + 2832 00 00 39 0954 EXPEXIT    JMP  * 
+                     0955 *
+                     0956 *
+                     0957 *          PRINTER SELECTION FORMAT VARIABLES
+                     0958 *
+2833 + 0000 00 00 00 0959 PRT        CON  0 
+                     0960 ADR        EQU  4:4 
+                     0961 VAL        EQU  3:3 
+                     0962 INST       EQU  2:2 
+                     0963 LOC        EQU  1:1 
+                     0964 *
+2834 + 0000 00 00 00 0965 PRTFMT     CON  0 
+2835 + 0065 00 00 00 0966            CON  1(LOC),1(INST) 
+2836 + 0064 00 01 00 0967            CON  1(LOC),1(ADR) 
+2837 + 0064 01 00 00 0968            CON  1(LOC),1(VAL) 
+2838 + 0064 01 00 00 0969            CON  1(LOC),1(VAL) 
+2839 + 0000 01 00 00 0970            CON  1(VAL) 
+2840 + 0064 00 01 00 0971            CON  1(LOC),1(ADR) 
                      0972 *
-                     0973 *          PRINTER SELECTION FORMAT VARIABLES
-                     0974 *
-3047 + 0000 00 00 00 0975 PRT        CON  0 
-                     0976 ADR        EQU  4:4 
-                     0977 VAL        EQU  3:3 
-                     0978 INST       EQU  2:2 
-                     0979 LOC        EQU  1:1 
+                     0973 PRTBUF     ORIG *+24 
+                     0974 LINE       ORIG *+30 
+                     0975 CARD       ORIG *+80 
+                     0976            ORIG *+10 
+                     0977 *
+                     0978 PRINTLOC   ORIG *+1 
+                     0979 *
                      0980 *
-3048 + 0000 00 00 00 0981 PRTFMT     CON  0 
-3049 + 0065 00 00 00 0982            CON  1(LOC),1(INST) 
-3050 + 0064 00 01 00 0983            CON  1(LOC),1(ADR) 
-3051 + 0064 01 00 00 0984            CON  1(LOC),1(VAL) 
-3052 + 0064 01 00 00 0985            CON  1(LOC),1(VAL) 
-3053 + 0000 01 00 00 0986            CON  1(VAL) 
-3054 + 0064 00 01 00 0987            CON  1(LOC),1(ADR) 
-                     0988 *
-                     0989 PRTBUF     ORIG *+24 
-                     0990 LINE       ORIG *+30 
-                     0991 CARD       ORIG *+80 
-                     0992            ORIG *+10 
+                     0981 *          SUBROUTINE OCTCHAR
+                     0982 *
+                     0983 *          CONVERTS A NUMBER FROM A NUMERIC FORMAT INTO
+                     0984 *          AN OCTAL CHARACTER REPRESENTATION.
+                     0985 *          CHARACTERS ARE STORED ONE PER WORD, SIGN FIRST,
+                     0986 *          ZERO FILL. THE NUMBER IS IN THE A REGISTER,
+                     0987 *          THE NUMBER OF CHARACTERS TO BE USED IN I2
+                     0988 *          AND THE ADDRESS IN WHICH THEY SHOULD BE
+                     0989 *          STORED IN REGISTER I1.
+                     0990 *
+                     0991 OCSAVEX    ORIG *+1 
+                     0992 OCTEMPA    ORIG *+1 
                      0993 *
-                     0994 PRINTLOC   ORIG *+1 
-                     0995 *
+2988 + 3007 00 02 32 0994 OCTCHAR    STJ  OCEXIT 
+2989 + 2986 00 05 31 0995            STX  OCSAVEX 
                      0996 *
-                     0997 *          SUBROUTINE OCTCHAR
-                     0998 *
-                     0999 *          CONVERTS A NUMBER FROM A NUMERIC FORMAT INTO
-                     1000 *          AN OCTAL CHARACTER REPRESENTATION.
-                     1001 *          CHARACTERS ARE STORED ONE PER WORD, SIGN FIRST,
-                     1002 *          ZERO FILL. THE NUMBER IS IN THE A REGISTER,
-                     1003 *          THE NUMBER OF CHARACTERS TO BE USED IN I2
-                     1004 *          AND THE ADDRESS IN WHICH THEY SHOULD BE
-                     1005 *          STORED IN REGISTER I1.
-                     1006 *
-                     1007 OCSAVEX    ORIG *+1 
-                     1008 OCTEMPA    ORIG *+1 
-                     1009 *
-3202 + 3221 00 02 32 1010 OCTCHAR    STJ  OCEXIT 
-3203 + 3200 00 05 31 1011            STX  OCSAVEX 
+2990 + 2987 00 05 24 0997            STA  OCTEMPA 
+2991 + 2992 00 00 24 0998            STA  *+1(0:0) 
+2992 + 0001 00 02 48 0999            ENTA 1 
+2993 + 0044 00 02 55 1000            ENTX 44 
+2994 + 2996 00 02 40 1001            JAP  STORESIGN 
+2995 + 0045 00 02 55 1002            ENTX 45 
+2996 + 0000 01 05 31 1003 STORESIGN  STX  0,1 
+2997 + 2987 00 13 08 1004            LDA  OCTEMPA(1:5) 
+                     1005 *
+2998 + 0000 02 00 49 1006            INC1 0,2 
+                     1007 *
+2999 + 0005 00 03 06 1008 NXTDIGIT   SRAX 5 
+3000 + 1009 00 05 04 1009            DIV  EIGHT 
+3001 + 0030 00 00 55 1010            INCX 30 
+3002 + 0000 01 05 31 1011            STX  0,1 
                      1012 *
-3204 + 3201 00 05 24 1013            STA  OCTEMPA 
-3205 + 3206 00 00 24 1014            STA  *+1(0:0) 
-3206 + 0001 00 02 48 1015            ENTA 1 
-3207 + 0044 00 02 55 1016            ENTX 44 
-3208 + 3210 00 02 40 1017            JAP  STORESIGN 
-3209 + 0045 00 02 55 1018            ENTX 45 
-3210 + 0000 01 05 31 1019 STORESIGN  STX  0,1 
-3211 + 3201 00 13 08 1020            LDA  OCTEMPA(1:5) 
+3003 + 0001 00 01 49 1013            DEC1 1 
+3004 + 0001 00 01 50 1014            DEC2 1 
+3005 + 2999 00 02 42 1015            J2P  NXTDIGIT 
+                     1016 *
+3006 + 2986 00 05 15 1017            LDX  OCSAVEX 
+3007 + 3007 00 00 39 1018 OCEXIT     JMP  * 
+                     1019 *
+                     1020 *
                      1021 *
-3212 + 0000 02 00 49 1022            INC1 0,2 
+                     1022 *          SUBROUTINE PRINTLINE
                      1023 *
-3213 + 0005 00 03 06 1024 NXTDIGIT   SRAX 5 
-3214 + 1009 00 05 04 1025            DIV  EIGHT 
-3215 + 0030 00 00 55 1026            INCX 30 
-3216 + 0000 01 05 31 1027            STX  0,1 
+                     1024 *          PRINT A LINE FOR THE OUTPUT LISTING.
+                     1025 *          LINES CAN BE OF DIFFERENT TYPES.
+                     1026 *          THE FORMAT OF EACH LINE IS
+                     1027 *          DETERMINED BY PRTFMT(OPTYPE).
                      1028 *
-3217 + 0001 00 01 49 1029            DEC1 1 
-3218 + 0001 00 01 50 1030            DEC2 1 
-3219 + 3213 00 02 42 1031            J2P  NXTDIGIT 
-                     1032 *
-3220 + 3200 00 05 15 1033            LDX  OCSAVEX 
-3221 + 3221 00 00 39 1034 OCEXIT     JMP  * 
-                     1035 *
-                     1036 *
-                     1037 *
-                     1038 *          SUBROUTINE PRINTLINE
-                     1039 *
-                     1040 *          PRINT A LINE FOR THE OUTPUT LISTING.
-                     1041 *          LINES CAN BE OF DIFFERENT TYPES.
-                     1042 *          THE FORMAT OF EACH LINE IS
-                     1043 *          DETERMINED BY PRTFMT(OPTYPE).
-                     1044 *
-                     1045 PLSAVEA    ORIG *+1 
-                     1046 PLSAVEX    ORIG *+1 
-                     1047 *
-3224 + 3312 00 02 32 1048 PRINTLINE  STJ  PLEXIT 
-3225 + 3222 00 05 24 1049            STA  PLSAVEA 
-3226 + 3223 00 05 31 1050            STX  PLSAVEX 
-3227 + 3309 00 02 25 1051            ST1  PLSAVE1(0:2) 
-3228 + 3310 00 02 26 1052            ST2  PLSAVE2(0:2) 
-3229 + 3311 00 02 27 1053            ST3  PLSAVE3(0:2) 
+                     1029 PLSAVEA    ORIG *+1 
+                     1030 PLSAVEX    ORIG *+1 
+                     1031 *
+3010 + 3098 00 02 32 1032 PRINTLINE  STJ  PLEXIT 
+3011 + 3008 00 05 24 1033            STA  PLSAVEA 
+3012 + 3009 00 05 31 1034            STX  PLSAVEX 
+3013 + 3095 00 02 25 1035            ST1  PLSAVE1(0:2) 
+3014 + 3096 00 02 26 1036            ST2  PLSAVE2(0:2) 
+3015 + 3097 00 02 27 1037            ST3  PLSAVE3(0:2) 
+                     1038 *
+3016 + 1577 00 05 09 1039            LD1  OPTYPE 
+3017 + 1577 00 05 33 1040            STZ  OPTYPE 
+3018 + 2834 01 05 08 1041            LDA  PRTFMT,1 
+3019 + 2833 00 05 24 1042            STA  PRT 
+                     1043 *
+                     1044 *          CHECK IF LOCATION COUNTER TO BE PRINTED.
+                     1045 *          IF SO PRINT IN COLUMNS 8-13.
+                     1046 *
+3020 + 2833 00 09 08 1047            LDA  PRT(LOC) 
+3021 + 3026 00 01 40 1048            JAZ  NOLOCPRT 
+3022 + 2985 00 05 08 1049            LDA  PRINTLOC 
+3023 + 2872 00 02 49 1050            ENT1 LINE+7 
+3024 + 0004 00 02 50 1051            ENT2 4 
+3025 + 2988 00 00 39 1052            JMP  OCTCHAR 
+                     1053 NOLOCPRT   EQU  * 
                      1054 *
-3230 + 1791 00 05 09 1055            LD1  OPTYPE 
-3231 + 1791 00 05 33 1056            STZ  OPTYPE 
-3232 + 3048 01 05 08 1057            LDA  PRTFMT,1 
-3233 + 3047 00 05 24 1058            STA  PRT 
-                     1059 *
-                     1060 *          CHECK IF LOCATION COUNTER TO BE PRINTED.
-                     1061 *          IF SO PRINT IN COLUMNS 8-13.
-                     1062 *
-3234 + 3047 00 09 08 1063            LDA  PRT(LOC) 
-3235 + 3240 00 01 40 1064            JAZ  NOLOCPRT 
-3236 + 3199 00 05 08 1065            LDA  PRINTLOC 
-3237 + 3086 00 02 49 1066            ENT1 LINE+7 
-3238 + 0004 00 02 50 1067            ENT2 4 
-3239 + 3202 00 00 39 1068            JMP  OCTCHAR 
-                     1069 NOLOCPRT   EQU  * 
-                     1070 *
-                     1071 *
-                     1072 *          CHECK IF VALUE SHOULD BE PRINTED AS NUMBER
-                     1073 *
-3240 + 3047 00 27 08 1074            LDA  PRT(VAL) 
-3241 + 3246 00 01 40 1075            JAZ  NOVALPRT 
-3242 + 1792 00 05 08 1076            LDA  VALUE 
-3243 + 3096 00 02 49 1077            ENT1 LINE+17 
-3244 + 0010 00 02 50 1078            ENT2 10 
-3245 + 3202 00 00 39 1079            JMP  OCTCHAR 
-                     1080 NOVALPRT   EQU  * 
-                     1081 *
-                     1082 *          PRINTVALUE AS AN ADDRESS FOR ORIG AND END
-                     1083 *
-3246 + 3047 00 36 08 1084            LDA  PRT(ADR) 
-3247 + 3252 00 01 40 1085            JAZ  NOADRPRT 
-3248 + 1792 00 05 08 1086            LDA  VALUE 
-3249 + 3102 00 02 49 1087            ENT1 LINE+23 
-3250 + 0004 00 02 50 1088            ENT2 4 
-3251 + 3202 00 00 39 1089            JMP  OCTCHAR 
-                     1090 NOADRPRT   EQU  * 
-                     1091 *
-                     1092 *          CHECK IF VALUE SHOULD BE AN INSTRUCTION
-                     1093 *
-3252 + 3047 00 18 08 1094            LDA  PRT(INST) 
-3253 + 3273 00 01 40 1095            JAZ  NOOPPRT 
-3254 + 1792 00 02 08 1096            LDA  VALUE(0:2) 
-3255 + 3093 00 02 49 1097            ENT1 LINE+14 
-3256 + 0004 00 02 50 1098            ENT2 4 
-3257 + 3202 00 00 39 1099            JMP  OCTCHAR 
-                     1100 *
-3258 + 1792 00 27 08 1101            LDA  VALUE(3:3) 
-3259 + 3098 00 02 49 1102            ENT1 LINE+19 
-3260 + 0002 00 02 50 1103            ENT2 2 
-3261 + 3202 00 00 39 1104            JMP  OCTCHAR 
-3262 + 3098 00 05 33 1105            STZ  LINE+19 
-                     1106 *
-3263 + 1792 00 36 08 1107            LDA  VALUE(4:4) 
-3264 + 3101 00 02 49 1108            ENT1 LINE+22 
-3265 + 0002 00 02 50 1109            ENT2 2 
-3266 + 3202 00 00 39 1110            JMP  OCTCHAR 
-3267 + 3101 00 05 33 1111            STZ  LINE+22 
-                     1112 *
-3268 + 1792 00 45 08 1113            LDA  VALUE(5:5) 
-3269 + 3104 00 02 49 1114            ENT1 LINE+25 
-3270 + 0002 00 02 50 1115            ENT2 2 
-3271 + 3202 00 00 39 1116            JMP  OCTCHAR 
-3272 + 3104 00 05 33 1117            STZ  LINE+25 
-                     1118 *
-                     1119 NOOPPRT    EQU  * 
+                     1055 *
+                     1056 *          CHECK IF VALUE SHOULD BE PRINTED AS NUMBER
+                     1057 *
+3026 + 2833 00 27 08 1058            LDA  PRT(VAL) 
+3027 + 3032 00 01 40 1059            JAZ  NOVALPRT 
+3028 + 1578 00 05 08 1060            LDA  VALUE 
+3029 + 2882 00 02 49 1061            ENT1 LINE+17 
+3030 + 0010 00 02 50 1062            ENT2 10 
+3031 + 2988 00 00 39 1063            JMP  OCTCHAR 
+                     1064 NOVALPRT   EQU  * 
+                     1065 *
+                     1066 *          PRINTVALUE AS AN ADDRESS FOR ORIG AND END
+                     1067 *
+3032 + 2833 00 36 08 1068            LDA  PRT(ADR) 
+3033 + 3038 00 01 40 1069            JAZ  NOADRPRT 
+3034 + 1578 00 05 08 1070            LDA  VALUE 
+3035 + 2888 00 02 49 1071            ENT1 LINE+23 
+3036 + 0004 00 02 50 1072            ENT2 4 
+3037 + 2988 00 00 39 1073            JMP  OCTCHAR 
+                     1074 NOADRPRT   EQU  * 
+                     1075 *
+                     1076 *          CHECK IF VALUE SHOULD BE AN INSTRUCTION
+                     1077 *
+3038 + 2833 00 18 08 1078            LDA  PRT(INST) 
+3039 + 3059 00 01 40 1079            JAZ  NOOPPRT 
+3040 + 1578 00 02 08 1080            LDA  VALUE(0:2) 
+3041 + 2879 00 02 49 1081            ENT1 LINE+14 
+3042 + 0004 00 02 50 1082            ENT2 4 
+3043 + 2988 00 00 39 1083            JMP  OCTCHAR 
+                     1084 *
+3044 + 1578 00 27 08 1085            LDA  VALUE(3:3) 
+3045 + 2884 00 02 49 1086            ENT1 LINE+19 
+3046 + 0002 00 02 50 1087            ENT2 2 
+3047 + 2988 00 00 39 1088            JMP  OCTCHAR 
+3048 + 2884 00 05 33 1089            STZ  LINE+19 
+                     1090 *
+3049 + 1578 00 36 08 1091            LDA  VALUE(4:4) 
+3050 + 2887 00 02 49 1092            ENT1 LINE+22 
+3051 + 0002 00 02 50 1093            ENT2 2 
+3052 + 2988 00 00 39 1094            JMP  OCTCHAR 
+3053 + 2887 00 05 33 1095            STZ  LINE+22 
+                     1096 *
+3054 + 1578 00 45 08 1097            LDA  VALUE(5:5) 
+3055 + 2890 00 02 49 1098            ENT1 LINE+25 
+3056 + 0002 00 02 50 1099            ENT2 2 
+3057 + 2988 00 00 39 1100            JMP  OCTCHAR 
+3058 + 2890 00 05 33 1101            STZ  LINE+25 
+                     1102 *
+                     1103 NOOPPRT    EQU  * 
+                     1104 *
+                     1105 *          CARD IMAGE IS ALREADY IN LINE IMAGE IN CARD.
+                     1106 *          NOW APPEND CARD NUMBER. CARD NUMBER IS
+                     1107 *          DECIMAL, SO WE USE CHAR, BUT THEN MUST
+                     1108 *          SUPPRESS LEADING ZEROS.
+                     1109 *
+3059 + 1165 00 05 08 1110            LDA  CARDNUMBER 
+3060 + 0000 00 01 05 1111            CHAR      
+3061 + 2975 00 02 49 1112            ENT1 LINE+110 
+                     1113 *
+3062 + 0000 01 05 33 1114 LEADZERO   STZ  0,1 
+3063 + 0001 00 00 49 1115            INC1 1 
+3064 + 0000 00 02 48 1116            ENTA 0 
+3065 + 0001 00 04 06 1117            SLC  1 
+3066 + 1001 00 45 56 1118            CMPA CHARO(5:5) 
+3067 + 3062 00 05 39 1119            JE   LEADZERO 
                      1120 *
-                     1121 *          CARD IMAGE IS ALREADY IN LINE IMAGE IN CARD.
-                     1122 *          NOW APPEND CARD NUMBER. CARD NUMBER IS
-                     1123 *          DECIMAL, SO WE USE CHAR, BUT THEN MUST
-                     1124 *          SUPPRESS LEADING ZEROS.
-                     1125 *
-3273 + 1365 00 05 08 1126            LDA  CARDNUMBER 
-3274 + 0000 00 01 05 1127            CHAR      
-3275 + 3189 00 02 49 1128            ENT1 LINE+110 
-                     1129 *
-3276 + 0000 01 05 33 1130 LEADZERO   STZ  0,1 
-3277 + 0001 00 00 49 1131            INC1 1 
-3278 + 0000 00 02 48 1132            ENTA 0 
-3279 + 0001 00 04 06 1133            SLC  1 
-3280 + 1001 00 45 56 1134            CMPA CHARO(5:5) 
-3281 + 3276 00 05 39 1135            JE   LEADZERO 
-                     1136 *
-3282 + 0000 01 05 24 1137 STRCHR     STA  0,1 
-3283 + 3288 00 01 47 1138            JXZ  ENDCARDNUM 
-3284 + 0001 00 00 49 1139            INC1 1 
-3285 + 0000 00 02 48 1140            ENTA 0 
-3286 + 0001 00 04 06 1141            SLC  1 
-3287 + 3282 00 00 39 1142            JMP  STRCHR 
-                     1143 ENDCARDNUM EQU  * 
-                     1144 *
-3288 + 3288 00 18 34 1145            JBUS *(LP) 
-                     1146 *
-                     1147 *          NOW OUTPUT LINE MUST BE PACKED INTO BUFFER
+3068 + 0000 01 05 24 1121 STRCHR     STA  0,1 
+3069 + 3074 00 01 47 1122            JXZ  ENDCARDNUM 
+3070 + 0001 00 00 49 1123            INC1 1 
+3071 + 0000 00 02 48 1124            ENTA 0 
+3072 + 0001 00 04 06 1125            SLC  1 
+3073 + 3068 00 00 39 1126            JMP  STRCHR 
+                     1127 ENDCARDNUM EQU  * 
+                     1128 *
+3074 + 3074 00 18 34 1129            JBUS *(LP) 
+                     1130 *
+                     1131 *          NOW OUTPUT LINE MUST BE PACKED INTO BUFFER
+                     1132 *
+3075 + 0119 00 02 49 1133            ENT1 119 
+3076 + 0024 00 02 50 1134            ENT2 24 
+                     1135 *
+3077 + 0005 00 02 51 1136 PCKWORD    ENT3 5 
+3078 + 0000 00 02 55 1137            ENTX 0 
+                     1138 *
+3079 + 2865 01 05 08 1139 PCKCHAR    LDA  LINE,1 
+3080 + 2865 01 05 33 1140            STZ  LINE,1 
+3081 + 0001 00 01 49 1141            DEC1 1 
+3082 + 0001 00 05 06 1142            SRC  1 
+3083 + 0001 00 01 51 1143            DEC3 1 
+3084 + 3079 00 02 43 1144            J3P  PCKCHAR 
+3085 + 0001 00 01 50 1145            DEC2 1 
+3086 + 2841 02 05 31 1146            STX  PRTBUF,2 
+3087 + 3077 00 02 42 1147            J2P  PCKWORD 
                      1148 *
-3289 + 0119 00 02 49 1149            ENT1 119 
-3290 + 0024 00 02 50 1150            ENT2 24 
-                     1151 *
-3291 + 0005 00 02 51 1152 PCKWORD    ENT3 5 
-3292 + 0000 00 02 55 1153            ENTX 0 
-                     1154 *
-3293 + 3079 01 05 08 1155 PCKCHAR    LDA  LINE,1 
-3294 + 3079 01 05 33 1156            STZ  LINE,1 
-3295 + 0001 00 01 49 1157            DEC1 1 
-3296 + 0001 00 05 06 1158            SRC  1 
-3297 + 0001 00 01 51 1159            DEC3 1 
-3298 + 3293 00 02 43 1160            J3P  PCKCHAR 
-3299 + 0001 00 01 50 1161            DEC2 1 
-3300 + 3055 02 05 31 1162            STX  PRTBUF,2 
-3301 + 3291 00 02 42 1163            J2P  PCKWORD 
-                     1164 *
-3302 + 3055 00 18 37 1165            OUT  PRTBUF(LP) 
-                     1166 *
-3303 + 3314 00 05 08 1167            LDA  LINERROR 
-3304 + 3313 00 05 01 1168            ADD  NERROR 
-3305 + 3313 00 05 24 1169            STA  NERROR 
-3306 + 3314 00 05 33 1170            STZ  LINERROR 
-                     1171 *
-3307 + 3222 00 05 08 1172            LDA  PLSAVEA 
-3308 + 3223 00 05 15 1173            LDX  PLSAVEX 
-3309 + 3309 00 02 49 1174 PLSAVE1    ENT1 * 
-3310 + 3310 00 02 50 1175 PLSAVE2    ENT2 * 
-3311 + 3311 00 02 51 1176 PLSAVE3    ENT3 * 
-3312 + 3312 00 00 39 1177 PLEXIT     JMP  * 
-                     1178 *
-3313 + 0000 00 00 00 1179 NERROR     CON  0 
-3314 + 0000 00 00 00 1180 LINERROR   CON  0 
-                     1181 *
-                     1182 *          SUBROUTINE ERROR
-                     1183 *
-                     1184 *          THIS SUBROUTINE PUTS AN ERROR FLAG INTO THE
-                     1185 *          OUTPUT LINE IMAGE AND COUNTS THE NUMBER OF
-                     1186 *          ERRORS PER LINE. UP TO 5 ERROR FLAGS WILL BE
-                     1187 *          SIGNALLED. THE ERROR FLAG IS THE CHARACTER IN
-                     1188 *          BYTE 1:1 OF THE WORD FOLLOWING THE CALL TO
-                     1189 *          ERROR.
-                     1190 *
-                     1191 ERRSAVA    ORIG *+1 
-                     1192 *
-3316 + 3319 00 02 32 1193 ERROR      STJ  *+3(0:2) 
-3317 + 3315 00 05 24 1194            STA  ERRSAVA 
-3318 + 3330 00 02 25 1195            ST1  ERRSAVE1(0:2) 
-                     1196 *
-3319 + 3319 00 02 49 1197            ENT1 * 
-3320 + 0000 01 09 08 1198            LDA  0,1(1:1) 
-3321 + 0001 00 00 49 1199            INC1 1 
-3322 + 3331 00 02 25 1200            ST1  ERREXIT(0:2) 
-                     1201 *
-3323 + 3314 00 05 09 1202            LD1  LINERROR 
-3324 + 0001 00 00 49 1203            INC1 1 
-3325 + 3314 00 05 25 1204            ST1  LINERROR 
+3088 + 2841 00 18 37 1149            OUT  PRTBUF(LP) 
+                     1150 *
+3089 + 3100 00 05 08 1151            LDA  LINERROR 
+3090 + 3099 00 05 01 1152            ADD  NERROR 
+3091 + 3099 00 05 24 1153            STA  NERROR 
+3092 + 3100 00 05 33 1154            STZ  LINERROR 
+                     1155 *
+3093 + 3008 00 05 08 1156            LDA  PLSAVEA 
+3094 + 3009 00 05 15 1157            LDX  PLSAVEX 
+3095 + 3095 00 02 49 1158 PLSAVE1    ENT1 * 
+3096 + 3096 00 02 50 1159 PLSAVE2    ENT2 * 
+3097 + 3097 00 02 51 1160 PLSAVE3    ENT3 * 
+3098 + 3098 00 00 39 1161 PLEXIT     JMP  * 
+                     1162 *
+3099 + 0000 00 00 00 1163 NERROR     CON  0 
+3100 + 0000 00 00 00 1164 LINERROR   CON  0 
+                     1165 *
+                     1166 *          SUBROUTINE ERROR
+                     1167 *
+                     1168 *          THIS SUBROUTINE PUTS AN ERROR FLAG INTO THE
+                     1169 *          OUTPUT LINE IMAGE AND COUNTS THE NUMBER OF
+                     1170 *          ERRORS PER LINE. UP TO 5 ERROR FLAGS WILL BE
+                     1171 *          SIGNALLED. THE ERROR FLAG IS THE CHARACTER IN
+                     1172 *          BYTE 1:1 OF THE WORD FOLLOWING THE CALL TO
+                     1173 *          ERROR.
+                     1174 *
+                     1175 ERRSAVA    ORIG *+1 
+                     1176 *
+3102 + 3105 00 02 32 1177 ERROR      STJ  *+3(0:2) 
+3103 + 3101 00 05 24 1178            STA  ERRSAVA 
+3104 + 3116 00 02 25 1179            ST1  ERRSAVE1(0:2) 
+                     1180 *
+3105 + 3105 00 02 49 1181            ENT1 * 
+3106 + 0000 01 09 08 1182            LDA  0,1(1:1) 
+3107 + 0001 00 00 49 1183            INC1 1 
+3108 + 3117 00 02 25 1184            ST1  ERREXIT(0:2) 
+                     1185 *
+3109 + 3100 00 05 09 1186            LD1  LINERROR 
+3110 + 0001 00 00 49 1187            INC1 1 
+3111 + 3100 00 05 25 1188            ST1  LINERROR 
+                     1189 *
+3112 + 0005 00 01 49 1190            DEC1 5 
+3113 + 3115 00 02 41 1191            J1P  *+2 
+3114 + 2870 01 05 24 1192            STA  LINE+5,1 
+                     1193 *
+3115 + 3101 00 05 08 1194            LDA  ERRSAVA 
+3116 + 3116 00 02 49 1195 ERRSAVE1   ENT1 * 
+3117 + 3117 00 00 39 1196 ERREXIT    JMP  * 
+                     1197 *
+                     1198 *
+                     1199 *          A SEPARATE ERROR ROUTINE FOR EACH TYPE.
+                     1200 *
+3118 + 3121 00 02 32 1201 MULDEF     STJ  *+3 
+3119 + 3102 00 00 39 1202            JMP  ERROR 
+3120 + 0896 00 00 00 1203            ALF  M    
+3121 + 3121 00 00 39 1204            JMP  * 
                      1205 *
-3326 + 0005 00 01 49 1206            DEC1 5 
-3327 + 3329 00 02 41 1207            J1P  *+2 
-3328 + 3084 01 05 24 1208            STA  LINE+5,1 
-                     1209 *
-3329 + 3315 00 05 08 1210            LDA  ERRSAVA 
-3330 + 3330 00 02 49 1211 ERRSAVE1   ENT1 * 
-3331 + 3331 00 00 39 1212 ERREXIT    JMP  * 
-                     1213 *
-                     1214 *
-                     1215 *          A SEPARATE ERROR ROUTINE FOR EACH TYPE.
-                     1216 *
-3332 + 3335 00 02 32 1217 MULDEF     STJ  *+3 
-3333 + 3316 00 00 39 1218            JMP  ERROR 
-3334 + 0896 00 00 00 1219            ALF  M    
-3335 + 3335 00 00 39 1220            JMP  * 
-                     1221 *
-3336 + 3339 00 02 32 1222 BADSYM     STJ  *+3 
-3337 + 3316 00 00 39 1223            JMP  ERROR 
-3338 + 0832 00 00 00 1224            ALF  L    
-3339 + 3339 00 00 39 1225            JMP  * 
-                     1226 *
-3340 + 3343 00 02 32 1227 UNOP       STJ  *+3 
-3341 + 3316 00 00 39 1228            JMP  ERROR 
-3342 + 1536 00 00 00 1229            ALF  U    
-3343 + 3343 00 00 39 1230            JMP  * 
+3122 + 3125 00 02 32 1206 BADSYM     STJ  *+3 
+3123 + 3102 00 00 39 1207            JMP  ERROR 
+3124 + 0832 00 00 00 1208            ALF  L    
+3125 + 3125 00 00 39 1209            JMP  * 
+                     1210 *
+3126 + 3129 00 02 32 1211 UNOP       STJ  *+3 
+3127 + 3102 00 00 39 1212            JMP  ERROR 
+3128 + 1536 00 00 00 1213            ALF  U    
+3129 + 3129 00 00 39 1214            JMP  * 
+                     1215 *
+3130 + 3133 00 02 32 1216 ILLFOR     STJ  *+3 
+3131 + 3102 00 00 39 1217            JMP  ERROR 
+3132 + 0384 00 00 00 1218            ALF  F    
+3133 + 3133 00 00 39 1219            JMP  * 
+                     1220 *
+3134 + 3137 00 02 32 1221 EXPOV      STJ  *+3 
+3135 + 3102 00 00 39 1222            JMP  ERROR 
+3136 + 1024 00 00 00 1223            ALF  O    
+3137 + 3137 00 00 39 1224            JMP  * 
+                     1225 *
+3138 + 3141 00 02 32 1226 ILLSYN     STJ  *+3 
+3139 + 3102 00 00 39 1227            JMP  ERROR 
+3140 + 1408 00 00 00 1228            ALF  S    
+3141 + 3141 00 00 39 1229            JMP  * 
+                     1230 *          SUBROUTINE DEFINELAB
                      1231 *
-3344 + 3347 00 02 32 1232 ILLFOR     STJ  *+3 
-3345 + 3316 00 00 39 1233            JMP  ERROR 
-3346 + 0384 00 00 00 1234            ALF  F    
-3347 + 3347 00 00 39 1235            JMP  * 
+                     1232 *          DEFINE A LABEL IF THERE IS ONE. THE VALUE
+                     1233 *          OF THE LABEL IS IN THE A REGISTER. FIRST
+                     1234 *          SEARCH THE SYMBOL TABLE FOR MULTIPLY
+                     1235 *          DEFINED LABELS OR FORWARD REFERENCES.
                      1236 *
-3348 + 3351 00 02 32 1237 EXPOV      STJ  *+3 
-3349 + 3316 00 00 39 1238            JMP  ERROR 
-3350 + 1024 00 00 00 1239            ALF  O    
-3351 + 3351 00 00 39 1240            JMP  * 
-                     1241 *
-3352 + 3355 00 02 32 1242 ILLSYN     STJ  *+3 
-3353 + 3316 00 00 39 1243            JMP  ERROR 
-3354 + 1408 00 00 00 1244            ALF  S    
-3355 + 3355 00 00 39 1245            JMP  * 
-                     1246 *          SUBROUTINE DEFINELAB
-                     1247 *
-                     1248 *          DEFINE A LABEL IF THERE IS ONE. THE VALUE
-                     1249 *          OF THE LABEL IS IN THE A REGISTER. FIRST
-                     1250 *          SEARCH THE SYMBOL TABLE FOR MULTIPLY
-                     1251 *          DEFINED LABELS OR FORWARD REFERENCES.
-                     1252 *
-3356 + 3374 00 02 32 1253 DEFINELAB  STJ  DLEXIT 
-3357 + 3372 00 02 25 1254            ST1  DLSAVE1(0:2) 
-3358 + 3373 00 02 26 1255            ST2  DLSAVE2(0:2) 
-                     1256 *
-3359 + 1435 00 09 09 1257            LD1  LABEL(1:1) 
-3360 + 3372 00 01 41 1258            J1Z  DLSAVE1 
-                     1259 *
-3361 + 1394 00 02 49 1260            ENT1 SYM 
-3362 + 1435 00 02 07 1261            MOVE LABEL(2) 
-                     1262 *
-3363 + 2856 00 00 39 1263            JMP  SEARCHSYM 
+3142 + 3160 00 02 32 1237 DEFINELAB  STJ  DLEXIT 
+3143 + 3158 00 02 25 1238            ST1  DLSAVE1(0:2) 
+3144 + 3159 00 02 26 1239            ST2  DLSAVE2(0:2) 
+                     1240 *
+3145 + 1235 00 09 09 1241            LD1  LABEL(1:1) 
+3146 + 3158 00 01 41 1242            J1Z  DLSAVE1 
+                     1243 *
+3147 + 1194 00 02 49 1244            ENT1 SYM 
+3148 + 1235 00 02 07 1245            MOVE LABEL(2) 
+                     1246 *
+3149 + 2642 00 00 39 1247            JMP  SEARCHSYM 
+                     1248 *
+3150 + 1580 00 05 09 1249            LD1  SYMINDEX 
+3151 + 3157 00 00 41 1250            J1N  NEWLABDEFN 
+                     1251 *
+3152 + 1581 01 01 10 1252            LD2  SYMTAB,1(0:1) 
+3153 + 3118 00 02 42 1253            J2P  MULDEF 
+                     1254 *
+3154 + 1583 01 05 24 1255            STA  SYMTAB+2,1 
+3155 + 1581 01 00 33 1256            STZ  SYMTAB,1(0:0) 
+3156 + 3158 00 00 39 1257            JMP  DLSAVE1 
+                     1258 *
+3157 + 2624 00 00 39 1259 NEWLABDEFN JMP  DEFINESYM 
+                     1260 *
+3158 + 3158 00 02 49 1261 DLSAVE1    ENT1 * 
+3159 + 3159 00 02 50 1262 DLSAVE2    ENT2 * 
+3160 + 3160 00 00 39 1263 DLEXIT     JMP  * 
                      1264 *
-3364 + 1794 00 05 09 1265            LD1  SYMINDEX 
-3365 + 3371 00 00 41 1266            J1N  NEWLABDEFN 
+                     1265 *
+                     1266 *          MAIN LOOP STARTS HERE
                      1267 *
-3366 + 1795 01 01 10 1268            LD2  SYMTAB,1(0:1) 
-3367 + 3332 00 02 42 1269            J2P  MULDEF 
+3161 + 3185 00 02 32 1268 MAIN       STJ  ENDMAIN 
+3162 + 3281 00 00 39 1269            JMP  INITIALIZE 
                      1270 *
-3368 + 1797 01 05 24 1271            STA  SYMTAB+2,1 
-3369 + 1795 01 00 33 1272            STZ  SYMTAB,1(0:0) 
-3370 + 3372 00 00 39 1273            JMP  DLSAVE1 
-                     1274 *
-3371 + 2838 00 00 39 1275 NEWLABDEFN JMP  DEFINESYM 
+3163 + 1167 00 00 39 1271 MAINLOOP   JMP  READCARD 
+                     1272 *
+3164 + 2895 00 05 08 1273            LDA  CARD 
+3165 + 1003 00 45 56 1274            CMPA CHARSTAR(5:5) 
+3166 + 3181 00 05 39 1275            JE   PRTLINE 
                      1276 *
-3372 + 3372 00 02 49 1277 DLSAVE1    ENT1 * 
-3373 + 3373 00 02 50 1278 DLSAVE2    ENT2 * 
-3374 + 3374 00 00 39 1279 DLEXIT     JMP  * 
-                     1280 *
+3167 + 1239 00 00 39 1277            JMP  GETFIELDS 
+3168 + 2586 00 00 39 1278            JMP  SEARCHOP 
+                     1279 *
+3169 + 2985 00 05 30 1280            ST6  PRINTLOC 
                      1281 *
-                     1282 *          MAIN LOOP STARTS HERE
-                     1283 *
-3375 + 3399 00 02 32 1284 MAIN       STJ  ENDMAIN 
-3376 + 3495 00 00 39 1285            JMP  INITIALIZE 
-                     1286 *
-3377 + 1367 00 00 39 1287 MAINLOOP   JMP  READCARD 
-                     1288 *
-3378 + 3109 00 05 08 1289            LDA  CARD 
-3379 + 1003 00 45 56 1290            CMPA CHARSTAR(5:5) 
-3380 + 3395 00 05 39 1291            JE   PRTLINE 
+3170 + 1577 00 05 09 1282            LD1  OPTYPE 
+3171 + 3172 01 00 39 1283            JMP  *+1,1 
+3172 + 3181 00 00 39 1284            JMP  PRTLINE 
+3173 + 3186 00 00 39 1285            JMP  MACHINEOP 
+3174 + 3215 00 00 39 1286            JMP  ORIGOP 
+3175 + 3237 00 00 39 1287            JMP  CONOP 
+3176 + 3222 00 00 39 1288            JMP  ALFOP 
+3177 + 3210 00 00 39 1289            JMP  EQUOP 
+3178 + 3273 00 00 39 1290            JMP  ENDOP 
+                     1291 *
                      1292 *
-3381 + 1439 00 00 39 1293            JMP  GETFIELDS 
-3382 + 2800 00 00 39 1294            JMP  SEARCHOP 
+3179 + 2895 05 05 08 1293 ENDCASE    LDA  CARD,5 
+3180 + 3138 00 04 40 1294            JANZ ILLSYN 
                      1295 *
-3383 + 3199 00 05 30 1296            ST6  PRINTLOC 
-                     1297 *
-3384 + 1791 00 05 09 1298            LD1  OPTYPE 
-3385 + 3386 01 00 39 1299            JMP  *+1,1 
-3386 + 3395 00 00 39 1300            JMP  PRTLINE 
-3387 + 3400 00 00 39 1301            JMP  MACHINEOP 
-3388 + 3429 00 00 39 1302            JMP  ORIGOP 
-3389 + 3451 00 00 39 1303            JMP  CONOP 
-3390 + 3436 00 00 39 1304            JMP  ALFOP 
-3391 + 3424 00 00 39 1305            JMP  EQUOP 
-3392 + 3487 00 00 39 1306            JMP  ENDOP 
-                     1307 *
+3181 + 3010 00 00 39 1296 PRTLINE    JMP  PRINTLINE 
+3182 + 3271 00 05 08 1297            LDA  ENDASSEM 
+3183 + 3163 00 01 40 1298            JAZ  MAINLOOP 
+3184 + 3315 00 00 39 1299            JMP  FINISHUP 
+3185 + 3185 00 00 39 1300 ENDMAIN    JMP  * 
+3186 + 0000 06 02 48 1301 MACHINEOP  ENTA 0,6 
+3187 + 3142 00 00 39 1302            JMP  DEFINELAB 
+                     1303 *
+3188 + 2666 00 02 49 1304            ENT1 HL2BYTE 
+3189 + 2661 00 05 33 1305            STZ  NOFORWARD 
+3190 + 2776 00 00 39 1306            JMP  EXPRESSION 
+3191 + 1578 00 02 24 1307            STA  VALUE(0:2) 
                      1308 *
-3393 + 3109 05 05 08 1309 ENDCASE    LDA  CARD,5 
-3394 + 3352 00 04 40 1310            JANZ ILLSYN 
-                     1311 *
-3395 + 3224 00 00 39 1312 PRTLINE    JMP  PRINTLINE 
-3396 + 3485 00 05 08 1313            LDA  ENDASSEM 
-3397 + 3377 00 01 40 1314            JAZ  MAINLOOP 
-3398 + 3529 00 00 39 1315            JMP  FINISHUP 
-3399 + 3399 00 00 39 1316 ENDMAIN    JMP  * 
-3400 + 0000 06 02 48 1317 MACHINEOP  ENTA 0,6 
-3401 + 3356 00 00 39 1318            JMP  DEFINELAB 
-                     1319 *
-3402 + 2880 00 02 49 1320            ENT1 HL2BYTE 
-3403 + 2875 00 05 33 1321            STZ  NOFORWARD 
-3404 + 2990 00 00 39 1322            JMP  EXPRESSION 
-3405 + 1792 00 02 24 1323            STA  VALUE(0:2) 
+3192 + 2895 05 05 08 1309            LDA  CARD,5 
+3193 + 1006 00 45 56 1310            CMPA CHARCOMMA(5:5) 
+3194 + 3198 00 08 39 1311            JNE  NOIPART 
+                     1312 *
+3195 + 2662 00 02 49 1313 IPART      ENT1 HLBYTE 
+3196 + 2776 00 00 39 1314            JMP  EXPRESSION 
+3197 + 1578 00 27 24 1315            STA  VALUE(3:3) 
+                     1316 NOIPART    EQU  * 
+                     1317 *
+3198 + 2895 05 05 08 1318            LDA  CARD,5 
+3199 + 1004 00 45 56 1319            CMPA CHARLEFTP(5:5) 
+3200 + 3208 00 08 39 1320            JNE  NOFPART 
+3201 + 2662 00 02 49 1321            ENT1 HLBYTE 
+3202 + 2776 00 00 39 1322            JMP  EXPRESSION 
+3203 + 1578 00 36 24 1323            STA  VALUE(4:4) 
                      1324 *
-3406 + 3109 05 05 08 1325            LDA  CARD,5 
-3407 + 1006 00 45 56 1326            CMPA CHARCOMMA(5:5) 
-3408 + 3412 00 08 39 1327            JNE  NOIPART 
-                     1328 *
-3409 + 2876 00 02 49 1329 IPART      ENT1 HLBYTE 
-3410 + 2990 00 00 39 1330            JMP  EXPRESSION 
-3411 + 1792 00 27 24 1331            STA  VALUE(3:3) 
-                     1332 NOIPART    EQU  * 
+3204 + 2895 05 05 08 1325            LDA  CARD,5 
+3205 + 1005 00 45 56 1326            CMPA CHARRIGHTP(5:5) 
+3206 + 3138 00 08 39 1327            JNE  ILLSYN 
+3207 + 0001 00 00 53 1328            INC5 1 
+                     1329 NOFPART    EQU  * 
+                     1330 *
+3208 + 1108 00 00 39 1331            JMP  GENERATE 
+3209 + 3179 00 00 39 1332            JMP  ENDCASE 
                      1333 *
-3412 + 3109 05 05 08 1334            LDA  CARD,5 
-3413 + 1004 00 45 56 1335            CMPA CHARLEFTP(5:5) 
-3414 + 3422 00 08 39 1336            JNE  NOFPART 
-3415 + 2876 00 02 49 1337            ENT1 HLBYTE 
-3416 + 2990 00 00 39 1338            JMP  EXPRESSION 
-3417 + 1792 00 36 24 1339            STA  VALUE(4:4) 
+                     1334 *
+3210 + 2668 00 02 49 1335 EQUOP      ENT1 HLWORD 
+3211 + 2776 00 00 39 1336            JMP  EXPRESSION 
+3212 + 1578 00 05 24 1337            STA  VALUE 
+3213 + 3142 00 00 39 1338            JMP  DEFINELAB 
+3214 + 3179 00 00 39 1339            JMP  ENDCASE 
                      1340 *
-3418 + 3109 05 05 08 1341            LDA  CARD,5 
-3419 + 1005 00 45 56 1342            CMPA CHARRIGHTP(5:5) 
-3420 + 3352 00 08 39 1343            JNE  ILLSYN 
-3421 + 0001 00 00 53 1344            INC5 1 
-                     1345 NOFPART    EQU  * 
-                     1346 *
-3422 + 1308 00 00 39 1347            JMP  GENERATE 
-3423 + 3393 00 00 39 1348            JMP  ENDCASE 
-                     1349 *
+                     1341 *
+3215 + 0000 06 02 48 1342 ORIGOP     ENTA 0,6 
+3216 + 3142 00 00 39 1343            JMP  DEFINELAB 
+                     1344 *
+3217 + 2664 00 02 49 1345            ENT1 HLADDR 
+3218 + 2776 00 00 39 1346            JMP  EXPRESSION 
+                     1347 *
+3219 + 1578 00 05 24 1348            STA  VALUE 
+3220 + 1578 00 05 14 1349            LD6  VALUE 
                      1350 *
-3424 + 2882 00 02 49 1351 EQUOP      ENT1 HLWORD 
-3425 + 2990 00 00 39 1352            JMP  EXPRESSION 
-3426 + 1792 00 05 24 1353            STA  VALUE 
-3427 + 3356 00 00 39 1354            JMP  DEFINELAB 
-3428 + 3393 00 00 39 1355            JMP  ENDCASE 
-                     1356 *
-                     1357 *
-3429 + 0000 06 02 48 1358 ORIGOP     ENTA 0,6 
-3430 + 3356 00 00 39 1359            JMP  DEFINELAB 
-                     1360 *
-3431 + 2878 00 02 49 1361            ENT1 HLADDR 
-3432 + 2990 00 00 39 1362            JMP  EXPRESSION 
-                     1363 *
-3433 + 1792 00 05 24 1364            STA  VALUE 
-3434 + 1792 00 05 14 1365            LD6  VALUE 
-                     1366 *
-3435 + 3393 00 00 39 1367            JMP  ENDCASE 
-3436 + 0000 06 02 48 1368 ALFOP      ENTA 0,6 
-3437 + 3356 00 00 39 1369            JMP  DEFINELAB 
-                     1370 *
-3438 + 0016 00 02 49 1371            ENT1 16 
-3439 + 3109 01 05 08 1372            LDA  CARD,1 
-3440 + 0004 00 02 50 1373            ENT2 4 
+3221 + 3179 00 00 39 1351            JMP  ENDCASE 
+3222 + 0000 06 02 48 1352 ALFOP      ENTA 0,6 
+3223 + 3142 00 00 39 1353            JMP  DEFINELAB 
+                     1354 *
+3224 + 0016 00 02 49 1355            ENT1 16 
+3225 + 2895 01 05 08 1356            LDA  CARD,1 
+3226 + 0004 00 02 50 1357            ENT2 4 
+                     1358 *
+3227 + 0001 00 00 49 1359 NXTALFCHAR INC1 1 
+3228 + 0001 00 00 06 1360            SLA  1 
+3229 + 2895 01 45 01 1361            ADD  CARD,1(5:5) 
+3230 + 0001 00 01 50 1362            DEC2 1 
+3231 + 3227 00 02 42 1363            J2P  NXTALFCHAR 
+                     1364 *
+3232 + 1578 00 05 24 1365            STA  VALUE 
+3233 + 1108 00 00 39 1366            JMP  GENERATE 
+3234 + 3179 00 00 39 1367            JMP  ENDCASE 
+                     1368 *
+                     1369 CONTEMPVAL ORIG *+1 
+                     1370 CONTEMP    ORIG *+1 
+                     1371 *
+3237 + 0000 06 02 48 1372 CONOP      ENTA 0,6 
+3238 + 3142 00 00 39 1373            JMP  DEFINELAB 
                      1374 *
-3441 + 0001 00 00 49 1375 NXTALFCHAR INC1 1 
-3442 + 0001 00 00 06 1376            SLA  1 
-3443 + 3109 01 45 01 1377            ADD  CARD,1(5:5) 
-3444 + 0001 00 01 50 1378            DEC2 1 
-3445 + 3441 00 02 42 1379            J2P  NXTALFCHAR 
-                     1380 *
-3446 + 1792 00 05 24 1381            STA  VALUE 
-3447 + 1308 00 00 39 1382            JMP  GENERATE 
-3448 + 3393 00 00 39 1383            JMP  ENDCASE 
-                     1384 *
-                     1385 CONTEMPVAL ORIG *+1 
-                     1386 CONTEMP    ORIG *+1 
-                     1387 *
-3451 + 0000 06 02 48 1388 CONOP      ENTA 0,6 
-3452 + 3356 00 00 39 1389            JMP  DEFINELAB 
-                     1390 *
-3453 + 1792 00 05 33 1391            STZ  VALUE 
+3239 + 1578 00 05 33 1375            STZ  VALUE 
+                     1376 *
+3240 + 2668 00 02 49 1377 NEXTCON    ENT1 HLWORD 
+3241 + 2776 00 00 39 1378            JMP  EXPRESSION 
+                     1379 *
+3242 + 2895 05 05 15 1380            LDX  CARD,5 
+3243 + 1004 00 45 63 1381            CMPX CHARLEFTP(5:5) 
+3244 + 3249 00 05 39 1382            JE   CONF 
+3245 + 1578 00 05 24 1383            STA  VALUE 
+3246 + 3266 00 00 39 1384            JMP  NOF 
+                     1385 *
+3247 + 3138 00 00 39 1386 CONERROR   JMP  ILLSYN 
+3248 + 3262 00 00 39 1387            JMP  NOFSTORE 
+                     1388 *
+3249 + 3235 00 05 24 1389 CONF       STA  CONTEMPVAL 
+3250 + 2662 00 02 49 1390            ENT1 HLBYTE 
+3251 + 2776 00 00 39 1391            JMP  EXPRESSION 
                      1392 *
-3454 + 2882 00 02 49 1393 NEXTCON    ENT1 HLWORD 
-3455 + 2990 00 00 39 1394            JMP  EXPRESSION 
-                     1395 *
-3456 + 3109 05 05 15 1396            LDX  CARD,5 
-3457 + 1004 00 45 63 1397            CMPX CHARLEFTP(5:5) 
-3458 + 3463 00 05 39 1398            JE   CONF 
-3459 + 1792 00 05 24 1399            STA  VALUE 
-3460 + 3480 00 00 39 1400            JMP  NOF 
-                     1401 *
-3461 + 3352 00 00 39 1402 CONERROR   JMP  ILLSYN 
-3462 + 3476 00 00 39 1403            JMP  NOFSTORE 
+3252 + 3261 00 36 24 1393            STA  FMOD(4:4) 
+                     1394 *
+3253 + 0005 00 03 06 1395            SRAX 5 
+3254 + 1009 00 05 04 1396            DIV  EIGHT 
+3255 + 1008 00 05 63 1397            CMPX FIVE 
+3256 + 3247 00 06 39 1398            JG   CONERROR 
+3257 + 3236 00 05 24 1399            STA  CONTEMP 
+3258 + 3236 00 05 63 1400            CMPX CONTEMP 
+3259 + 3247 00 04 39 1401            JL   CONERROR 
+3260 + 3235 00 05 08 1402            LDA  CONTEMPVAL 
+3261 + 1578 00 00 24 1403 FMOD       STA  VALUE(0) 
                      1404 *
-3463 + 3449 00 05 24 1405 CONF       STA  CONTEMPVAL 
-3464 + 2876 00 02 49 1406            ENT1 HLBYTE 
-3465 + 2990 00 00 39 1407            JMP  EXPRESSION 
-                     1408 *
-3466 + 3475 00 36 24 1409            STA  FMOD(4:4) 
+3262 + 2895 05 05 08 1405 NOFSTORE   LDA  CARD,5 
+3263 + 1005 00 45 56 1406            CMPA CHARRIGHTP(5:5) 
+3264 + 3138 00 08 39 1407            JNE  ILLSYN 
+3265 + 0001 00 00 53 1408            INC5 1 
+                     1409 NOF        EQU  * 
                      1410 *
-3467 + 0005 00 03 06 1411            SRAX 5 
-3468 + 1009 00 05 04 1412            DIV  EIGHT 
-3469 + 1008 00 05 63 1413            CMPX FIVE 
-3470 + 3461 00 06 39 1414            JG   CONERROR 
-3471 + 3450 00 05 24 1415            STA  CONTEMP 
-3472 + 3450 00 05 63 1416            CMPX CONTEMP 
-3473 + 3461 00 04 39 1417            JL   CONERROR 
-3474 + 3449 00 05 08 1418            LDA  CONTEMPVAL 
-3475 + 1792 00 00 24 1419 FMOD       STA  VALUE(0) 
+3266 + 2895 05 05 08 1411            LDA  CARD,5 
+3267 + 1006 00 45 56 1412            CMPA CHARCOMMA(5:5) 
+3268 + 3240 00 05 39 1413            JE   NEXTCON 
+                     1414 *
+3269 + 1108 00 00 39 1415            JMP  GENERATE 
+3270 + 3179 00 00 39 1416            JMP  ENDCASE 
+3271 + 0000 00 00 00 1417 ENDASSEM   CON  0 
+3272 + 0000 00 00 00 1418 STARTADD   CON  0 
+                     1419 *
                      1420 *
-3476 + 3109 05 05 08 1421 NOFSTORE   LDA  CARD,5 
-3477 + 1005 00 45 56 1422            CMPA CHARRIGHTP(5:5) 
-3478 + 3352 00 08 39 1423            JNE  ILLSYN 
-3479 + 0001 00 00 53 1424            INC5 1 
-                     1425 NOF        EQU  * 
-                     1426 *
-3480 + 3109 05 05 08 1427            LDA  CARD,5 
-3481 + 1006 00 45 56 1428            CMPA CHARCOMMA(5:5) 
-3482 + 3454 00 05 39 1429            JE   NEXTCON 
+3273 + 0000 06 02 48 1421 ENDOP      ENTA 0,6 
+3274 + 3142 00 00 39 1422            JMP  DEFINELAB 
+                     1423 *
+3275 + 2664 00 02 49 1424            ENT1 HLADDR 
+3276 + 2776 00 00 39 1425            JMP  EXPRESSION 
+3277 + 1578 00 05 24 1426            STA  VALUE 
+3278 + 3272 00 05 24 1427            STA  STARTADD 
+3279 + 3271 00 37 32 1428            STJ  ENDASSEM(4:5) 
+3280 + 3179 00 00 39 1429            JMP  ENDCASE 
                      1430 *
-3483 + 1308 00 00 39 1431            JMP  GENERATE 
-3484 + 3393 00 00 39 1432            JMP  ENDCASE 
-3485 + 0000 00 00 00 1433 ENDASSEM   CON  0 
-3486 + 0000 00 00 00 1434 STARTADD   CON  0 
-                     1435 *
+3281 + 3285 00 02 32 1431 INITIALIZE STJ  INITEXIT 
+3282 + 1149 00 16 36 1432            IN   INBUF(CR) 
+3283 + 0000 00 00 35 1433            IOC  0(TAPE) 
+3284 + 0000 00 02 54 1434            ENT6 0 
+3285 + 3285 00 00 39 1435 INITEXIT   JMP  * 
                      1436 *
-3487 + 0000 06 02 48 1437 ENDOP      ENTA 0,6 
-3488 + 3356 00 00 39 1438            JMP  DEFINELAB 
-                     1439 *
-3489 + 2878 00 02 49 1440            ENT1 HLADDR 
-3490 + 2990 00 00 39 1441            JMP  EXPRESSION 
-3491 + 1792 00 05 24 1442            STA  VALUE 
-3492 + 3486 00 05 24 1443            STA  STARTADD 
-3493 + 3485 00 37 32 1444            STJ  ENDASSEM(4:5) 
-3494 + 3393 00 00 39 1445            JMP  ENDCASE 
-                     1446 *
-3495 + 3499 00 02 32 1447 INITIALIZE STJ  INITEXIT 
-3496 + 1349 00 16 36 1448            IN   INBUF(CR) 
-3497 + 0000 00 00 35 1449            IOC  0(TAPE) 
-3498 + 0000 00 02 54 1450            ENT6 0 
-3499 + 3499 00 00 39 1451 INITEXIT   JMP  * 
+3286 + 0000 00 00 00 1437 ASMDEF     ALF       
+                     1438            ORIG *+1 
+3288 + 0000 00 00 00 1439            ALF       
+                     1440            ORIG *+5 
+3294 + 1043 09 07 00 1441            ALF  ORIG 
+3295 + 2988 31 00 00 1442            ALF  *+1  
+                     1443            ORIG *+3 
+3299 + 1436 14 02 16 1444            ALF  SYMBO
+3300 + 0832 04 05 06 1445            ALF  L DEF
+3301 + 0591 05 04 00 1446            ALF  INED 
+3302 + 0156 00 01 22 1447            ALF  BY AS
+3303 + 1413 14 02 13 1448            ALF  SEMBL
+3304 + 0339 00 00 00 1449            ALF  ER   
+                     1450            ORIG *+5 
+                     1451 *
                      1452 *
-3500 + 0000 00 00 00 1453 ASMDEF     ALF       
-                     1454            ORIG *+1 
-3502 + 0000 00 00 00 1455            ALF       
-                     1456            ORIG *+5 
-3508 + 1043 09 07 00 1457            ALF  ORIG 
-3509 + 2988 31 00 00 1458            ALF  *+1  
-                     1459            ORIG *+3 
-3513 + 1436 14 02 16 1460            ALF  SYMBO
-3514 + 0832 04 05 06 1461            ALF  L DEF
-3515 + 0591 05 04 00 1462            ALF  INED 
-3516 + 0156 00 01 22 1463            ALF  BY AS
-3517 + 1413 14 02 13 1464            ALF  SEMBL
-3518 + 0339 00 00 00 1465            ALF  ER   
-                     1466            ORIG *+5 
-                     1467 *
+                     1453 *          SUBROUTINE FINISH UP
+                     1454 *
+                     1455 *          WHEN AN END CARD IS READ, WE MUST FINISH
+                     1456 *          LAST LOADER BLOCK, OUTPUT FORWARD REFERENCE
+                     1457 *          FIX-UP COMMANDS, AND START ADDRESS.
+                     1458 *
+                     1459 FINTEMP    ORIG *+5 
+                     1460 *
+3315 + 3365 00 02 32 1461 FINISHUP   STJ  FINEXIT 
+3316 + 1127 00 00 39 1462            JMP  FINISHBLCK 
+                     1463 *
+                     1464 *          CHECK FOR UNDEFINED SYMBOLS AND DEFINE THEM
+                     1465 *
+3317 + 0001 00 02 48 1466            ENTA 1 
+3318 + 1578 00 03 24 1467            STA  VALUE(0:3) 
                      1468 *
-                     1469 *          SUBROUTINE FINISH UP
-                     1470 *
-                     1471 *          WHEN AN END CARD IS READ, WE MUST FINISH
-                     1472 *          LAST LOADER BLOCK, OUTPUT FORWARD REFERENCE
-                     1473 *          FIX-UP COMMANDS, AND START ADDRESS.
-                     1474 *
-                     1475 FINTEMP    ORIG *+5 
-                     1476 *
-3529 + 3579 00 02 32 1477 FINISHUP   STJ  FINEXIT 
-3530 + 1327 00 00 39 1478            JMP  FINISHBLCK 
-                     1479 *
-                     1480 *          CHECK FOR UNDEFINED SYMBOLS AND DEFINE THEM
+3319 + 0000 00 02 51 1469            ENT3 0 
+3320 + 1581 03 05 08 1470 NEXTSYM1   LDA  SYMTAB,3 
+3321 + 3346 00 02 40 1471            JAP  DENFDSYM 
+                     1472 *
+3322 + 1235 00 13 24 1473            STA  LABEL(1:5) 
+3323 + 3292 00 13 24 1474            STA  ASMDEF+6(1:5) 
+3324 + 1582 03 05 08 1475            LDA  SYMTAB+1,3 
+3325 + 1236 00 05 24 1476            STA  LABEL+1 
+3326 + 3293 00 05 24 1477            STA  ASMDEF+7 
+3327 + 0000 06 02 48 1478            ENTA 0,6 
+3328 + 3142 00 00 39 1479            JMP  DEFINELAB 
+3329 + 0001 00 00 54 1480            INC6 1 
                      1481 *
-3531 + 0001 00 02 48 1482            ENTA 1 
-3532 + 1792 00 03 24 1483            STA  VALUE(0:3) 
-                     1484 *
-3533 + 0000 00 02 51 1485            ENT3 0 
-3534 + 1795 03 05 08 1486 NEXTSYM1   LDA  SYMTAB,3 
-3535 + 3560 00 02 40 1487            JAP  DENFDSYM 
-                     1488 *
-3536 + 1435 00 13 24 1489            STA  LABEL(1:5) 
-3537 + 3506 00 13 24 1490            STA  ASMDEF+6(1:5) 
-3538 + 1796 03 05 08 1491            LDA  SYMTAB+1,3 
-3539 + 1436 00 05 24 1492            STA  LABEL+1 
-3540 + 3507 00 05 24 1493            STA  ASMDEF+7 
-3541 + 0000 06 02 48 1494            ENTA 0,6 
-3542 + 3356 00 00 39 1495            JMP  DEFINELAB 
-3543 + 0001 00 00 54 1496            INC6 1 
+3330 - 0001 06 02 48 1482            ENTA -1,6 
+3331 + 3310 00 02 49 1483            ENT1 FINTEMP 
+3332 + 0004 00 02 50 1484            ENT2 4 
+3333 + 2988 00 00 39 1485            JMP  OCTCHAR 
+                     1486 *
+3334 + 3310 00 05 08 1487            LDA  FINTEMP 
+3335 + 3287 00 27 24 1488            STA  ASMDEF+1(3:3) 
+3336 + 3311 00 05 08 1489            LDA  FINTEMP+1 
+3337 + 3287 00 36 24 1490            STA  ASMDEF+1(4:4) 
+3338 + 3312 00 05 08 1491            LDA  FINTEMP+2 
+3339 + 3287 00 45 24 1492            STA  ASMDEF+1(5:5) 
+3340 + 3313 00 05 08 1493            LDA  FINTEMP+3 
+3341 + 3288 00 09 24 1494            STA  ASMDEF+2(1:1) 
+3342 + 3314 00 05 08 1495            LDA  FINTEMP+4 
+3343 + 3288 00 18 24 1496            STA  ASMDEF+2(2:2) 
                      1497 *
-3544 - 0001 06 02 48 1498            ENTA -1,6 
-3545 + 3524 00 02 49 1499            ENT1 FINTEMP 
-3546 + 0004 00 02 50 1500            ENT2 4 
-3547 + 3202 00 00 39 1501            JMP  OCTCHAR 
+3344 + 3286 00 18 37 1498            OUT  ASMDEF(LP) 
+3345 + 3345 00 18 34 1499            JBUS *(LP) 
+                     1500 *
+                     1501 DENFDSYM   EQU  * 
                      1502 *
-3548 + 3524 00 05 08 1503            LDA  FINTEMP 
-3549 + 3501 00 27 24 1504            STA  ASMDEF+1(3:3) 
-3550 + 3525 00 05 08 1505            LDA  FINTEMP+1 
-3551 + 3501 00 36 24 1506            STA  ASMDEF+1(4:4) 
-3552 + 3526 00 05 08 1507            LDA  FINTEMP+2 
-3553 + 3501 00 45 24 1508            STA  ASMDEF+1(5:5) 
-3554 + 3527 00 05 08 1509            LDA  FINTEMP+3 
-3555 + 3502 00 09 24 1510            STA  ASMDEF+2(1:1) 
-3556 + 3528 00 05 08 1511            LDA  FINTEMP+4 
-3557 + 3502 00 18 24 1512            STA  ASMDEF+2(2:2) 
-                     1513 *
-3558 + 3500 00 18 37 1514            OUT  ASMDEF(LP) 
-3559 + 3559 00 18 34 1515            JBUS *(LP) 
+3346 + 1584 03 37 08 1503            LDA  SYMTAB+3,3(4:5) 
+3347 + 1010 00 05 56 1504            CMPA CHAINEND 
+3348 + 3354 00 05 39 1505            JE   UPSYM1 
+                     1506 *
+3349 + 1578 00 37 24 1507            STA  VALUE(4:5) 
+3350 + 1583 03 37 08 1508            LDA  SYMTAB+2,3(4:5) 
+3351 + 1578 00 02 24 1509            STA  VALUE(0:2) 
+3352 + 1578 00 05 08 1510            LDA  VALUE 
+3353 + 1027 00 00 39 1511            JMP  TAPEOUT 
+                     1512 *
+3354 + 0004 00 00 51 1513 UPSYM1     INC3 4 
+3355 + 1579 00 05 59 1514            CMP3 NSYMBOL 
+3356 + 3320 00 04 39 1515            JL   NEXTSYM1 
                      1516 *
-                     1517 DENFDSYM   EQU  * 
-                     1518 *
-3560 + 1798 03 37 08 1519            LDA  SYMTAB+3,3(4:5) 
-3561 + 1010 00 05 56 1520            CMPA CHAINEND 
-3562 + 3568 00 05 39 1521            JE   UPSYM1 
-                     1522 *
-3563 + 1792 00 37 24 1523            STA  VALUE(4:5) 
-3564 + 1797 03 37 08 1524            LDA  SYMTAB+2,3(4:5) 
-3565 + 1792 00 02 24 1525            STA  VALUE(0:2) 
-3566 + 1792 00 05 08 1526            LDA  VALUE 
-3567 + 1227 00 00 39 1527            JMP  TAPEOUT 
+3357 + 3272 00 05 08 1517            LDA  STARTADD 
+3358 + 1578 00 02 24 1518            STA  VALUE(0:2) 
+3359 + 0002 00 02 48 1519            ENTA 2 
+3360 + 1578 00 27 24 1520            STA  VALUE(3:3) 
+3361 + 1578 00 37 33 1521            STZ  VALUE(4:5) 
+3362 + 1578 00 05 08 1522            LDA  VALUE 
+3363 + 1027 00 00 39 1523            JMP  TAPEOUT 
+                     1524 *
+3364 + 1015 00 00 39 1525            JMP  FINISHBUF 
+                     1526 *
+3365 + 3365 00 00 39 1527 FINEXIT    JMP  * 
                      1528 *
-3568 + 0004 00 00 51 1529 UPSYM1     INC3 4 
-3569 + 1793 00 05 59 1530            CMP3 NSYMBOL 
-3570 + 3534 00 04 39 1531            JL   NEXTSYM1 
-                     1532 *
-3571 + 3486 00 05 08 1533            LDA  STARTADD 
-3572 + 1792 00 02 24 1534            STA  VALUE(0:2) 
-3573 + 0002 00 02 48 1535            ENTA 2 
-3574 + 1792 00 27 24 1536            STA  VALUE(3:3) 
-3575 + 1792 00 37 33 1537            STZ  VALUE(4:5) 
-3576 + 1792 00 05 08 1538            LDA  VALUE 
-3577 + 1227 00 00 39 1539            JMP  TAPEOUT 
-                     1540 *
-3578 + 1215 00 00 39 1541            JMP  FINISHBUF 
-                     1542 *
-3579 + 3579 00 00 39 1543 FINEXIT    JMP  * 
-                     1544 *
-                     1545 TAPE       EQU  0 
-                     1546 LP         EQU  18 
-                     1547 *
-                     1548            ORIG 3666 
-3666 + 0000 00 57 18 1549 FIRST      CON  * 
-                     1550 *
-                     1551 CHKSUM     ORIG *+1 
-                     1552 HEADER     ORIG *+1 
-                     1553 *
-3669 + 0200 05 03 12 1554 CHKMSG     ALF  CHECK
-3670 + 1432 14 00 05 1555            ALF  SUM E
-3671 + 1235 16 19 00 1556            ALF  RROR 
-3672 + 0339 19 16 19 1557 HDRMSG     ALF  ERROR
-3673 + 0009 15 00 08 1558            ALF   IN H
-3674 + 0321 04 05 19 1559            ALF  EADER
-                     1560 *
-3675 + 2990 46 00 00 1561 ERRORLINE  ALF  ***  
-                     1562 ERRORMSG   ORIG *+3 
-3679 + 0000 00 00 00 1563            ALF       
-3680 + 0000 02 13 16 1564            ALF    BLO
-3681 + 0204 00 48 00 1565            ALF  CK = 
-                     1566 ERRORBLK   ORIG *+1 
-3683 + 0000 00 00 00 1567            ALF       
-3684 + 0008 05 01 04 1568            ALF   HEAD
-3685 + 0339 00 48 00 1569            ALF  ER = 
-                     1570 ERRORLA    ORIG *+1 
-3687 + 2701 01 43 41 1571            ALF  (LA),
-3688 + 0000 00 00 00 1572            ALF       
-                     1573 ERRORN     ORIG *+1 
-3690 + 2703 43 00 00 1574            ALF  (N)  
-                     1575            ORIG *+8 
-                     1576 *
-3699 + 1011 00 00 36 1577 LOADER     IN   BUF1(TAPE) 
-3700 + 0000 00 02 51 1578            ENT3 0 
-                     1579 *
-3701 + 3952 00 00 39 1580 NEXTBLOCK  JMP  INPUT 
-3702 + 3667 00 05 24 1581            STA  CHKSUM 
-3703 + 3668 00 05 24 1582            STA  HEADER 
-3704 + 0001 00 00 51 1583            INC3 1 
-                     1584 *
-3705 + 3668 00 02 09 1585            LD1  HEADER(0:2) 
-3706 + 3668 00 37 10 1586            LD2  HEADER(4:5) 
-3707 + 3668 00 27 12 1587            LD4  HEADER(3:3) 
-3708 + 0002 00 01 52 1588            DEC4 2 
-3709 + 0000 01 01 44 1589            J4Z  0,1 
-3710 + 0001 00 00 52 1590            INC4 1 
-3711 + 3714 00 04 44 1591            J4NZ LLL 
-3712 + 0000 02 02 25 1592            ST1  0,2(0:2) 
-3713 + 3701 00 00 39 1593            JMP  NEXTBLOCK 
-3714 + 3733 00 00 41 1594 LLL        J1N  HDRERROR 
-3715 + 3666 00 05 57 1595            CMP1 FIRST 
-3716 + 3733 00 07 39 1596            JGE  HDRERROR 
-                     1597 *
-3717 - 0001 02 02 48 1598            ENTA -1,2 
-3718 + 0000 01 00 48 1599            INCA 0,1 
-3719 + 3666 00 05 56 1600            CMPA FIRST 
-3720 + 3733 00 07 39 1601            JGE  HDRERROR 
-                     1602 *
-3721 + 3952 00 00 39 1603 LOADLOOP   JMP  INPUT 
-3722 + 0000 01 05 24 1604            STA  0,1 
-3723 + 0001 00 00 49 1605            INC1 1 
-3724 + 3667 00 05 01 1606            ADD  CHKSUM(0:5) 
-3725 + 3667 00 05 24 1607            STA  CHKSUM(0:5) 
-3726 + 0001 00 01 50 1608            DEC2 1 
-3727 + 3721 00 02 42 1609            J2P  LOADLOOP 
-                     1610 *
-3728 + 3952 00 00 39 1611            JMP  INPUT 
-3729 + 3667 00 05 56 1612            CMPA CHKSUM 
-3730 + 3701 00 05 39 1613            JE   NEXTBLOCK 
-                     1614 *
-3731 + 3669 00 02 50 1615 CHKSUMERR  ENT2 CHKMSG 
-3732 + 3316 00 00 39 1616            JMP  ERROR 
-                     1617 *
-3733 + 3672 00 02 50 1618 HDRERROR   ENT2 HDRMSG 
-                     1619 *
-3734 + 3316 00 00 39 1620            JMP  ERROR 
+                     1529 *          LOADER ROUTINE
+                     1530 *
+                     1531 *
+                     1532            ORIG 3680 
+3680 + 0000 00 57 32 1533 FIRST      CON  * 
+                     1534 BUF1       ORIG *+100 
+                     1535 BUF2       ORIG *+100 
+                     1536 *
+                     1537 CHKSUM     ORIG *+1 
+                     1538 HEADER     ORIG *+1 
+                     1539 *
+3883 + 0200 05 03 12 1540 CHKMSG     ALF  CHECK
+3884 + 1432 14 00 05 1541            ALF  SUM E
+3885 + 1235 16 19 00 1542            ALF  RROR 
+3886 + 0339 19 16 19 1543 HDRMSG     ALF  ERROR
+3887 + 0009 15 00 08 1544            ALF   IN H
+3888 + 0321 04 05 19 1545            ALF  EADER
+                     1546 *
+3889 + 2990 46 00 00 1547 ERRORLINE  ALF  ***  
+                     1548 ERRORMSG   ORIG *+3 
+3893 + 0000 00 00 00 1549            ALF       
+3894 + 0000 02 13 16 1550            ALF    BLO
+3895 + 0204 00 48 00 1551            ALF  CK = 
+                     1552 ERRORBLK   ORIG *+1 
+3897 + 0000 00 00 00 1553            ALF       
+3898 + 0008 05 01 04 1554            ALF   HEAD
+3899 + 0339 00 48 00 1555            ALF  ER = 
+                     1556 ERRORLA    ORIG *+1 
+3901 + 2701 01 43 41 1557            ALF  (LA),
+3902 + 0000 00 00 00 1558            ALF       
+                     1559 ERRORN     ORIG *+1 
+3904 + 2703 43 00 00 1560            ALF  (N)  
+                     1561            ORIG *+8 
+                     1562 *
+3913 + 3681 00 00 36 1563 LOADER     IN   BUF1(TAPE) 
+3914 + 0000 00 02 51 1564            ENT3 0 
+                     1565 *
+3915 + 3966 00 00 39 1566 NEXTBLOCK  JMP  INPUT 
+3916 + 3881 00 05 24 1567            STA  CHKSUM 
+3917 + 3882 00 05 24 1568            STA  HEADER 
+3918 + 0001 00 00 51 1569            INC3 1 
+                     1570 *
+3919 + 3882 00 02 09 1571            LD1  HEADER(0:2) 
+3920 + 3882 00 37 10 1572            LD2  HEADER(4:5) 
+3921 + 3882 00 27 12 1573            LD4  HEADER(3:3) 
+3922 + 0002 00 01 52 1574            DEC4 2 
+3923 + 0000 01 01 44 1575            J4Z  0,1 
+3924 + 0001 00 00 52 1576            INC4 1 
+3925 + 3928 00 04 44 1577            J4NZ LLL 
+3926 + 0000 02 02 25 1578            ST1  0,2(0:2) 
+3927 + 3915 00 00 39 1579            JMP  NEXTBLOCK 
+3928 + 3947 00 00 41 1580 LLL        J1N  HDRERROR 
+3929 + 3680 00 05 57 1581            CMP1 FIRST 
+3930 + 3947 00 07 39 1582            JGE  HDRERROR 
+                     1583 *
+3931 - 0001 02 02 48 1584            ENTA -1,2 
+3932 + 0000 01 00 48 1585            INCA 0,1 
+3933 + 3680 00 05 56 1586            CMPA FIRST 
+3934 + 3947 00 07 39 1587            JGE  HDRERROR 
+                     1588 *
+3935 + 3966 00 00 39 1589 LOADLOOP   JMP  INPUT 
+3936 + 0000 01 05 24 1590            STA  0,1 
+3937 + 0001 00 00 49 1591            INC1 1 
+3938 + 3881 00 05 01 1592            ADD  CHKSUM 
+3939 + 3881 00 05 24 1593            STA  CHKSUM 
+3940 + 0001 00 01 50 1594            DEC2 1 
+3941 + 3935 00 02 42 1595            J2P  LOADLOOP 
+                     1596 *
+3942 + 3966 00 00 39 1597            JMP  INPUT 
+3943 + 3881 00 05 56 1598            CMPA CHKSUM 
+3944 + 3915 00 05 39 1599            JE   NEXTBLOCK 
+                     1600 *
+3945 + 3883 00 02 50 1601 CHKSUMERR  ENT2 CHKMSG 
+3946 + 3949 00 00 39 1602            JMP  LERROR 
+                     1603 *
+3947 + 3886 00 02 50 1604 HDRERROR   ENT2 HDRMSG 
+                     1605 *
+3948 + 3949 00 00 39 1606            JMP  LERROR 
+                     1607 *
+3949 + 3890 00 02 49 1608 LERROR     ENT1 ERRORMSG 
+3950 + 0000 02 03 07 1609            MOVE 0,2(3) 
+3951 + 0000 03 02 48 1610            ENTA 0,3 
+3952 + 0000 00 01 05 1611            CHAR      
+3953 + 3896 00 05 31 1612            STX  ERRORBLK 
+3954 + 3882 00 02 08 1613            LDA  HEADER(0:2) 
+3955 + 0000 00 01 05 1614            CHAR      
+3956 + 3900 00 21 31 1615            STX  ERRORLA(2:5) 
+3957 + 3882 00 37 08 1616            LDA  HEADER(4:5) 
+3958 + 0000 00 01 05 1617            CHAR      
+3959 + 3903 00 21 31 1618            STX  ERRORN(2:5) 
+3960 + 3889 00 18 37 1619            OUT  ERRORLINE(LP) 
+3961 + 0000 00 02 05 1620            HLT       
                      1621 *
-3735 + 3676 00 02 49 1622 ERROR      ENT1 ERRORMSG 
-3736 + 0000 02 03 07 1623            MOVE 0,2(3) 
-3737 + 0000 03 02 48 1624            ENTA 0,3 
-3738 + 0000 00 01 05 1625            CHAR      
-3739 + 3682 00 05 31 1626            STX  ERRORBLK 
-3740 + 3668 00 02 08 1627            LDA  HEADER(0:2) 
-3741 + 0000 00 01 05 1628            CHAR      
-3742 + 3686 00 21 31 1629            STX  ERRORLA(2:5) 
-3743 + 3668 00 37 08 1630            LDA  HEADER(4:5) 
-3744 + 0000 00 01 05 1631            CHAR      
-3745 + 3689 00 21 31 1632            STX  ERRORN(2:5) 
-3746 + 3675 00 18 37 1633            OUT  ERRORLINE(LP) 
-3747 + 0000 00 02 05 1634            HLT       
-                     1635 *
-                     1636 *
-                     1637 *         DATA FOR INPUT SUBROUTINE
+                     1622 *
+                     1623 *         DATA FOR INPUT SUBROUTINE
+                     1624 *
+                     1625 ADDR       ORIG *+1 
+3963 + 0000 00 00 00 1626 COUNT      CON  0 
+3964 + 0000 00 57 33 1627 INPUTBUF   CON  BUF1 
+3965 + 0000 00 59 05 1628 USINGBUF   CON  BUF2 
+                     1629 *
+                     1630 *
+3966 + 3986 00 02 32 1631 INPUT      STJ  EXITINPUT 
+3967 + 3985 00 02 25 1632            ST1  TEMP1(0:2) 
+3968 + 3984 00 02 26 1633            ST2  TEMP2(0:2) 
+                     1634 *
+3969 + 3963 00 05 09 1635            LD1  COUNT 
+3970 + 3978 00 02 41 1636            J1P  RETURNWORD 
+                     1637 *
                      1638 *
-                     1639 ADDR       ORIG *+1 
-3749 + 0000 00 00 00 1640 COUNT      CON  0 
-                     1641 BUF1       ORIG *+100 
-                     1642 BUF2       ORIG *+100 
-3950 + 0000 00 15 51 1643 INPUTBUF   CON  BUF1 
-3951 + 0000 00 17 23 1644 USINGBUF   CON  BUF2 
-                     1645 *
+3971 + 3965 00 05 09 1639            LD1  USINGBUF 
+3972 + 0000 01 00 36 1640            IN   0,1(TAPE) 
+3973 + 3964 00 05 10 1641            LD2  INPUTBUF 
+3974 + 3965 00 05 26 1642            ST2  USINGBUF 
+3975 + 3962 00 05 26 1643            ST2  ADDR 
+3976 + 3964 00 05 25 1644            ST1  INPUTBUF 
+3977 + 0100 00 02 49 1645            ENT1 100 
                      1646 *
-3952 + 3972 00 02 32 1647 INPUT      STJ  EXITINPUT 
-3953 + 3971 00 02 25 1648            ST1  TEMP1(0:2) 
-3954 + 3970 00 02 26 1649            ST2  TEMP2(0:2) 
-                     1650 *
-3955 + 3749 00 05 09 1651            LD1  COUNT 
-3956 + 3964 00 02 41 1652            J1P  RETURNWORD 
-                     1653 *
+                     1647 *
+3978 + 3962 00 05 10 1648 RETURNWORD LD2  ADDR 
+3979 + 0000 02 05 08 1649            LDA  0,2 
+3980 + 0001 00 00 50 1650            INC2 1 
+3981 + 3962 00 05 26 1651            ST2  ADDR 
+3982 + 0001 00 01 49 1652            DEC1 1 
+3983 + 3963 00 05 25 1653            ST1  COUNT 
                      1654 *
-3957 + 3951 00 05 09 1655            LD1  USINGBUF 
-3958 + 0000 01 00 36 1656            IN   0,1(TAPE) 
-3959 + 3950 00 05 10 1657            LD2  INPUTBUF 
-3960 + 3951 00 05 26 1658            ST2  USINGBUF 
-3961 + 3748 00 05 26 1659            ST2  ADDR 
-3962 + 3950 00 05 25 1660            ST1  INPUTBUF 
-3963 + 0100 00 02 49 1661            ENT1 100 
-                     1662 *
-                     1663 *
-3964 + 3748 00 05 10 1664 RETURNWORD LD2  ADDR 
-3965 + 0000 02 05 08 1665            LDA  0,2 
-3966 + 0001 00 00 50 1666            INC2 1 
-3967 + 3748 00 05 26 1667            ST2  ADDR 
-3968 + 0001 00 01 49 1668            DEC1 1 
-3969 + 3749 00 05 25 1669            ST1  COUNT 
-                     1670 *
-3970 + 3970 00 02 50 1671 TEMP2      ENT2 * 
-3971 + 3971 00 02 49 1672 TEMP1      ENT1 * 
-3972 + 3972 00 00 39 1673 EXITINPUT  JMP  * 
-                     1674 *
-3973 + 3375 00 00 39 1675 MIXAL      JMP  MAIN 
-3974 + 0000 00 00 35 1676            IOC  0(0) 
-3975 + 3699 00 00 39 1677            JMP  LOADER 
-                     1678            END  MIXAL 
-                                     TRANS 3973
+3984 + 3984 00 02 50 1655 TEMP2      ENT2 * 
+3985 + 3985 00 02 49 1656 TEMP1      ENT1 * 
+3986 + 3986 00 00 39 1657 EXITINPUT  JMP  * 
+                     1658 *
+3987 + 3161 00 00 39 1659 MIXAL      JMP  MAIN 
+3988 + 0000 00 00 35 1660            IOC  0(0) 
+3989 + 3913 00 00 39 1661            JMP  LOADER 
+                     1662            END  MIXAL 
+                                     TRANS 3987
                          * SYMBOL TABLE
-                          *          EQU  3976
-                          ADDR       EQU  3748
+                          *          EQU  3990
+                          ADDR       EQU  3962
                           ADR        EQU  36
-                          ALFOP      EQU  3436
-                          ASMDEF     EQU  3500
-                          BADSYM     EQU  3336
-                          BLCKLENGTH EQU  1241
-                          BLOCKOUT   EQU  1334
-                          BUF1       EQU  1011
-                          BUF2       EQU  1111
-                          CARD       EQU  3109
-                          CARDDONE   EQU  1385
-                          CARDNUMBER EQU  1365
+                          ALFOP      EQU  3222
+                          ASMDEF     EQU  3286
+                          BADSYM     EQU  3122
+                          BLCKLENGTH EQU  1041
+                          BLOCKOUT   EQU  1134
+                          BUF1       EQU  3681
+                          BUF2       EQU  3781
+                          CARD       EQU  2895
+                          CARDDONE   EQU  1185
+                          CARDNUMBER EQU  1165
                           CHAINEND   EQU  1010
                           CHAR9      EQU  1002
                           CHARA      EQU  1000
@@ -1699,233 +1683,234 @@
                           CHARO      EQU  1001
                           CHARRIGHTP EQU  1005
                           CHARSTAR   EQU  1003
-                          CHECKSUM   EQU  1325
-                          CHKMSG     EQU  3669
-                          CHKSUM     EQU  3667
-                          CHKSUMERR  EQU  3731
-                          CONERROR   EQU  3461
-                          CONF       EQU  3463
-                          CONOP      EQU  3451
-                          CONTEMP    EQU  3450
-                          CONTEMPVAL EQU  3449
-                          COUNT      EQU  3749
+                          CHECKSUM   EQU  1125
+                          CHKMSG     EQU  3883
+                          CHKSUM     EQU  3881
+                          CHKSUMERR  EQU  3945
+                          CONERROR   EQU  3247
+                          CONF       EQU  3249
+                          CONOP      EQU  3237
+                          CONTEMP    EQU  3236
+                          CONTEMPVAL EQU  3235
+                          COUNT      EQU  3963
                           CR         EQU  16
-                          DEFINELAB  EQU  3356
-                          DEFINESYM  EQU  2838
-                          DENFDSYM   EQU  3560
-                          DLEXIT     EQU  3374
-                          DLSAVE1    EQU  3372
-                          DLSAVE2    EQU  3373
-                          DOWNHIGH   EQU  2818
-                          DSEXIT     EQU  2853
-                          DSSAVE1    EQU  2852
+                          DEFINELAB  EQU  3142
+                          DEFINESYM  EQU  2624
+                          DENFDSYM   EQU  3346
+                          DLEXIT     EQU  3160
+                          DLSAVE1    EQU  3158
+                          DLSAVE2    EQU  3159
+                          DOWNHIGH   EQU  2604
+                          DSEXIT     EQU  2639
+                          DSSAVE1    EQU  2638
                           EIGHT      EQU  1009
-                          ENDASSEM   EQU  3485
-                          ENDCARDNUM EQU  3288
-                          ENDCASE    EQU  3393
-                          ENDMAIN    EQU  3399
-                          ENDOP      EQU  3487
-                          ENDSYM     EQU  1424
-                          EQUOP      EQU  3424
-                          ERREXIT    EQU  3331
-                          ERROR      EQU  3316
-                          ERRORBLK   EQU  3682
-                          ERRORLA    EQU  3686
-                          ERRORLINE  EQU  3675
-                          ERRORMSG   EQU  3676
-                          ERRORN     EQU  3689
-                          ERRSAVA    EQU  3315
-                          ERRSAVE1   EQU  3330
-                          ESEXIT     EQU  2986
-                          ESQUIT     EQU  2984
-                          ESSAVE1    EQU  2985
-                          ESSAVEX    EQU  2949
-                          EVALSYM    EQU  2950
-                          EXITINPUT  EQU  3972
-                          EXPEXIT    EQU  3046
-                          EXPLOOP    EQU  2996
-                          EXPOV      EQU  3348
-                          EXPOVER    EQU  3030
-                          EXPQUIT    EQU  3034
-                          EXPRESSION EQU  2990
-                          EXPSAVE1   EQU  3034
-                          EXPSAVE2   EQU  3045
-                          EXPSAVEX   EQU  2989
-                          FIBEXIT    EQU  1226
-                          FIBSAVE1   EQU  1224
-                          FIBSAVE2   EQU  1225
-                          FINEXIT    EQU  3579
-                          FINISHBLCK EQU  1327
-                          FINISHBUF  EQU  1215
-                          FINISHUP   EQU  3529
-                          FINTEMP    EQU  3524
-                          FIRST      EQU  3666
+                          ENDASSEM   EQU  3271
+                          ENDCARDNUM EQU  3074
+                          ENDCASE    EQU  3179
+                          ENDMAIN    EQU  3185
+                          ENDOP      EQU  3273
+                          ENDSYM     EQU  1224
+                          EQUOP      EQU  3210
+                          ERREXIT    EQU  3117
+                          ERROR      EQU  3102
+                          ERRORBLK   EQU  3896
+                          ERRORLA    EQU  3900
+                          ERRORLINE  EQU  3889
+                          ERRORMSG   EQU  3890
+                          ERRORN     EQU  3903
+                          ERRSAVA    EQU  3101
+                          ERRSAVE1   EQU  3116
+                          ESEXIT     EQU  2772
+                          ESQUIT     EQU  2770
+                          ESSAVE1    EQU  2771
+                          ESSAVEX    EQU  2735
+                          EVALSYM    EQU  2736
+                          EXITINPUT  EQU  3986
+                          EXPEXIT    EQU  2832
+                          EXPLOOP    EQU  2782
+                          EXPOV      EQU  3134
+                          EXPOVER    EQU  2816
+                          EXPQUIT    EQU  2820
+                          EXPRESSION EQU  2776
+                          EXPSAVE1   EQU  2820
+                          EXPSAVE2   EQU  2831
+                          EXPSAVEX   EQU  2775
+                          FIBEXIT    EQU  1026
+                          FIBSAVE1   EQU  1024
+                          FIBSAVE2   EQU  1025
+                          FINEXIT    EQU  3365
+                          FINISHBLCK EQU  1127
+                          FINISHBUF  EQU  1015
+                          FINISHUP   EQU  3315
+                          FINTEMP    EQU  3310
+                          FIRST      EQU  3680
                           FIVE       EQU  1008
-                          FLBEXIT    EQU  1348
-                          FLBQUIT    EQU  1344
-                          FLBSAVE1   EQU  1347
-                          FLBSAVEA   EQU  1326
-                          FMOD       EQU  3475
-                          FORERROR   EQU  3033
-                          GENERATE   EQU  1308
-                          GENEXIT    EQU  1324
-                          GETFIELDS  EQU  1439
-                          GETSYM     EQU  1399
-                          GFEXIT     EQU  1460
-                          GFSAVE1    EQU  1459
-                          GFSAVEA    EQU  1438
-                          GNSAVE1    EQU  1323
-                          GNSAVEA    EQU  1307
-                          GSEXIT     EQU  1434
-                          GSQUIT     EQU  1428
-                          GSSAVE1    EQU  1432
-                          GSSAVE2    EQU  1433
-                          GSSAVEA    EQU  1397
-                          GSSAVEX    EQU  1398
-                          HDRERROR   EQU  3733
-                          HDRMSG     EQU  3672
-                          HEADER     EQU  3668
-                          HL2BYTE    EQU  2880
-                          HLADDR     EQU  2878
-                          HLBYTE     EQU  2876
-                          HLTINDEX   EQU  46
-                          HLWORD     EQU  2882
-                          ILLFOR     EQU  3344
-                          ILLSYN     EQU  3352
-                          INBUF      EQU  1349
-                          INITEXIT   EQU  3499
-                          INITIALIZE EQU  3495
-                          INPUT      EQU  3952
-                          INPUTBUF   EQU  3950
+                          FLBEXIT    EQU  1148
+                          FLBQUIT    EQU  1144
+                          FLBSAVE1   EQU  1147
+                          FLBSAVEA   EQU  1126
+                          FMOD       EQU  3261
+                          FORERROR   EQU  2819
+                          GENERATE   EQU  1108
+                          GENEXIT    EQU  1124
+                          GETFIELDS  EQU  1239
+                          GETSYM     EQU  1199
+                          GFEXIT     EQU  1260
+                          GFSAVE1    EQU  1259
+                          GFSAVEA    EQU  1238
+                          GNSAVE1    EQU  1123
+                          GNSAVEA    EQU  1107
+                          GSEXIT     EQU  1234
+                          GSQUIT     EQU  1228
+                          GSSAVE1    EQU  1232
+                          GSSAVE2    EQU  1233
+                          GSSAVEA    EQU  1197
+                          GSSAVEX    EQU  1198
+                          HDRERROR   EQU  3947
+                          HDRMSG     EQU  3886
+                          HEADER     EQU  3882
+                          HL2BYTE    EQU  2666
+                          HLADDR     EQU  2664
+                          HLBYTE     EQU  2662
+                          HLTINDEX   EQU  44
+                          HLWORD     EQU  2668
+                          ILLFOR     EQU  3130
+                          ILLSYN     EQU  3138
+                          INBUF      EQU  1149
+                          INITEXIT   EQU  3285
+                          INITIALIZE EQU  3281
+                          INPUT      EQU  3966
+                          INPUTBUF   EQU  3964
                           INST       EQU  18
-                          IPART      EQU  3409
-                          ISDEFINED  EQU  2974
-                          ISNOTDEF   EQU  2981
-                          ISNOTTHERE EQU  2977
-                          ISNUMBER   EQU  2963
-                          ISSTAR     EQU  2956
-                          ISSYMBOL   EQU  2969
-                          LABEL      EQU  1435
-                          LDRBLOCK   EQU  1242
-                          LEADZERO   EQU  3276
-                          LEGALLABEL EQU  1451
-                          LETTER     EQU  1396
-                          LINE       EQU  3079
-                          LINERROR   EQU  3314
-                          LLL        EQU  3714
-                          LOADER     EQU  3699
-                          LOADLOOP   EQU  3721
+                          IPART      EQU  3195
+                          ISDEFINED  EQU  2760
+                          ISNOTDEF   EQU  2767
+                          ISNOTTHERE EQU  2763
+                          ISNUMBER   EQU  2749
+                          ISSTAR     EQU  2742
+                          ISSYMBOL   EQU  2755
+                          LABEL      EQU  1235
+                          LDRBLOCK   EQU  1042
+                          LEADZERO   EQU  3062
+                          LEGALLABEL EQU  1251
+                          LERROR     EQU  3949
+                          LETTER     EQU  1196
+                          LINE       EQU  2865
+                          LINERROR   EQU  3100
+                          LLL        EQU  3928
+                          LOADER     EQU  3913
+                          LOADLOOP   EQU  3935
                           LOC        EQU  9
                           LP         EQU  18
-                          MACHINEOP  EQU  3400
-                          MAIN       EQU  3375
-                          MAINLOOP   EQU  3377
+                          MACHINEOP  EQU  3186
+                          MAIN       EQU  3161
+                          MAINLOOP   EQU  3163
                           MAXSYMBOL  EQU  250
-                          MIXAL      EQU  3973
-                          MULDEF     EQU  3332
-                          NERROR     EQU  3313
-                          NEWLABDEFN EQU  3371
-                          NEXTBLOCK  EQU  3701
-                          NEXTCHAR   EQU  1378
-                          NEXTCON    EQU  3454
-                          NEXTOP     EQU  3028
-                          NEXTSYM1   EQU  3534
-                          NEXTWORD   EQU  1375
-                          NOADRPRT   EQU  3252
-                          NOF        EQU  3480
-                          NOFORWARD  EQU  2875
-                          NOFPART    EQU  3422
-                          NOFSTORE   EQU  3476
-                          NOIPART    EQU  3412
-                          NOLABEL    EQU  1453
-                          NOLOCPRT   EQU  3240
-                          NOOPPRT    EQU  3273
-                          NOTSTAR    EQU  2960
-                          NOVALPRT   EQU  3246
-                          NSYMBOL    EQU  1793
-                          NUMBEROPS  EQU  165
-                          NXTALFCHAR EQU  3441
-                          NXTDIGIT   EQU  3213
-                          NXTLOADLOC EQU  1306
-                          OCEXIT     EQU  3221
-                          OCSAVEX    EQU  3200
-                          OCTCHAR    EQU  3202
-                          OCTEMPA    EQU  3201
-                          OP         EQU  1437
-                          OP8ADD     EQU  3023
-                          OPADD      EQU  3012
-                          OPDIV      EQU  3020
-                          OPERATOR   EQU  2884
-                          OPHIGH     EQU  2797
-                          OPLOW      EQU  2798
-                          OPMID      EQU  2799
-                          OPMUL      EQU  3016
-                          OPSUB      EQU  3014
-                          OPTAB      EQU  1461
-                          OPTYPE     EQU  1791
-                          ORIGOP     EQU  3429
-                          PCKCHAR    EQU  3293
-                          PCKWORD    EQU  3291
-                          PLEXIT     EQU  3312
-                          PLSAVE1    EQU  3309
-                          PLSAVE2    EQU  3310
-                          PLSAVE3    EQU  3311
-                          PLSAVEA    EQU  3222
-                          PLSAVEX    EQU  3223
-                          PRINTLINE  EQU  3224
-                          PRINTLOC   EQU  3199
-                          PRT        EQU  3047
-                          PRTBUF     EQU  3055
-                          PRTFMT     EQU  3048
-                          PRTLINE    EQU  3395
-                          RCEXIT     EQU  1393
-                          RCSAVE1    EQU  1390
-                          RCSAVE2    EQU  1391
-                          RCSAVE3    EQU  1392
-                          RCSAVEA    EQU  1366
-                          READCARD   EQU  1367
-                          RETURNWORD EQU  3964
-                          SCANSYM    EQU  1408
-                          SEARCHOP   EQU  2800
-                          SEARCHSYM  EQU  2856
-                          SOPDONE    EQU  2825
-                          SOPEXIT    EQU  2837
-                          SOPFOUND   EQU  2830
-                          SOPLOOP    EQU  2807
-                          SOPSAVE1   EQU  2836
-                          SOPSAVEA   EQU  2795
-                          SOPSAVEX   EQU  2796
-                          SSEXIT     EQU  2873
-                          SSSAVE1    EQU  2870
-                          SSSAVEA    EQU  2854
-                          SSSAVEX    EQU  2855
-                          STARTADD   EQU  3486
-                          STILLROOM  EQU  1238
-                          STOREBUF   EQU  1211
-                          STORESIGN  EQU  3210
-                          STRCHR     EQU  3282
-                          SYM        EQU  1394
-                          SYMDONE    EQU  2869
-                          SYMERROR   EQU  1422
-                          SYMINDEX   EQU  1794
-                          SYMLOOP    EQU  2863
-                          SYMTAB     EQU  1795
+                          MIXAL      EQU  3987
+                          MULDEF     EQU  3118
+                          NERROR     EQU  3099
+                          NEWLABDEFN EQU  3157
+                          NEXTBLOCK  EQU  3915
+                          NEXTCHAR   EQU  1178
+                          NEXTCON    EQU  3240
+                          NEXTOP     EQU  2814
+                          NEXTSYM1   EQU  3320
+                          NEXTWORD   EQU  1175
+                          NOADRPRT   EQU  3038
+                          NOF        EQU  3266
+                          NOFORWARD  EQU  2661
+                          NOFPART    EQU  3208
+                          NOFSTORE   EQU  3262
+                          NOIPART    EQU  3198
+                          NOLABEL    EQU  1253
+                          NOLOCPRT   EQU  3026
+                          NOOPPRT    EQU  3059
+                          NOTSTAR    EQU  2746
+                          NOVALPRT   EQU  3032
+                          NSYMBOL    EQU  1579
+                          NUMBEROPS  EQU  158
+                          NXTALFCHAR EQU  3227
+                          NXTDIGIT   EQU  2999
+                          NXTLOADLOC EQU  1106
+                          OCEXIT     EQU  3007
+                          OCSAVEX    EQU  2986
+                          OCTCHAR    EQU  2988
+                          OCTEMPA    EQU  2987
+                          OP         EQU  1237
+                          OP8ADD     EQU  2809
+                          OPADD      EQU  2798
+                          OPDIV      EQU  2806
+                          OPERATOR   EQU  2670
+                          OPHIGH     EQU  2583
+                          OPLOW      EQU  2584
+                          OPMID      EQU  2585
+                          OPMUL      EQU  2802
+                          OPSUB      EQU  2800
+                          OPTAB      EQU  1261
+                          OPTYPE     EQU  1577
+                          ORIGOP     EQU  3215
+                          PCKCHAR    EQU  3079
+                          PCKWORD    EQU  3077
+                          PLEXIT     EQU  3098
+                          PLSAVE1    EQU  3095
+                          PLSAVE2    EQU  3096
+                          PLSAVE3    EQU  3097
+                          PLSAVEA    EQU  3008
+                          PLSAVEX    EQU  3009
+                          PRINTLINE  EQU  3010
+                          PRINTLOC   EQU  2985
+                          PRT        EQU  2833
+                          PRTBUF     EQU  2841
+                          PRTFMT     EQU  2834
+                          PRTLINE    EQU  3181
+                          RCEXIT     EQU  1193
+                          RCSAVE1    EQU  1190
+                          RCSAVE2    EQU  1191
+                          RCSAVE3    EQU  1192
+                          RCSAVEA    EQU  1166
+                          READCARD   EQU  1167
+                          RETURNWORD EQU  3978
+                          SCANSYM    EQU  1208
+                          SEARCHOP   EQU  2586
+                          SEARCHSYM  EQU  2642
+                          SOPDONE    EQU  2611
+                          SOPEXIT    EQU  2623
+                          SOPFOUND   EQU  2616
+                          SOPLOOP    EQU  2593
+                          SOPSAVE1   EQU  2622
+                          SOPSAVEA   EQU  2581
+                          SOPSAVEX   EQU  2582
+                          SSEXIT     EQU  2659
+                          SSSAVE1    EQU  2656
+                          SSSAVEA    EQU  2640
+                          SSSAVEX    EQU  2641
+                          STARTADD   EQU  3272
+                          STILLROOM  EQU  1038
+                          STOREBUF   EQU  1011
+                          STORESIGN  EQU  2996
+                          STRCHR     EQU  3068
+                          SYM        EQU  1194
+                          SYMDONE    EQU  2655
+                          SYMERROR   EQU  1222
+                          SYMINDEX   EQU  1580
+                          SYMLOOP    EQU  2649
+                          SYMTAB     EQU  1581
                           TAPE       EQU  0
-                          TAPEBUF    EQU  1212
-                          TAPEBUFPTR EQU  1213
-                          TAPECNTR   EQU  1214
-                          TAPEOUT    EQU  1227
-                          TEMP1      EQU  3971
-                          TEMP2      EQU  3970
-                          TOEXIT     EQU  1240
-                          TOSAVE1    EQU  1239
+                          TAPEBUF    EQU  1012
+                          TAPEBUFPTR EQU  1013
+                          TAPECNTR   EQU  1014
+                          TAPEOUT    EQU  1027
+                          TEMP1      EQU  3985
+                          TEMP2      EQU  3984
+                          TOEXIT     EQU  1040
+                          TOSAVE1    EQU  1039
                           TWO        EQU  1007
-                          UNDEFSYM   EQU  2874
-                          UNOP       EQU  3340
-                          UPLOW      EQU  2822
-                          UPSYM1     EQU  3568
-                          USINGBUF   EQU  3951
+                          UNDEFSYM   EQU  2660
+                          UNOP       EQU  3126
+                          UPLOW      EQU  2608
+                          UPSYM1     EQU  3354
+                          USINGBUF   EQU  3965
                           VAL        EQU  27
-                          VALUE      EQU  1792
-                          VALUE1     EQU  2987
-                          VALUE2     EQU  2988
+                          VALUE      EQU  1578
+                          VALUE1     EQU  2773
+                          VALUE2     EQU  2774

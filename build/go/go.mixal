@@ -9,8 +9,8 @@ WELCOME    ALF  WELCO
            ALF  -U20                                                            
            ALF  USB-U                                                           
            ALF  ART.                                                            
-           ALF  U8 10                                                           
-           ALF  00 BL                                                           
+           ALF  U0 10                                                           
+           ALF  24 BL                                                           
            ALF  OCKS.                                                           
            ALF   FPU.                                                           
            ORIG 4091                                                            

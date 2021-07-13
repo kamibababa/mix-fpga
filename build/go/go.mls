@@ -9,8 +9,8 @@
 4007 + 2904 32 30 00 0009            ALF  -U20 
 4008 + 1558 02 45 24 0010            ALF  USB-U
 4009 + 0083 23 40 00 0011            ALF  ART. 
-4010 + 1574 00 31 30 0012            ALF  U8 10
-4011 + 1950 00 02 13 0013            ALF  00 BL
+4010 + 1566 00 31 30 0012            ALF  U0 10
+4011 + 2082 00 02 13 0013            ALF  24 BL
 4012 + 1027 12 22 40 0014            ALF  OCKS.
 4013 + 0006 17 24 40 0015            ALF   FPU.
                      0016            ORIG 4091 
@@ -21,8 +21,8 @@
 4095 + 0000 00 00 39 0021            JMP  0 
                      0022            END  START 
                                      TRANS 4091
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  4096
-                          WELCOME    EQU  4001
-                          START      EQU  4091
                           NEXT       EQU  4093
+                          START      EQU  4091
+                          WELCOME    EQU  4001
