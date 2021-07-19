@@ -286,17 +286,17 @@ def assembler(fin,fout):
                 spl=['']+spl
             loc = spl[0]
             op = spl[1]
+            if len(loc)>0:
+                if len(loc)==2 and loc[1]=='H':
+                    loc='{:2s}@{:04d}'.format(loc,line_number)
+                if loc not in symbols:
+                    symbols[loc] = symbols['*']
             if len(spl)<3:
                 address='     '
             elif op=='ALF':
                 address = line[line.index('ALF')+5:line.index('ALF')+10]
             else:
                 address = spl[2]+' '
-            if len(loc)>0:
-                if len(loc)==2 and loc[1]=='H':
-                    loc='{:2s}@{:04d}'.format(loc,line_number)
-                if loc not in symbols:
-                    symbols[loc] = symbols['*']
             if (op=='EQU'):
                 symbols[loc] = w_expr(address)
                 printequ=True
@@ -335,10 +335,12 @@ def assembler(fin,fout):
                     i = (word% 0o1000000 )//0o10000
                     f = (word% 0o10000)//0o100
                     c = (word%0o100 )
-                    print('{:04d} {:s} {:04d} {:02d} {:02d} {:02d}      {:10s} {:4s} {:d}'.format(symbols[s],sign,a,i,f,c,s,'CON',word),file=fout)
-                if (len(loc)>0):
+                    if fout:
+                        print('{:04d} {:s} {:04d} {:02d} {:02d} {:02d}      {:10s} {:4s} {:d}'.format(symbols[s],sign,a,i,f,c,s,'CON',word),file=fout)
+                if (len(loc)>0 and symbols['*']>symbols[loc]):
                     symbols[loc] = symbols['*']
-                print('                     {:04d} {:10s} {:4s} {:s}'.format(line_number,loc,op,address),file=fout)
+                if fout:
+                    print('                     {:04d} {:10s} {:4s} {:s}'.format(line_number,loc,op,address),file=fout)
                 return trans
             else:
                 (c,f) = opcode(op)
@@ -349,11 +351,11 @@ def assembler(fin,fout):
                 else:
                     sign='+'
                 next_loc=symbols['*']+1
-        if printcomment:
+        if fout and printcomment:
             print('                     {:04d} {:s}'.format(line_number,line),file=fout)
-        elif printequ:
+        elif fout and printequ:
             print('                     {:04d} {:10s} {:4s} {:s}'.format(line_number,loc,op,address),file=fout)
-        else:
+        elif fout:
             print('{:04d} {:s} {:04d} {:02d} {:02d} {:02d} {:04d} {:10s} {:4s} {:s}'.format(symbols['*'],sign,a,i,f,c,line_number,loc,op,address),file=fout)
 
                  

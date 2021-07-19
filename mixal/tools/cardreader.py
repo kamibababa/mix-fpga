@@ -17,5 +17,5 @@ fin = fin.read().split('\n')
 fout = open('/dev/ttyUSB0','w')
 for line in fin:
     time.sleep(t)
-    print(line,file = fout, end='')
+    print(line,file = fout,end='\n\r')
     fout.flush()
