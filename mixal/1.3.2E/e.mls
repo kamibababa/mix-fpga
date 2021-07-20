@@ -83,31 +83,31 @@
 3099 + 0000 00 00 07      =7         CON  7
                      0076            END  BEGIN 
                                      TRANS 3085
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  3092
-                          EASTER     EQU  3000
-                          CPLUS60    EQU  3011
-                          GMINUS1    EQU  3013
-                          XPLUS57    EQU  3020
-                          3H@0033    EQU  3030
-                          2H@0034    EQU  3031
-                          4H@0035    EQU  3032
-                          20MINUSN   EQU  3037
                           1H@0051    EQU  3048
+                          20MINUSN   EQU  3037
+                          2H@0034    EQU  3031
                           2H@0053    EQU  3050
-                          EASTX      EQU  3057
-                          MARCH      EQU  3058
-                          APRIL      EQU  3059
-                          ANS        EQU  3060
-                          DAY        EQU  3061
-                          MONTH      EQU  3062
-                          YEAR       EQU  3064
-                          BEGIN      EQU  3085
-                          Y          EQU  3092
-                          =19        EQU  3093
+                          3H@0033    EQU  3030
+                          4H@0035    EQU  3032
                           =1//100+1  EQU  3094
-                          =3//4+1    EQU  3095
-                          =8//25+1   EQU  3096
-                          =30        EQU  3097
                           =1//4+1    EQU  3098
+                          =19        EQU  3093
+                          =3//4+1    EQU  3095
+                          =30        EQU  3097
                           =7         EQU  3099
+                          =8//25+1   EQU  3096
+                          ANS        EQU  3060
+                          APRIL      EQU  3059
+                          BEGIN      EQU  3085
+                          CPLUS60    EQU  3011
+                          DAY        EQU  3061
+                          EASTER     EQU  3000
+                          EASTX      EQU  3057
+                          GMINUS1    EQU  3013
+                          MARCH      EQU  3058
+                          MONTH      EQU  3062
+                          XPLUS57    EQU  3020
+                          Y          EQU  3092
+                          YEAR       EQU  3064

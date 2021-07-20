@@ -464,129 +464,129 @@
 3872 + 0000 00 00 00      V          CON  0
                      0436            END  BEGIN 
                                      TRANS 3500
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  3844
-                          EASTER     EQU  3000
-                          CPLUS60    EQU  3011
-                          GMINUS1    EQU  3013
-                          XPLUS57    EQU  3020
-                          3H@0033    EQU  3030
-                          2H@0034    EQU  3031
-                          4H@0035    EQU  3032
-                          20MINUSN   EQU  3037
                           1H@0051    EQU  3048
-                          2H@0053    EQU  3050
-                          EASTX      EQU  3057
-                          MARCH      EQU  3058
-                          APRIL      EQU  3059
-                          ANS        EQU  3060
-                          DAY        EQU  3061
-                          MONTH      EQU  3062
-                          YEAR       EQU  3064
-                          BEGINE     EQU  3085
-                          BEGIN      EQU  3500
-                          CYCLE      EQU  3504
-                          TIME       EQU  3505
                           1H@0107    EQU  3529
-                          OPTABLE    EQU  3602
+                          1H@0232    EQU  3653
+                          1H@0293    EQU  3710
+                          1H@0331    EQU  3745
+                          1H@0400    EQU  3810
+                          1H@0409    EQU  3819
+                          20MINUSN   EQU  3037
+                          2H@0034    EQU  3031
+                          2H@0053    EQU  3050
+                          2H@0236    EQU  3657
+                          2H@0284    EQU  3701
+                          2H@0410    EQU  3820
+                          3H@0033    EQU  3030
+                          4H@0035    EQU  3032
+                          9H@0214    EQU  3635
+                          9H@0225    EQU  3646
+                          9H@0238    EQU  3659
+                          =1//100+1  EQU  3846
+                          =1//4+1    EQU  3850
+                          =19        EQU  3845
+                          =3//4+1    EQU  3847
+                          =30        EQU  3849
+                          =5         EQU  3864
+                          =7         EQU  3851
+                          =8         EQU  3863
+                          =8//25+1   EQU  3848
+                          =BEGIN     EQU  3862
+                          ADD        EQU  3660
+                          ADDRERROR  EQU  3854
+                          ADDROP     EQU  3797
+                          ANS        EQU  3060
+                          APRIL      EQU  3059
                           AREG       EQU  3603
+                          BEGIN      EQU  3500
+                          BEGINE     EQU  3085
+                          CLOCK      EQU  3626
+                          COMPARE    EQU  3826
+                          COMPI      EQU  3624
+                          CPLUS60    EQU  3011
+                          CYCLE      EQU  3504
+                          DAY        EQU  3061
+                          DEC        EQU  3811
+                          DIV        EQU  3675
+                          EASTER     EQU  3000
+                          EASTX      EQU  3057
+                          EQ         EQU  3786
+                          FCHECK     EQU  3636
+                          FERROR     EQU  3865
+                          GE         EQU  3785
+                          GETAV      EQU  3648
+                          GETV       EQU  3650
+                          GMINUS1    EQU  3013
+                          GR         EQU  3783
                           I1REG      EQU  3604
                           I2REG      EQU  3605
                           I3REG      EQU  3606
                           I4REG      EQU  3607
                           I5REG      EQU  3608
                           I6REG      EQU  3609
-                          XREG       EQU  3610
+                          IN         EQU  3859
+                          INC        EQU  3813
+                          INDEXERROR EQU  3853
+                          INST       EQU  3623
+                          IOC        EQU  3858
+                          IREG1      EQU  3869
+                          JBUS       EQU  3857
+                          JMP        EQU  3762
+                          JNOV       EQU  3774
+                          JOV        EQU  3772
+                          JRED       EQU  3860
                           JREG       EQU  3611
-                          ZERO       EQU  3612
-                          SIGNA      EQU  3613
+                          JSJ        EQU  3788
+                          JTABLE     EQU  3771
+                          JUMP       EQU  3758
+                          L          EQU  3867
+                          LE         EQU  3779
+                          LOAD       EQU  3735
+                          LOAD1      EQU  3737
+                          LOADN      EQU  3730
+                          LOADN1     EQU  3732
+                          LS         EQU  3780
+                          M          EQU  3852
+                          MARCH      EQU  3058
+                          MEMERROR   EQU  3861
+                          MEMORY     EQU  3627
+                          MONTH      EQU  3062
+                          MOVE       EQU  3711
+                          MUL        EQU  3666
+                          NE         EQU  3782
+                          OPERROR    EQU  3855
+                          OPTABLE    EQU  3602
+                          OUT        EQU  3756
+                          OVCHECK    EQU  3689
+                          OVTOG      EQU  3625
+                          R          EQU  3866
+                          REGJUMP    EQU  3791
+                          SHIFT      EQU  3693
                           SIGN1      EQU  3614
                           SIGN2      EQU  3615
                           SIGN3      EQU  3616
                           SIGN4      EQU  3617
                           SIGN5      EQU  3618
                           SIGN6      EQU  3619
-                          SIGNX      EQU  3620
+                          SIGNA      EQU  3613
                           SIGNJ      EQU  3621
+                          SIGNX      EQU  3620
                           SIGNZ      EQU  3622
-                          INST       EQU  3623
-                          COMPI      EQU  3624
-                          OVTOG      EQU  3625
-                          CLOCK      EQU  3626
-                          MEMORY     EQU  3627
-                          9H@0214    EQU  3635
-                          FCHECK     EQU  3636
-                          9H@0225    EQU  3646
-                          GETAV      EQU  3648
-                          GETV       EQU  3650
-                          1H@0232    EQU  3653
-                          2H@0236    EQU  3657
-                          9H@0238    EQU  3659
-                          ADD        EQU  3660
-                          SUB        EQU  3663
-                          MUL        EQU  3666
-                          DIV        EQU  3675
-                          STOREAX    EQU  3687
-                          OVCHECK    EQU  3689
-                          SHIFT      EQU  3693
-                          2H@0284    EQU  3701
-                          1H@0293    EQU  3710
-                          MOVE       EQU  3711
-                          LOADN      EQU  3730
-                          LOADN1     EQU  3732
-                          LOAD       EQU  3735
-                          LOAD1      EQU  3737
-                          STORE      EQU  3740
-                          1H@0331    EQU  3745
-                          OUT        EQU  3756
-                          JUMP       EQU  3758
-                          JMP        EQU  3762
-                          JTABLE     EQU  3771
-                          JOV        EQU  3772
-                          JNOV       EQU  3774
-                          LE         EQU  3779
-                          LS         EQU  3780
-                          NE         EQU  3782
-                          GR         EQU  3783
-                          GE         EQU  3785
-                          EQ         EQU  3786
-                          JSJ        EQU  3788
-                          REGJUMP    EQU  3791
-                          ADDROP     EQU  3797
-                          1H@0400    EQU  3810
-                          DEC        EQU  3811
-                          INC        EQU  3813
-                          1H@0409    EQU  3819
-                          2H@0410    EQU  3820
                           SIZECHECK  EQU  3821
-                          COMPARE    EQU  3826
-                          TRACE      EQU  3841
-                          Y          EQU  3844
-                          =19        EQU  3845
-                          =1//100+1  EQU  3846
-                          =3//4+1    EQU  3847
-                          =8//25+1   EQU  3848
-                          =30        EQU  3849
-                          =1//4+1    EQU  3850
-                          =7         EQU  3851
-                          M          EQU  3852
-                          INDEXERROR EQU  3853
-                          ADDRERROR  EQU  3854
-                          OPERROR    EQU  3855
-                          SPEC       EQU  3856
-                          JBUS       EQU  3857
-                          IOC        EQU  3858
-                          IN         EQU  3859
-                          JRED       EQU  3860
-                          MEMERROR   EQU  3861
-                          =BEGIN     EQU  3862
-                          =8         EQU  3863
-                          =5         EQU  3864
-                          FERROR     EQU  3865
-                          R          EQU  3866
-                          L          EQU  3867
-                          TEMP       EQU  3868
-                          IREG1      EQU  3869
                           SIZECHK    EQU  3870
                           SIZEERROR  EQU  3871
+                          SPEC       EQU  3856
+                          STORE      EQU  3740
+                          STOREAX    EQU  3687
+                          SUB        EQU  3663
+                          TEMP       EQU  3868
+                          TIME       EQU  3505
+                          TRACE      EQU  3841
                           V          EQU  3872
+                          XPLUS57    EQU  3020
+                          XREG       EQU  3610
+                          Y          EQU  3844
+                          YEAR       EQU  3064
+                          ZERO       EQU  3612

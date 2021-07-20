@@ -55,24 +55,24 @@
 2082 + 0000 00 00 63      =63        CON  63
                      0055            END  BEGIN 
                                      TRANS 2036
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  2082
-                          TAPE       EQU  16
-                          TYPE       EQU  19
-                          SIZE       EQU  16
-                          OSIZE      EQU  14
-                          TABLE      EQU  1000
+                          1H@0020    EQU  2038
+                          1H@0046    EQU  2064
+                          2H@0024    EQU  2042
+                          2H@0038    EQU  2056
+                          3H@0026    EQU  2044
+                          3H@0037    EQU  2055
+                          4H@0034    EQU  2052
+                          =63        EQU  2082
+                          ANS        EQU  2068
+                          BEGIN      EQU  2036
                           BUF1       EQU  2000
                           BUF2       EQU  2018
-                          BEGIN      EQU  2036
-                          1H@0020    EQU  2038
-                          2H@0024    EQU  2042
-                          3H@0026    EQU  2044
-                          4H@0034    EQU  2052
-                          3H@0037    EQU  2055
-                          2H@0038    EQU  2056
-                          1H@0046    EQU  2064
-                          ANS        EQU  2068
                           CHAR       EQU  2070
                           FREQ       EQU  2071
-                          =63        EQU  2082
+                          OSIZE      EQU  14
+                          SIZE       EQU  16
+                          TABLE      EQU  1000
+                          TAPE       EQU  16
+                          TYPE       EQU  19

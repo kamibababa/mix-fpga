@@ -30,11 +30,11 @@
 3048 + 0000 00 00 24      =N         CON  24
                      0030            END  0B 
                                      TRANS 3024
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  3048
-                          N          EQU  24
-                          M          EQU  11
-                          X          EQU  3000
                           0H@0006    EQU  3024
                           1H@0012    EQU  3030
                           =N         EQU  3048
+                          M          EQU  11
+                          N          EQU  24
+                          X          EQU  3000

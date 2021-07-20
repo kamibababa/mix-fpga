@@ -312,25 +312,30 @@ E9         STZ  0,6
            JMP  DECISION                                                        
            JMP  CYCLE                                                           
 * (FILL IN VALUES, DECISION ROUTINES HERE)                                      
-INBUF      CON  0                                                               
-           ORIG *+16                                                            
+INBUF1     ORIG *+14   
+           CON  INBUF2                                                         
+INBUF2     ORIG *+14  
+           CON  INBUF1                                                          
+INBUF      CON  INBUF1                                                               
 VALUES     STJ  9F                                                              
-           IN   INBUF(19)   
-           JBUS *(19)                                                    
-           LD1  INBUF(1:1)                                                      
+           LD3  INBUF
+           IN   0,3(19)
+           LD3  14,3
+           ST3  INBUF
+           LD1  0,3(1:1)                                                      
            DEC1 30                                                              
            ST1  INFLOOR                                                         
-           LD1  INBUF(2:2)                                                      
+           LD1  0,3(2:2)                                                      
            DEC1 30                                                              
            ST1  OUTFLOOR                                                        
-           LDX  INBUF(3:5)                                                      
+           LDX  0,3(3:5)                                                      
            ENTA 0                                                               
            NUM                                                                  
            STA  GIVEUPTIME                                                      
-           LDX  INBUF+1(1:4)                                                    
+           LDX  1,3(1:4)                                                    
            ENTA 0                                                               
            NUM                                                                  
-           STA  INTERTIME                                                       
+           STA  INTERTIME 
 9H         JMP  *                                                               
 * DECISION ROUTINE                                                              
 DECISION   STJ  9F                                                              
@@ -365,42 +370,52 @@ DECISION   STJ  9F
 8H         ENT6 *                                                               
 9H         JMP  *                                                               
 * PRINT                                                                         
-OUTBUF     ORIG *+24                                                            
-PRINT      STJ  9F                                                              
-           STA  OUTBUF+6                                                        
+OUTBUF1    ORIG *+24                                                            
+           CON  OUTBUF2
+OUTBUF2    ORIG *+24   
+           CON  OUTBUF1
+OUTBUF     CON  OUTBUF1                                                         
+PRINT      STJ  9F     
+           LD3  OUTBUF                                                         
+           STA  6,3                                                        
            LDA  TIME                                                            
            CHAR                                                                 
-           STX  OUTBUF(2:5)                                                     
+           STX  0,3(2:5)                                                     
            ENTA 30,4                                                            
-           STA  OUTBUF+1(3:3)                                                   
+           STA  1,3(3:3)                                                   
            ENTX 0,5                                                             
            ENTA 15                                                              
            JXZ  4F                                                              
            DECA 11                                                              
            JXN  4F                                                              
            INCA 20                                                              
-4H         STA  OUTBUF+2(3:3)                                                   
+4H         STA  2,3(3:3)                                                   
            LDA  D1                                                              
            ENTX 0                                                               
            JAZ  2F                                                              
            INCX 27                                                              
-2H         STX  OUTBUF+3(3:3)                                                   
+2H         STX  3,3(3:3)                                                   
            LDA  D2                                                              
            ENTX 0                                                               
            JAZ  2F                                                              
            INCX 27                                                              
-2H         STX  OUTBUF+4(3:3)                                                   
+2H         STX  4,3(3:3)                                                   
            LDA  D3                                                              
            ENTX 0                                                               
            JAZ  2F                                                              
            INCX 27                                                              
-2H         STX  OUTBUF+5(3:3)                                                   
-           OUT  OUTBUF(18)                                                      
-           JBUS *(18)
+2H         STX  5,3(3:3)                                                   
+           OUT  0,3(18) 
+	   LD3  24,3
+           ST3  OUTBUF
 9H         JMP  *                                                               
 * MAIN LINKAGE                                                                  
 BEGIN      ENT4 2                                                               
-           ENT5 0                                                               
+           ENT5 0    
+           LD3  INBUF
+           IN   0,3(19)
+           LD3  14,3
+           ST3  INBUF
            JMP  CYCLE                                                           
 POOLMAX    NOP  POOL                                                            
 POOL       END  BEGIN                                                           

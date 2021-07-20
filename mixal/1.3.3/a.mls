@@ -93,33 +93,33 @@
 2505 + 0000 00 00 00      START      CON  0
                      0089            END  BEGIN 
                                      TRANS 2424
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  2501
-                          MAXWDS     EQU  1200
-                          PERM       EQU  0
-                          ANS        EQU  1200
-                          OUTBUF     EQU  2400
-                          CARDS      EQU  16
-                          PRINTER    EQU  18
-                          BEGIN      EQU  2424
                           1H@0012    EQU  2427
                           1H@0025    EQU  2440
-                          2H@0028    EQU  2443
                           1H@0035    EQU  2450
-                          OPEN       EQU  2458
                           1H@0044    EQU  2459
+                          1H@0079    EQU  2491
+                          2H@0028    EQU  2443
+                          4H@0077    EQU  2489
+                          5H@0074    EQU  2486
+                          =0         EQU  2504
+                          =ANS       EQU  2503
+                          =MAXWDS-16 EQU  2501
+                          ANS        EQU  1200
+                          BEGIN      EQU  2424
+                          CARDS      EQU  16
+                          CLOSE      EQU  2496
                           DONE       EQU  2464
-                          LPREN      EQU  2475
-                          RPREN      EQU  2476
                           EQUALS     EQU  2477
                           GO         EQU  2478
-                          SUCC       EQU  2481
-                          5H@0074    EQU  2486
-                          4H@0077    EQU  2489
-                          1H@0079    EQU  2491
-                          CLOSE      EQU  2496
-                          =MAXWDS-16 EQU  2501
+                          LPREN      EQU  2475
+                          MAXWDS     EQU  1200
+                          OPEN       EQU  2458
+                          OUTBUF     EQU  2400
+                          PERM       EQU  0
+                          PRINTER    EQU  18
+                          RPREN      EQU  2476
                           SIZE       EQU  2502
-                          =ANS       EQU  2503
-                          =0         EQU  2504
                           START      EQU  2505
+                          SUCC       EQU  2481

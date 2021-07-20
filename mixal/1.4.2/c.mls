@@ -65,26 +65,26 @@
 3087 + 0000 00 00 10      =10        CON  10
                      0065            END  START 
                                      TRANS 3080
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  3087
-                          READER     EQU  16
-                          INPUT      EQU  3000
-                          NEXTCHAR   EQU  3016
                           1H@0007    EQU  3018
+                          1H@0039    EQU  3062
                           2H@0011    EQU  3022
+                          2H@0018    EQU  3028
                           3H@0013    EQU  3024
                           9H@0015    EQU  3026
-                          2H@0018    EQU  3028
-                          IN1        EQU  3030
-                          OUTPUT     EQU  3043
-                          PUNCH      EQU  17
-                          OUT1       EQU  3059
-                          1H@0039    EQU  3062
                           9H@0053    EQU  3076
-                          PERIOD     EQU  3079
-                          START      EQU  3080
-                          OUT        EQU  3083
-                          OUTX       EQU  3084
-                          IN         EQU  3085
-                          INX        EQU  3086
                           =10        EQU  3087
+                          IN         EQU  3085
+                          IN1        EQU  3030
+                          INPUT      EQU  3000
+                          INX        EQU  3086
+                          NEXTCHAR   EQU  3016
+                          OUT        EQU  3083
+                          OUT1       EQU  3059
+                          OUTPUT     EQU  3043
+                          OUTX       EQU  3084
+                          PERIOD     EQU  3079
+                          PUNCH      EQU  17
+                          READER     EQU  16
+                          START      EQU  3080

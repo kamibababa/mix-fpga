@@ -55,17 +55,17 @@
 3075 + 0000 00 00 00      S          CON  0
                      0049            END  START 
                                      TRANS 3024
-                          * SYMBOL TABLE
+                         * SYMBOL TABLE
                           *          EQU  3069
-                          BUF        EQU  3000
-                          START      EQU  3024
-                          OUTER      EQU  3027
-                          INNER      EQU  3032
                           1H@0026    EQU  3046
                           =10        EQU  3069
-                          CONST      EQU  3070
                           =2         EQU  3071
-                          R          EQU  3072
-                          TEMP       EQU  3073
+                          BUF        EQU  3000
+                          CONST      EQU  3070
+                          INNER      EQU  3032
                           M          EQU  3074
+                          OUTER      EQU  3027
+                          R          EQU  3072
                           S          EQU  3075
+                          START      EQU  3024
+                          TEMP       EQU  3073
