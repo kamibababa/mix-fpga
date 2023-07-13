@@ -1,0 +1,75 @@
+Von:		Michael Schröder <mi.schroeder@netcologne.de>
+An:		taocp@cs.stanford.edu
+Betreff:	MIX is not mythical anymore
+Datum:		Wed, 05 May 2021 14:59:47 +0200
+Sicherheit:	Mit GPG signiert
+
+Dear Mr. Knuth,
+
+on your homepage I found links related to MIXware. On the bottom of the
+list you ask:
+
+"(Please let me know of any other sites that I should add to this
+list.)"
+
+And here it is: https://gitlab.com/x653/mix-fpga
+
+It's my git repository, where I present a way to build a real MIX
+computer based on a little fpga-board. Even if MIX is "quite obsolete",
+it's real fun to run the mixal programs on real hardware. So MIX is not
+mythical anymore, as stated in TAOCP Vol.1 1.3.
+
+Everybody can follow the guidelines presented in my repository and
+build their own MIX. All commands described in TAOCP 1.3 except
+floating point arithmetic are implemented following the exact timing
+specifications. (Even the fancy SRC/SLC commands, which need a modulo
+10 computation execute in the requested two cycles).
+
+All character based in-/output units (U16-U20) are connected to a USB-
+port (115200 baud 8N1), so you can connect to MIX with a PC to upload
+your mixal programs.
+
+Everything is ready for production. So in case you want to have a real
+MIX computer, I would like to offer you the following barter trade:
+
+- I send you a signed MIX-computer (you can choose the color of the
+case: red, blue or gray)
+
+and
+
+- You send me a signed copy of your book "The Art of Computer
+Programming Vol. 1"
+
+How does this sound?
+
+Best regards
+
+Michael Schröder
+
+Von:		Maggie McLoughlin <mam@CS.Stanford.EDU>
+Antwort an:	knuth-bug@cs.stanford.edu
+An:		Michael Schröder <mi.schroeder@netcologne.de>
+Betreff:	Re: MIX is not mythical anymore
+Datum:		Wed, 05 May 2021 09:52:13 -0700 (05.05.2021 18:52:13)
+
+> I would like to offer you the following barter trade:
+> - I send you a signed MIX-computer (you can choose the color of the
+> case: red, blue or gray)
+RED
+> - You send me a signed copy of your book "The Art of Computer
+> Programming Vol. 1"
+
+Deal. Tell me which color of ink you prefer.
+
+(And when you do MMIX, I'll do the same with Volume 1 Fascicle 1,
+plus Volume 4A, plus the MMIX volume from LNCS.)
+
+And by the way, congratulations on the evident success of this project.
+
+-- Don Knuth
+
+PS Do you have the GO-button (exercise 1.3.1--26)? [There's an in-joke
+about this: The index refers to page 126, where there's something
+next to the Overflow toggle that looks like a button.]
+
+PPS oops I see you have indeed anticipated the GO button

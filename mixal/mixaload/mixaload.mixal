@@ -4,7 +4,7 @@ TAPE       EQU  0
 CR         EQU  16                                                              
 LP         EQU  18                                                              
 *                                                                               
-MAXSYMBOL  EQU  250                                                             
+MAXSYMBOL  EQU  260                                                             
 *                                                                               
 * CHARACTER CONSTANT                                                            
 CHARA      ALF  AAAAA                                                           
@@ -1529,7 +1529,7 @@ FINEXIT    JMP  *
 *          LOADER ROUTINE                                                       
 *                                                                               
 *                                                                               
-           ORIG 3680                                                            
+           ORIG 3780                                                            
 FIRST      CON  *                                                               
 BUF1       ORIG *+100                                                           
 BUF2       ORIG *+100                                                           

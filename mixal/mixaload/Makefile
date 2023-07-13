@@ -11,7 +11,7 @@ $(NAME).out: $(NAME).card
 	cat /dev/ttyUSB0 > $(NAME).out &
 	../tools/cardreader.py $(NAME).card
 	sleep 1
-	../tools/cardreader.py $(NAME).in -t0.03
+	../tools/cardreader.py $(NAME).in -t0.02
 	sleep 1
 	killall cat
 	cat $(NAME).out

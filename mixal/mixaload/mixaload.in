@@ -2,9 +2,9 @@
 L          EQU  500                                                             
 PRINTER    EQU  18                                                              
 PRIME      EQU  -1                                                              
-BUF0       EQU  2000                                                            
+BUF0       EQU  1000                                                            
 BUF1       EQU  BUF0+25                                                         
-           ORIG 3000                                                            
+           ORIG 2000                                                            
 C1         CON  1-L                                                             
 C3         CON  3                                                               
 START      LD1  C1                                                              
@@ -44,9 +44,57 @@ TITLE      ALF  FIRST
            ALF   HUND                                                           
            ALF  RED P                                                           
            ALF  RIMES                                                           
-           ORIG BUF0+24                                                         
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
            CON  BUF1+10                                                         
-           ORIG BUF1+24                                                         
+           ORIG BUF1                                                            
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
+           CON  0                                                               
            CON  BUF0+10                                                         
            END  START                                                           
+                                                                                
                                                                                 
